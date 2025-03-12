@@ -245,13 +245,13 @@ def ajouter_devoir():
     chemin1 = os.path.join('static', 'images', fichier_filename)
     print(f"Relative path for database: {chemin1}")
 
-    # Database connection (using the already defined `db`)
+    curseur = db.cursor()
     try:
-        curseur = db.cursor()
+        
 
         # Insert data into the database
         requete = '''
-        INSERT INTO examens (nom, description, type, classe, chemin, idprof, date_creation)
+        INSERT INTO examens (nom, description, type, classe, chemin, idprof, datedesoumission)
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         '''
         values = (nom, description, type_devoir, classe, chemin1, prof, date)
