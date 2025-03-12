@@ -424,7 +424,7 @@ def afficher_note():
 def afficher_examens():
     sess_id = session.get('id')  # ID du professeur connecté
     cursor=db.cursor()
-    cursor.execute("SELECT * FROM examens where idprof=%s",(sess_id,))
+    cursor.execute("SELECT nom,description,type,classe FROM examens where idprof=%s",(sess_id,))
     examens=cursor.fetchall()
     cursor.close()
     return render_template('examen.html',examens=examens)
