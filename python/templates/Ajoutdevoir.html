@@ -10,7 +10,7 @@
 </head>
 <body class="bg-gray-200 h-screen flex overflow-hidden">
 
-    <!-- Sidebar -->
+    
     <div class="w-64 bg-blue-900 text-white p-5 flex flex-col h-full flex-shrink-0">
         <div class="flex items-center mb-6">
             <i class="fas fa-user-tie text-3xl mr-2"></i>
@@ -38,11 +38,11 @@
         </a>
     </div>
 
-    <!-- Contenu principal -->
+    
     <div class="flex-1 flex items-center justify-center p-6 h-full">
         <div class="bg-white shadow-2xl rounded-lg p-8 w-full max-w-5xl min-h-fit flex flex-col relative">
 
-            <!-- Message de succès ou d'erreur (fixé en haut sans pousser le contenu) -->
+            
             <div class="absolute top-0 left-0 right-0 w-full">
                 {% if errorfichier %}
                     <div class="bg-red-500 text-white text-center p-3 rounded-lg mb-4">
@@ -57,7 +57,7 @@
 
             <h1 class="text-3xl font-bold text-center text-blue-900 mb-6 mt-12">Ajouter Un Devoir</h1>
 
-            <!-- Formulaire ajusté avec une hauteur minimale -->
+            
             <form action="/ajouterun_devoir" method="POST" enctype="multipart/form-data" class="space-y-4 flex-grow flex flex-col justify-between">
 
                 <div class="flex-grow">
@@ -112,7 +112,7 @@
 
                 <input type="number" name="id" value="{{sess_id}}" readonly hidden>
 
-                <!-- Bouton fixé en bas -->
+                
                 <div class="mt-4 flex justify-center">
                     <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
                         <i class="fas fa-plus-circle mr-2"></i> Ajouter
