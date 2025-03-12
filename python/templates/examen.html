@@ -10,7 +10,6 @@
 </head>
 <body class="bg-blue-50">
     <div class="flex h-screen">
-        <!-- Sidebar -->
         <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
             <div class="flex items-center mb-6">
                 <i class="fas fa-user-tie text-3xl mr-2"></i>
@@ -42,6 +41,18 @@
             <h2 class="text-2xl font-semibold mb-4">Examens</h2>
             <div class="bg-white p-4 shadow rounded">
                 <a href="/ajoutdevoirpage" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded inline-block">Créer un nouvel examen</a>
+            </div>
+            <div class="mt-6">
+                <h3 class="text-xl font-semibold mb-2">Examens donnés</h3>
+                <ul class="bg-white p-4 shadow rounded">
+                    {% for examen in examens %}
+                    <p class="text-gray-700">Nom : {{ examen[0] }}</p>
+                    <p class="text-gray-700">Description de l'examen : {{ examen[1] }}</p>
+                    <p class="text-gray-700">Type : {{ examen[2] }}</p>
+                    <p class="text-gray-700">Classe : {{ examen[3] }}</p>
+                    <p class="text-gray-700">Date de creation de l'examen : {{ examen[4] }}</p>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </div>

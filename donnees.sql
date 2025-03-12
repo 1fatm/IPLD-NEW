@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS gestion_examens;
 USE gestion_examens;
 
--- Suppression des anciennes tables si elles existent
+
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS statistiques;
 DROP TABLE IF EXISTS plagiat;
@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS examens;
 DROP TABLE IF EXISTS enseignants;
 DROP TABLE IF EXISTS etudiants;
 
--- Table des étudiants
+
 CREATE TABLE etudiants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom_complet VARCHAR(255) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE etudiants (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table des enseignants
+
 CREATE TABLE enseignants (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom_complet VARCHAR(255) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE enseignants (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table des examens (créés par les enseignants)
+
 CREATE TABLE examens (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE examens (
     FOREIGN KEY (idprof) REFERENCES enseignants(id) ON DELETE CASCADE
 );
 
--- Table des copies (soumissions des étudiants)
+
 CREATE TABLE copies (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_examen INT NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE copies (
     FOREIGN KEY (id_etudiant) REFERENCES etudiants(id) ON DELETE CASCADE
 );
 
--- Table des corrections (notes attribuées aux copies)
+
 CREATE TABLE corrections (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_copie INT NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE corrections (
     FOREIGN KEY (id_copie) REFERENCES copies(id) ON DELETE CASCADE
 );
 
--- Table de détection de plagiat
+
 CREATE TABLE plagiat (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_copie INT NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE plagiat (
     FOREIGN KEY (id_copie) REFERENCES copies(id) ON DELETE CASCADE
 );
 
--- Table des statistiques des notes
+
 CREATE TABLE statistiques (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_examen INT NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE statistiques (
     FOREIGN KEY (id_examen) REFERENCES examens(id) ON DELETE CASCADE
 );
 
--- Table des messages (chatbot)
+
 CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_etudiant INT NULL,
