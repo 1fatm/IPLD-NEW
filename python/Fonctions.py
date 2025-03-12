@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector,os,re
+import numpy as np
+import matplotlib.pyplot as plt
+import io
+import base64
+
 
 app = Flask(__name__)
 app.secret_key = 'your_love'
@@ -417,3 +422,70 @@ def afficher_note():
     
     curseur.close()
     return render_template('notep.html', notes=notes)
+
+def generer_statistiques():
+    sess_id = session.get('id')  # ID du professeur connecté
+    if not sess_id:
+        return "Erreur : utilisateur non authentifié"
+
+    curseur = db.cursor(dictionary=True)
+
+    # Récupérer les statistiques des examens donnés par ce professeur
+    requete = """
+    SELECT e.classe, c.note
+    FROM copies cop
+    JOIN corrections c ON cop.id = c.id_copie
+    JOIN examens ex ON cop.id_examen = ex.id
+    JOIN etudiants e ON cop.id_etudiant = e.id
+    WHERE ex.idprof = %s
+    """
+    curseur.execute(requete, (sess_id,))
+    resultats = curseur.fetchall()
+    curseur.close()
+
+    if not resultats:
+        return "Aucune donnée disponible."
+
+    # Transformer les résultats en un dictionnaire {classe: [notes]}
+    notes_par_classe = {}
+    for row in resultats:
+        classe = row["classe"]
+        note = row["note"]
+
+        if classe not in notes_par_classe:
+            notes_par_classe[classe] = []
+        notes_par_classe[classe].append(note)
+
+    # Générer les statistiques
+    statistiques = []
+    histogrammes = {}
+
+    for classe, notes in notes_par_classe.items():
+        notes_array = np.array(notes)
+        moyenne = round(np.mean(notes_array), 2)
+        taux_reussite = round((np.sum(notes_array >= 10) / len(notes_array)) * 100, 2)  # % d'élèves ayant >= 10
+
+        # Générer un histogramme
+        plt.figure(figsize=(6, 4))
+        plt.hist(notes_array, bins=5, color='skyblue', edgecolor='black', alpha=0.7)
+        plt.xlabel('Notes')
+        plt.ylabel('Nombre d\'étudiants')
+        plt.title(f'Distribution des notes - {classe}')
+        
+        # Sauvegarde de l'image en base64 pour l'affichage
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
+        img.seek(0)
+        img_b64 = base64.b64encode(img.getvalue()).decode('utf8')
+        histogrammes[classe] = img_b64
+        plt.close()
+
+        statistiques.append({
+            "classe": classe,
+            "moyenne": moyenne,
+            "taux_reussite": taux_reussite
+        })
+
+    print(histogrammes)  # Pour vérifier les images générées
+
+    return render_template("statistique.html", statistiques=statistiques, histogrammes=histogrammes)
