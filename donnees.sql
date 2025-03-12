@@ -1,7 +1,15 @@
-CREATE DATABASE  gestion_examens;
+CREATE DATABASE IF NOT EXISTS gestion_examens;
 USE gestion_examens;
 
-
+-- Suppression des anciennes tables si elles existent
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS statistiques;
+DROP TABLE IF EXISTS plagiat;
+DROP TABLE IF EXISTS corrections;
+DROP TABLE IF EXISTS copies;
+DROP TABLE IF EXISTS examens;
+DROP TABLE IF EXISTS enseignants;
+DROP TABLE IF EXISTS etudiants;
 
 -- Table des étudiants
 CREATE TABLE etudiants (
@@ -9,7 +17,7 @@ CREATE TABLE etudiants (
     nom_complet VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
-    classe varchar(30) NOT NULL, 
+    classe Varchar(50) NOT NULL,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -28,7 +36,7 @@ CREATE TABLE examens (
     nom VARCHAR(255) NOT NULL,
     description TEXT,
     type ENUM('examen', 'quiz', 'devoir') NOT NULL,
-    classe ENUM('DUT1', 'DUT2', 'DIC1', 'DIC2', 'License') NOT NULL,
+    classe Varchar(50) NOT NULL,
     chemin VARCHAR(255) NOT NULL,
     idprof INT NOT NULL,
     datedesoumission DATETIME NOT NULL,
