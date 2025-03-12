@@ -28,7 +28,7 @@ CREATE TABLE examens (
     nom VARCHAR(255) NOT NULL,
     description TEXT,
     type ENUM('examen', 'quiz', 'devoir') NOT NULL,
-    classe ENUM('DUT1', 'DUT2', 'DIC1', 'DIC2', 'License') NOT NULL,
+    classe varchar(255) NOT NULL,
     chemin VARCHAR(255) NOT NULL,
     idprof INT NOT NULL,
     datedesoumission DATETIME NOT NULL,
