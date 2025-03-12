@@ -1,5 +1,7 @@
-CREATE DATABASE gestion_examens;
+CREATE DATABASE  gestion_examens;
 USE gestion_examens;
+
+
 
 -- Table des étudiants
 CREATE TABLE etudiants (
@@ -7,6 +9,7 @@ CREATE TABLE etudiants (
     nom_complet VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
+    classe varchar(30), 
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -22,12 +25,15 @@ CREATE TABLE enseignants (
 -- Table des examens (créés par les enseignants)
 CREATE TABLE examens (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_enseignant INT NOT NULL,
-    titre VARCHAR(255) NOT NULL,
+    nom VARCHAR(255) NOT NULL,
     description TEXT,
-    fichier_pdf VARCHAR(255) NOT NULL,
+    type ENUM('examen', 'quiz', 'devoir') NOT NULL,
+    classe ENUM('DUT1', 'DUT2', 'DIC1', 'DIC2', 'License') NOT NULL,
+    chemin VARCHAR(255) NOT NULL,
+    idprof INT NOT NULL,
+    datedesoumission DATETIME NOT NULL,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_enseignant) REFERENCES enseignants(id) ON DELETE CASCADE
+    FOREIGN KEY (idprof) REFERENCES enseignants(id) ON DELETE CASCADE
 );
 
 -- Table des copies (soumissions des étudiants)
@@ -76,8 +82,8 @@ CREATE TABLE statistiques (
 -- Table des messages (chatbot)
 CREATE TABLE messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    id_etudiant INT,
-    id_enseignant INT,
+    id_etudiant INT NULL,
+    id_enseignant INT NULL,
     message TEXT NOT NULL,
     reponse TEXT,
     date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
