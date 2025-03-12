@@ -1,8 +1,5 @@
-# your_flask_app/__init__.py
-
 from flask import Flask
-import flask
-
+app = Flask(__name__)
 # Create the Flask application instance
 app = Flask(__name__)
 

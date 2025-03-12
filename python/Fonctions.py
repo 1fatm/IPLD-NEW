@@ -417,3 +417,7 @@ def afficher_note():
     
     curseur.close()
     return render_template('notep.html', notes=notes)
+
+def deconnection():
+    session.clear()
+    return redirect('/')
