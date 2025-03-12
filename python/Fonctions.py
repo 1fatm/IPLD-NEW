@@ -423,6 +423,22 @@ def afficher_note():
     curseur.close()
     return render_template('notep.html', notes=notes)
 
+def afficher_examens():
+    if "enseignant_id" not in session:
+        return "Accès refusé. Veuillez vous connecter.", 403
+    
+    enseignant_id = session["enseignant_id"]
+    connexion = get_db_connection()
+    cursor = connexion.cursor(dictionary=True)
+    
+    cursor.execute("SELECT nom, description, type, classe, datedesoumission FROM examens WHERE idprof = %s ORDER BY date_creation DESC", (enseignant_id,))
+    examens = cursor.fetchall()
+    
+    cursor.close()
+    connexion.close()
+    
+    return render_template("examen.html", examens=examens)
+
 def generer_statistiques():
     sess_id = session.get('id')  # ID du professeur connecté
     if not sess_id:
