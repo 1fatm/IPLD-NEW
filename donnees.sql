@@ -9,7 +9,7 @@ CREATE TABLE etudiants (
     nom_complet VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     mot_de_passe VARCHAR(255) NOT NULL,
-    classe varchar(30), 
+    classe varchar(30) NOT NULL, 
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
