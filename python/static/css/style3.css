@@ -1,19 +1,19 @@
-/* Reset */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Arrière-plan et mise en page */
+
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to right, #e3f2fd, #bbdefb);
     color: #333;
 }
-/* style3.css */
+
 .home-section {
-    display: block; /* Afficher par défaut */
+    display: block;
 }
 
 .welcome-message {
@@ -96,16 +96,15 @@ body {
     color: #555;
 }
 
-/* Tableau de bord */
 .dashboard {
     display: flex;
     min-height: 100vh;
 }
 
-/* Sidebar */
+
 .sidebar {
     width: 250px;
-    background-color: #122943; /* Bleu principal */
+    background-color: #122943; 
     color: white;
     padding: 20px;
     display: flex;
@@ -147,19 +146,18 @@ body {
     margin-right: 10px;
 }
 .sidebar ul li:last-child {
-    margin-top: auto; /* Pousse le dernier élément (Déconnexion) vers le bas */
-    position: absolute; /* Position absolue pour le placer en bas */
-    bottom: 20px; /* Espacement depuis le bas */
-    width: calc(100% - 40px); /* Largeur ajustée pour correspondre à la sidebar */
+    margin-top: auto; 
+    position: absolute; 
+    bottom: 20px; 
+    width: calc(100% - 40px); 
 }
 
-/* Contenu principal */
 .main-content {
     flex-grow: 1;
     padding: 20px;
 }
 
-/* En-tête */
+
 header {
     display: flex;
     justify-content: space-between;
@@ -174,7 +172,7 @@ header h1 {
     color: #111213;
 }
 
-/* Boîtes d'information */
+
 .info-boxes {
     display: flex;
     gap: 20px;
@@ -195,7 +193,7 @@ header h1 {
     transform: translateY(-5px);
 }
 
-/* Formulaire pour soumettre un examen */
+
 .exam-section {
     margin-top: 30px;
     padding: 20px;
@@ -234,7 +232,7 @@ header h1 {
     background: #0056b3;
 }
 
-/* Chatbot (bouton flottant) */
+
 .chatbot-btn {
     position: fixed;
     bottom: 20px;
@@ -251,7 +249,6 @@ header h1 {
 .chatbot-btn:hover {
     background: #0056b3;
 }
-/* Section des notes corrigées */
 .grades-section {
     margin-top: 30px;
     padding: 20px;
@@ -286,7 +283,7 @@ header h1 {
 .grade-item p {
     margin: 5px 0;
 }
-/* Style du chatbot */
+
 .chatbot-window {
     position: fixed;
     bottom: 20px;
@@ -295,7 +292,7 @@ header h1 {
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    display: none; /* Masqué par défaut */
+    display: none; 
     flex-direction: column;
     z-index: 1000;
 }
@@ -375,7 +372,7 @@ header h1 {
     cursor: pointer;
 }
 
-/* Bouton pour ouvrir le chatbot */
+
 .chatbot-toggle {
     position: fixed;
     bottom: 20px;
@@ -389,7 +386,7 @@ header h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
 }
-/* Section des notifications */
+
 .notifications-section {
     margin-top: 30px;
     padding: 20px;
@@ -423,7 +420,7 @@ header h1 {
 .notification-item small {
     color: #666;
     font-size: 12px;
-}/* Section de recherche */
+}
 .search-section {
     margin-top: 30px;
     padding: 20px;
@@ -460,7 +457,7 @@ header h1 {
 
 .search-section button:hover {
     background: #0056b3;
-}/* Section des sujets d'examen */
+}
 .exam-topics-section {
     margin-top: 30px;
     padding: 20px;
@@ -535,7 +532,7 @@ header h1 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Alignement à gauche */
+    align-items: flex-start; 
 }
 
 .exam-topic-item h3 {
@@ -572,7 +569,7 @@ header h1 {
     align-items: center;
     gap: 10px;
     margin-top: 10px;
-    width: 100%; /* Largeur max */
+    width: 100%;
 }
 
 .custom-file-upload {
