@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copies Soumises - Tableau de Bord Enseignant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-blue-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
+            <div class="flex items-center mb-6">
+                <i class="fas fa-user-tie text-3xl mr-2"></i>
+                <h1 class="text-2xl font-bold">Enseignant</h1>
+            </div>
+            <nav>
+                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-house-light mr-2"></i> Accueil
+                </a>
+                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-file-text-light mr-2"></i> Examens
+                </a>
+                <a href="/copie" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-files-light mr-2"></i> Copies soumises
+                </a>
+                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-pencil-light mr-2"></i> Notes et corrections
+                </a>
+                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-chart-bar-light mr-2"></i> Statistiques
+                </a>
+            </nav>
+            <a href="deconnexion.html" class="mt-auto text-sm py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
+                <i class="ph-sign-out-light mr-2"></i> Déconnexion
+            </a>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="flex-1 p-6">
+            <h2 class="text-3xl font-bold text-blue-900 mb-6">Fichiers soumis</h2>
+
+            <!-- Liste des devoirs soumis -->
+            <div class="space-y-6">
+                {% for devoir in devoirsoumis %}
+                    <div class="bg-white p-4 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-semibold text-blue-800">Etudiant : {{ devoir[0] }}</h3>
+                        <p class="text-gray-700">Classe : {{ devoir[1] }}</p>
+                        <p class="text-gray-700">Nom de l'examen : {{ devoir[2] }}</p>
+                        <p class="text-gray-700">Date de soumission : {{ devoir[4] }}</p>
+                        <a href="{{ devoir[3] }}" download="{{ devoir[2] }}_CopieEtudiant_{{ devoir[0] }}.pdf" class="text-blue-600 hover:text-blue-800">Télécharger la copie</a>
+
+                        <!-- Formulaire pour les détails -->
+                        <form action="/info_copiecode" method="post" class="mt-4">
+                            <input type="text" name="id" value="{{ devoir[5] }}" readonly hidden>
+                            <input type="submit" value="Détails" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        </form>
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500">Aucun devoir soumis pour le moment.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

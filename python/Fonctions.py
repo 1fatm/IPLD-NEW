@@ -90,10 +90,10 @@ def connexionprof():
         if enseignant and check_password_hash(enseignant[3], mot_de_passe):
             session['username'] = enseignant[1]
             session['id'] = enseignant[0]
-            return timeline_prof()
+            return render_template('accueilp.html', sess_username=session['username'])
         else:
             erreur_message="Identifiants incorrects"
-            return render_template('connexion_prof.html',erreur_message=erreur_message)
+            return render_template('connexion_prof.html',erreur_message=erreur_message,sess_username=session['username'])
 
 def connexionetudiant():
     if request.method == 'POST':
@@ -142,10 +142,10 @@ def timeline_eleve():
 
 
 def timeline_prof():
-    sess_username=session.get('username')
-    sess_id=session.get('id')
+    sess_username = session.get('username')
+    sess_id = session.get('id')
     cursor = db.cursor()
-
+    print(sess_id)  # This line prints sess_id to the terminal
     requete = """
     SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id
     FROM copies c
@@ -153,13 +153,14 @@ def timeline_prof():
     JOIN examens ex ON c.id_examen = ex.id
     WHERE ex.idprof = %s
     """
-    
     cursor.execute(requete, (sess_id,))
     devoirsoumis = cursor.fetchall()
-    db.close()
-    
-    return render_template('pageProf.html', devoirsoumis=devoirsoumis)
+    print(devoirsoumis)  # This line prints devoirsoumis to the terminal
 
+    db.commit()
+    db.close()
+
+    return render_template('copie.html', devoirsoumis=devoirsoumis)
 
 def connexionetu():
     if request.method == 'POST':
@@ -264,8 +265,6 @@ def ajouter_devoir():
     finally:
         # Close the resources
         curseur.close()
-
-
     return render_template("Ajoutdevoir.html", success_message="Devoir ajouté avec succès.",sess_id=session['id'])
 
 def infodev():
@@ -384,6 +383,8 @@ def notercopie():
 def updatenote():
     idcopie=request.form['id']
     newnote=request.form['newnote']
+    sess_id = session.get('id')
+    sess_username = session.get('username')
     curseur=db.cursor()
     requete = '''
     update corrections set note=%s where id_copie=%s
@@ -393,4 +394,26 @@ def updatenote():
     db.commit()
     curseur.close()
     db.close()
-    return render_template("info_copie.html", success_message="Note modifiée avec succès.",note=newnote)
+    return render_template("info_copie.html")
+
+def afficher_note():
+    sess_id = session.get('id')  # Récupération de l'ID du professeur
+    if not sess_id:
+        return "Erreur : utilisateur non authentifié"
+
+    curseur = db.cursor()
+
+    requete = """
+    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note
+    FROM copies cop
+    JOIN etudiants e ON cop.id_etudiant = e.id
+    JOIN corrections c ON cop.id = c.id_copie
+    JOIN examens ex ON cop.id_examen = ex.id
+    WHERE ex.idprof = %s
+    """
+    
+    curseur.execute(requete, (sess_id,))
+    notes = curseur.fetchall()
+    
+    curseur.close()
+    return render_template('notep.html', notes=notes)

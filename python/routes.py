@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note
 
 @app.route('/')
 def index():
@@ -71,9 +71,6 @@ def Notercopie():
 @app.route('/updatenote',methods=['POST'])
 def Updatenote():
     return updatenote()
-@app.route('/ajoutdevoir')
-def AjoutAdmin_route():
-    return render_template('Ajoutdevoir.html',sess_username=session['username'],sess_id=session['id'])
 
 @app.route('/ajouterun_devoir', methods=['POST'])
 def Ajoutdevoir_route():
@@ -95,3 +92,32 @@ def timelineprof_route():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/examen')
+def examen_route():
+    return render_template('examen.html')
+
+@app.route('/accueilp')
+def accueilp_route():
+    return render_template('accueilp.html')
+
+@app.route('/ajoutdevoirpage')
+def AjoutAdmin_route():
+    return render_template('Ajoutdevoir.html',sess_username=session['username'],sess_id=session['id'])
+
+@app.route('/copie')
+def copie_examen():
+    return timeline_prof()
+
+@app.route('/notep')
+def note_prof():
+    return afficher_note()
+
+@app.route('/statistiquesp')
+def statistique():
+    return render_template('statistique.html')
+
+@app.route('/deconnexion')
+def deconnect():
+    return render_template('accueilp.html')
+

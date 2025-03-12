@@ -1,39 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <link rel="stylesheet" href="{{ url_for('static', filename='accueil.css') }}">
-    <title>AjouterDevoir
-
-    </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Ajouter Devoir</title>
 </head>
-<body> 
-    <form action="/ajouterun_devoir" method="POST" enctype="multipart/form-data">
-        {% if errorfichier %}
-        <p style="color: red;">{{ errorfichier }}</p>
-        {% elif succes_message %}
-        <p style="color: green;">{{ succes_message }}</p>
-        {%endif%}
-        <h1>Ajouter Un Devoir</h1> 
-        <label for="nom">Nom du de devoir:</label>
-        <input type="text" name="nom" id="nom" required><br>
-        <label for="description">Description du devoir:</label>
-        <input type="text" name="description" id="description" required><br>
-        <label for="option-diponibilité">Type</label><br>
-        <label><input type="radio" name="typedevoir" value="examen" required> examen</label>
-        <label><input type="radio" name="typedevoir" value="quiz" required>quiz</label>
-        <label><input type="radio" name="typedevoir" value="devoir" required>devoir</label><br><br>
-        <label for="classe">Classe</label><br>
-        <label><input type="radio" name="classe" value="DIC1" required> DIC1</label>
-        <label><input type="radio" name="classe" value="DIC2" required>DIC2</label>
-        <label><input type="radio" name="classe" value="DIC3" required>DIC3</label>
-        <label><input type="radio" name="classe" value="DIC1" required> DUT1</label>
-        <label><input type="radio" name="classe" value="DIC2" required>DUT2</label><br>
-        <label for="fichier">Fichier de l'Exercice</label><br>
-        <input type="file" name="fichier"><br><br>
-        <label for="date">Date limite</label>
-        <input type="date" name="date" id="date" required><br>
-        <input type="number" name="id" value="{{sess_id}}" readonly hidden>
-        <input type="submit" value="Ajouter">
-    </form>
+<body class="bg-gray-200 h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <div class="w-64 bg-blue-900 text-white p-5 flex flex-col h-full flex-shrink-0">
+        <div class="flex items-center mb-6">
+            <i class="fas fa-user-tie text-3xl mr-2"></i>
+            <h1 class="text-2xl font-bold">Enseignant</h1>
+        </div>
+        <nav class="space-y-2 flex-1">
+            <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <i class="ph-house-light mr-2"></i> Accueil
+            </a>
+            <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <i class="ph-file-text-light mr-2"></i> Examens
+            </a>
+            <a href="/copie" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <i class="ph-files-light mr-2"></i> Copies soumises
+            </a>
+            <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <i class="ph-pencil-light mr-2"></i> Notes et corrections
+            </a>
+            <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <i class="ph-chart-bar-light mr-2"></i> Statistiques
+            </a>
+        </nav>
+        <a href="deconnexion.html" class="text-sm py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
+            <i class="ph-sign-out-light mr-2"></i> Déconnexion
+        </a>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="flex-1 flex items-center justify-center p-6 h-full">
+        <div class="bg-white shadow-2xl rounded-lg p-8 w-full max-w-5xl min-h-fit flex flex-col relative">
+
+            <!-- Message de succès ou d'erreur (fixé en haut sans pousser le contenu) -->
+            <div class="absolute top-0 left-0 right-0 w-full">
+                {% if errorfichier %}
+                    <div class="bg-red-500 text-white text-center p-3 rounded-lg mb-4">
+                        <p class="font-semibold">{{ errorfichier }}</p>
+                    </div>
+                {% elif success_message %}
+                    <div class="bg-green-500 text-white text-center p-3 rounded-lg mb-4">
+                        <p class="font-semibold">{{ success_message }}</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <h1 class="text-3xl font-bold text-center text-blue-900 mb-6 mt-12">Ajouter Un Devoir</h1>
+
+            <!-- Formulaire ajusté avec une hauteur minimale -->
+            <form action="/ajouterun_devoir" method="POST" enctype="multipart/form-data" class="space-y-4 flex-grow flex flex-col justify-between">
+
+                <div class="flex-grow">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="nom" class="block text-gray-700 font-semibold">Nom du devoir</label>
+                            <input type="text" name="nom" id="nom" required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800">
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-gray-700 font-semibold">Description du devoir</label>
+                            <input type="text" name="description" id="description" required 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-semibold">Type</label>
+                        <div class="flex gap-3 text-gray-600">
+                            <label class="flex items-center"><input type="radio" name="typedevoir" value="examen" required class="mr-2"> Examen</label>
+                            <label class="flex items-center"><input type="radio" name="typedevoir" value="quiz" required class="mr-2"> Quiz</label>
+                            <label class="flex items-center"><input type="radio" name="typedevoir" value="devoir" required class="mr-2"> Devoir</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-semibold">Classe</label>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-x-2 gap-y-1 text-gray-600">
+                            <label class="flex items-center"><input type="radio" name="classe" value="DIC1" required class="mr-1"> DIC1</label>
+                            <label class="flex items-center"><input type="radio" name="classe" value="DIC2" required class="mr-1"> DIC2</label>
+                            <label class="flex items-center"><input type="radio" name="classe" value="DIC3" required class="mr-1"> DIC3</label>
+                            <label class="flex items-center"><input type="radio" name="classe" value="DUT1" required class="mr-1"> DUT1</label>
+                            <label class="flex items-center"><input type="radio" name="classe" value="DUT2" required class="mr-1"> DUT2</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="fichier" class="block text-gray-700 font-semibold">Fichier de l'Exercice</label>
+                        <input type="file" name="fichier" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800">
+                    </div>
+
+                    <div>
+                        <label for="date" class="block text-gray-700 font-semibold">Date limite</label>
+                        <input type="date" name="date" id="date" required 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800">
+                    </div>
+                </div>
+
+                <input type="number" name="id" value="{{sess_id}}" readonly hidden>
+
+                <!-- Bouton fixé en bas -->
+                <div class="mt-4 flex justify-center">
+                    <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                        <i class="fas fa-plus-circle mr-2"></i> Ajouter
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>

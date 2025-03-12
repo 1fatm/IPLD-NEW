@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes et Corrections - Tableau de Bord Enseignant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-blue-50">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
+            <div class="flex items-center mb-6">
+                <i class="fas fa-user-tie text-3xl mr-2"></i>
+                <h1 class="text-2xl font-bold">Enseignant</h1>
+            </div>
+            <nav>
+                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-house-light mr-2"></i> Accueil
+                </a>
+                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-file-text-light mr-2"></i> Examens
+                </a>
+                <a href="/copie" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-files-light mr-2"></i> Copies soumises
+                </a>
+                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-pencil-light mr-2"></i> Notes et corrections
+                </a>
+                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                    <i class="ph-chart-bar-light mr-2"></i> Statistiques
+                </a>
+            </nav>
+            <a href="deconnexion.html" class="mt-auto text-sm py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
+                <i class="ph-sign-out-light mr-2"></i> Déconnexion
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6 overflow-y-auto">
+            <h2 class="text-3xl font-bold text-blue-800 mb-6">Notes et Corrections</h2>
+            
+            {% for note in notes %}
+            <div class="bg-white p-6 rounded-lg shadow-lg mb-4">
+                <h3 class="text-xl font-semibold text-blue-800">Etudiant : {{ note[0] }}</h3>
+                <p class="text-gray-700">Classe : {{ note[1] }}</p>
+                <p class="text-gray-700">Nom de l'examen : {{ note[2] }}</p>
+                <p class="text-gray-700">Note : {{ note[3] }}</p>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+</body>
+</html>
