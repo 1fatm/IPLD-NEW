@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Timeline.css') }}">
+    <title>Timeline</title>
+</head>
+<body> 
+    <header> 
+    {% if sess_username %}
+        <p style="color: rgb(0, 0, 0);font-weight: bolder;">{{ sess_username }}</p>
+    {% endif %}
+    
+        <header> 
+            <a href="/Profil"> Mon compte </a>
+        {% if sess_username %}
+        <p style="color: rgb(0, 0, 0);font-weight: bolder;">{{ sess_username }}</p>
+        {% endif %} 
+        </header>
+        <a href="/ajoutdevoir">Ajouter un devoir</a>
+    
+        <div>
+            <h2>Fichiers soumis</h2>
+            {% for devoir in devoirsoumis %}  
+            <h2>Les devoirs</h2>
+                <div class="salle"> 
+                    <h2>Etudiant:{{ devoir[0] }}</h2>
+                    <p>Classe:{{ devoir[1] }}</p>
+                    <p>Nom examen:{{ devoir[2] }}</p>
+                    <p>Date de soumission:{{ devoir[4] }}</p>
+                    <a href="{{ devoir[3] }}" download="{{ devoir[2] }}CopieEtudiant_{{ devoir[0] }}.pdf">Télécharger la copie</a>
+                    <form action="/info_copiecode" method="post">
+                        <input type="text" name="id"value="{{devoir[5]}}" readonly hidden>
+                        <input type="submit" value="Détails">
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+    </html>

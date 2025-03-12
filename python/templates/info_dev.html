@@ -1,0 +1,31 @@
+-- Active: 1718130434832@@127.0.0.1@3306@gestion_examens
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
+    </head>
+    <body>
+        {% for devoir in infodevoirs %}
+        <div class="infodevoirs"> 
+            <div class="salle"> 
+                <h2>Nom:{{ devoir[1] }}</h2>
+                <p>description:{{ devoir[2] }}</p>
+                <p>Type:{{ devoir[3] }}</p>
+                {% if prof_nom %}
+                <p style="color: rgb(0, 0, 0);">Prof:{{ prof_nom }}</p>{%endif%}
+                <p>Date limite:{{ devoir[7] }}</p>
+                <a href="{{ devoir[5] }}" download="{{ devoir[1] }}.pdf">Télécharger le fichier</a>
+                <section id="submit-exam" class="submit-exam-section">
+                    <h2>Soumettre un Devoir</h2>
+                    <form action="/soumettre" method="post" enctype="multipart/form-data">
+                        <label for="copie">Sélectionner un fichier PDF :</label>
+                        <input type="file" name="copie" id="copie" accept="application/pdf" required>
+                        <input type="text" name="idev"value="{{devoir[0]}}" readonly hidden>
+                        <input type="text" name="ideleve"value="{{session['id']}}" readonly hidden>
+                        <button type="submit"><i class="fas fa-upload"></i> Envoyer</button>
+                    </form>
+                </section>
+            </div>
+        {% endfor %}
+    </div>
+    </body>
+</html>

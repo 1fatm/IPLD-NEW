@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='accueil.css') }}">
+    <title>AjouterDevoir
+
+    </title>
+</head>
+<body> 
+    <form action="/ajouterun_devoir" method="POST" enctype="multipart/form-data">
+        {% if errorfichier %}
+        <p style="color: red;">{{ errorfichier }}</p>
+        {% elif succes_message %}
+        <p style="color: green;">{{ succes_message }}</p>
+        {%endif%}
+        <h1>Ajouter Un Devoir</h1> 
+        <label for="nom">Nom du de devoir:</label>
+        <input type="text" name="nom" id="nom" required><br>
+        <label for="description">Description du devoir:</label>
+        <input type="text" name="description" id="description" required><br>
+        <label for="option-diponibilité">Type</label><br>
+        <label><input type="radio" name="typedevoir" value="examen" required> examen</label>
+        <label><input type="radio" name="typedevoir" value="quiz" required>quiz</label>
+        <label><input type="radio" name="typedevoir" value="devoir" required>devoir</label><br><br>
+        <label for="classe">Classe</label><br>
+        <label><input type="radio" name="classe" value="DIC1" required> DIC1</label>
+        <label><input type="radio" name="classe" value="DIC2" required>DIC2</label>
+        <label><input type="radio" name="classe" value="DIC3" required>DIC3</label>
+        <label><input type="radio" name="classe" value="DIC1" required> DUT1</label>
+        <label><input type="radio" name="classe" value="DIC2" required>DUT2</label><br>
+        <label for="fichier">Fichier de l'Exercice</label><br>
+        <input type="file" name="fichier"><br><br>
+        <label for="date">Date limite</label>
+        <input type="date" name="date" id="date" required><br>
+        <input type="number" name="id" value="{{sess_id}}" readonly hidden>
+        <input type="submit" value="Ajouter">
+    </form>
+</body>
+</html>

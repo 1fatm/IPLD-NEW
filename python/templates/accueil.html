@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Choisissez votre rôle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/accueil.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <h1>Bienvenue sur la Plateforme</h1>
+        <p>Êtes-vous un étudiant ou un enseignant ?</p>
+
+        <div class="role-selection">
+            <div class="role-card" onclick="redirectTo('etudiant')">
+                <img src="{{ url_for('static', filename='images/etudiant.jpg') }}" alt="Étudiant">
+                <h2>Étudiant</h2>
+            </div>
+
+            <div class="role-card" onclick="redirectTo('enseignant')">
+                <img src="{{ url_for('static', filename='images/enseignant.jpg') }}" alt="Enseignant">
+                <h2>Enseignant</h2>
+            </div>
+        </div>
+    </div>
+
+    <script src="particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80 },
+                "size": { "value": 3 },
+                "move": { "speed": 2 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            }
+        });
+
+        function redirectTo(role) 
+        {
+            if (role === 'etudiant') 
+            {
+                window.location.href = "/connectionetudiantpage";
+            } 
+            else if (role === 'enseignant') 
+            {
+                window.location.href = "/connectionprofpage";
+            }
+        }
+
+    </script>
+</body>
+</html>

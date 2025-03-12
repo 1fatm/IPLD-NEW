@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h1> Inscription Etudiant</h1>
+            <form id="registerForm" method="POST" action="/inscriptionetudiantcode">
+                {% if erreur_message %}
+                <p style="color: red;">{{ erreur_message }}</p>
+                {% elif succes_message %}
+                <p style="color: green;">{{ succes_message }}</p>
+                {% elif erreur_password %}
+                <p style="color: rgb(128, 0, 0);">{{ erreur_password }}</p>
+                {% endif %}
+                
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name" name="name" placeholder="Nom complet" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirmer le mot de passe" required>
+                </div>
+
+                <!-- Sélection de la classe -->
+                <div class="input-group">
+                    <i class="fas fa-graduation-cap"></i>
+                    <select id="classe" name="classe" required>
+                        <option value="" disabled selected>Choisissez votre classe</option>
+                        <option value="DUT1">DUT1</option>
+                        <option value="DUT2">DUT2</option>
+                        <option value="DIC1">DIC1</option>
+                        <option value="DIC2">DIC2</option>
+                        <option value="DIC3">DIC3</option>
+                    </select>
+                </div>
+
+                <button type="submit" name="submit">S'inscrire</button>
+            </form>
+            <p>Déjà un compte ? <a href="/connectionetudiantpage">Se connecter</a></p>
+        </div>
+    </div>
+</body>
+</html>

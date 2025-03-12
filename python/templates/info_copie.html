@@ -1,0 +1,37 @@
+-- Active: 1718130434832@@127.0.0.1@3306@gestion_examens
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
+    </head>
+    <body>
+        {% for copie in infocopie %}
+        <div class="infodevoirs"> 
+            <div class="salle"> 
+                <h2>Etudiant:{{ copie[0] }}</h2>
+                <p>Classe:{{ copie[1] }}</p>
+                <p>Nom devoir:{{ copie[2] }}</p>
+                <p>Date limite:{{ copie[4] }}</p>
+                <a href="{{ copie[3] }}" download="{{ copie[2] }}_Etudiant_{{ copie[0] }}.pdf">Télécharger la copie</a>
+                {% if not note %}
+                <form action="/notercopie" method="post" enctype="multipart/form-data">
+                    <label for="note">Note :</label>
+                    <input type="number" name="note" id="note" required>
+                    <label for="commentaire">Commentaire :</label>
+                    <input type="text" name="commentaire" id="commentaire">
+                    <input type="text" name="id" value="{{copie[5]}}" readonly hidden>
+                    <button type="submit"><i class="fas fa-upload"></i>Corriger</button>
+                </form>
+                {%else%}
+                <p style="color: green;"> Note:{{ note }}</p>
+                <form action="/updatenote" method="post">
+                    <label for="newnote">Modifier note</label>
+                    <input type="number" name="newnote" id="newnote">
+                    <input type="text" name="id" value="{{copie[5]}}" readonly hidden>
+                    <input type="submit" value="Modifier">
+                </form>
+                {%endif%}
+            </div>
+        {% endfor %}
+    </div>
+    </body>
+</html>
