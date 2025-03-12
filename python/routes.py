@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note, generer_statistiques,afficher_examens
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection
 
 @app.route('/')
 def index():
@@ -122,7 +122,6 @@ def examen():
     return afficher_examens()
 
 
-@app.route('/deconnexion')
-def deconnect():
-    return render_template('accueilp.html')
-
+@app.route('/deconnection')
+def deconnecter():
+    return deconnection()

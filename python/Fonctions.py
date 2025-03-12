@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector,os,re
-import numpy as np
-import matplotlib.pyplot as plt
 import io
 import base64
 
@@ -505,3 +503,7 @@ def generer_statistiques():
     print(histogrammes)  # Pour vérifier les images générées
 
     return render_template("statistique.html", statistiques=statistiques, histogrammes=histogrammes)
+
+def deconnection():
+    session.clear()
+    return redirect('/')
