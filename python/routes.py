@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens
 
 @app.route('/')
 def index():
@@ -82,10 +82,6 @@ def Soumettre():
     return soumettrefichier()
 
 
-@app.route('/timeline')
-def timeline_route():
-    return timeline_client()
-
 @app.route('/timelineP')
 def timelineprof_route():
     return timeline_prof()
@@ -95,7 +91,7 @@ if __name__ == '__main__':
 
 @app.route('/examen')
 def examen_route():
-    return render_template('examen.html')
+    return afficher_examens()
 
 @app.route('/accueilp')
 def accueilp_route():
