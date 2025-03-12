@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector,os,re
-import numpy as np
-import matplotlib.pyplot as plt
 import io
 import base64
 
@@ -423,11 +421,6 @@ def afficher_note():
     curseur.close()
     return render_template('notep.html', notes=notes)
 
-<<<<<<< HEAD
-def deconnection():
-    session.clear()
-    return redirect('/')
-=======
 def afficher_examens():
     if "enseignant_id" not in session:
         return "Accès refusé. Veuillez vous connecter.", 403
@@ -510,4 +503,7 @@ def generer_statistiques():
     print(histogrammes)  # Pour vérifier les images générées
 
     return render_template("statistique.html", statistiques=statistiques, histogrammes=histogrammes)
->>>>>>> a70a8137053414cf5e957e06c5383265ad91fa99
+
+def deconnection():
+    session.clear()
+    return redirect('/')
