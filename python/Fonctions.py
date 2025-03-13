@@ -15,7 +15,6 @@ try:
         user="root",
         password="",
         database="gestion_examens",
-        port=3308
         )
     print("Connexion réussie à la base de données.")
 except mysql.connector.Error as err:
