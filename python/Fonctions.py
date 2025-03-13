@@ -202,7 +202,7 @@ from flask import request, render_template
 from werkzeug.utils import secure_filename
 
 def ajouter_devoir():
-    repertoire = os.path.join('python', 'static', 'images')  # Use os.path.join for cross-platform compatibility
+    repertoire = os.path.join('python', 'static', 'images','examens')  # Use os.path.join for cross-platform compatibility
     if not os.path.exists(repertoire):
         print(f"Creating directory: {repertoire}")
         os.makedirs(repertoire)
@@ -212,7 +212,8 @@ def ajouter_devoir():
     description = request.form.get('description')
     type_devoir = request.form.get('typedevoir')
     classe = request.form.get('classe')
-    fichier = request.files.get('fichier')  # Use request.files for file uploads
+    fichier = request.files.get('fichier') 
+    fichier_correction = request.files.get('correction')
     prof = request.form.get('id')
     date = request.form.get('date')
 
@@ -246,22 +247,56 @@ def ajouter_devoir():
     chemin1 = os.path.join('static', 'images', fichier_filename)
     print(f"Relative path for database: {chemin1}")
 
+    repertoire_correction = os.path.join('python', 'static', 'images','corrections')  # Use os.path.join for cross-platform compatibility
+    if not os.path.exists(repertoire_correction):
+     print(f"Creating directory correction: {repertoire_correction}")
+     os.makedirs(repertoire_correction)
+     # Validate file upload
+    if not fichier_correction or fichier_correction.filename == '':
+        errorfichier_correction = "Correction non téléchargé"
+        return render_template("Ajoutdevoir.html", errorfichier_correction=errorfichier_correction)
+
+    # Validate file extension
+    allowed_extensions = {'pdf', 'docx', 'doc'}
+    file_extension = fichier_correction.filename.rsplit('.', 1)[1].lower() if '.' in fichier_correction.filename else ''
+    if file_extension not in allowed_extensions:
+        errorfichier_correction = "Format de fichier correction non autorisé"
+        return render_template("Ajoutdevoir.html", errorfichier_correction=errorfichier_correction)
+
+    # Clean the filename and ensure safe filename
+    fichier_correction_filename = secure_filename(fichier_correction.filename)
+    print(f"Cleaned filename: {fichier_correction_filename}")
+
+    # Save the file to the directory
+    file_path = os.path.join(repertoire_correction, fichier_correction_filename)
+    print(f"Saving file to: {file_path}")
+    fichier_correction.save(file_path)
+
+    # Verify if the file was saved
+    if not os.path.exists(file_path):
+        errorfichier_correction = "Échec de l'enregistrement du fichier_correction."
+        return render_template("Ajoutdevoir.html", errorfichier_correction=errorfichier_correction)
+
+    # Get the relative path for the database
+    chemin2 = os.path.join('static', 'images', fichier_correction_filename)
+    print(f"Relative path for database: {chemin2}")
+
     curseur = db.cursor()
     try:
         
 
         # Insert data into the database
         requete = '''
-        INSERT INTO examens (nom, description, type, classe, chemin, idprof, datedesoumission)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO examens (nom, description, type, classe, chemin,chemin_correction, idprof, datedesoumission)
+        VALUES (%s, %s, %s, %s, %s, %s, %s,%s)
         '''
-        values = (nom, description, type_devoir, classe, chemin1, prof, date)
+        values = (nom, description, type_devoir, classe, chemin1,chemin2, prof, date)
 
         curseur.execute(requete, values)
         db.commit()
     except mysql.connector.Error as err:
         db.rollback()
-        return render_template("Ajoutdevoir.html", errorfichier=f"Erreur MySQL : {err}")
+        return render_template("Ajoutdevoir.html", errorfichier=f"Erreur MySQL : {err}",)
     finally:
         # Close the resources
         curseur.close()

@@ -38,6 +38,7 @@ CREATE TABLE examens (
     type ENUM('examen', 'quiz', 'devoir') NOT NULL,
     classe Varchar(50) NOT NULL,
     chemin VARCHAR(255) NOT NULL,
+    chemin_correction VARCHAR(255) NOT NULL,
     idprof INT NOT NULL,
     datedesoumission DATETIME NOT NULL,
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
