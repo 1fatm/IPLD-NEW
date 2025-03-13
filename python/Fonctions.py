@@ -499,7 +499,7 @@ def generer_statistiques():
             "taux_reussite": taux_reussite
         })
 
-    print(histogrammes)  # Pour vérifier les images générées
+    print(histogrammes)  
 
     return render_template("statistique.html", statistiques=statistiques, histogrammes=histogrammes)
 
