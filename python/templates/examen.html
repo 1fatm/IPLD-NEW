@@ -43,16 +43,18 @@
             </div>
             <div class="mt-6">
                 <h3 class="text-xl font-semibold mb-2">Examens donnés</h3>
+                {% if verif==True %}
                 <ul class="bg-white p-4 shadow rounded">
                     {% for examen in examens %}
-                
                     <p class="text-gray-700">Nom : {{ examen[0] }}</p>
                     <p class="text-gray-700">Description de l'examen : {{ examen[1] }}</p>
                     <p class="text-gray-700">Type : {{ examen[2] }}</p>
                     <p class="text-gray-700">Classe de  : {{ examen[3] }}</p>
                     <a href="{{ examen[5] }}" download="{{ examen[5] }}.pdf" class="text-blue-600 hover:text-blue-800">Voir l'examen</a>
                     {% endfor %}
-                    
+                {% else %}
+                <p class="text-gray-700">Vous n'avez pas encore créé d'examen.</p>
+                {% endif %}
                 </ul>
             </div>
         </div>
