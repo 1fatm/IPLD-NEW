@@ -110,6 +110,12 @@
                     </div>
 
                     <div>
+                        <label for="correction" class="block text-gray-700 font-semibold">Correction de l'Exercice</label>
+                        <input type="file" name="correction" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800">
+                    </div>
+
+                    <div>
                         <label for="date" class="block text-gray-700 font-semibold">Date limite</label>
                         <input type="date" name="date" id="date" required 
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-800">
@@ -117,7 +123,6 @@
                 </div>
 
                 <input type="number" name="id" value="{{sess_id}}" readonly hidden>
-
                 
                 <div class="mt-4 flex justify-center">
                     <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
