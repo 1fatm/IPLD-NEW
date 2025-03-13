@@ -485,7 +485,7 @@ def generer_statistiques():
         plt.ylabel('Nombre d\'étudiants')
         plt.title(f'Distribution des notes - {classe}')
         
-        # Sauvegarde de l'image en base64 pour l'affichage
+        
         img = io.BytesIO()
         plt.savefig(img, format='png')
         img.seek(0)
