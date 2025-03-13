@@ -273,14 +273,23 @@ def ajouter_devoir():
 def infodev():
     sess_username=session.get('username')
     id=request.form['id']
+    sess_id = session.get('id')
     curseur=db.cursor()
     curseur.execute("Select * from examens where id=%s",(id,))
     infodevoirs=curseur.fetchall()
     db.commit()
     print(infodevoirs)
+    curseur=db.cursor()
+    verificationsoumission=curseur.execute("Select * from copies where id_examen=%s and id_etudiant=%s",(id,sess_id))
+    verificationsoumission=curseur.fetchall()
+    if verificationsoumission:
+        soumis=True
+    else:
+        soumis=False
+    db.commit()
     curseur.close()
     db.close()
-    return render_template('info_dev.html',sess_username=sess_username,infodevoirs=infodevoirs)
+    return render_template('info_dev.html',sess_username=sess_username,infodevoirs=infodevoirs,soumis=soumis)
 
 def infocopiecode():
     sess_username=session.get('username')
