@@ -68,9 +68,9 @@
 
         <h1>Statistiques des Examens</h1>
 
-    {% if message %}
-        <p class="message">{{ message }}</p>
-    {% else %}
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% else %}
         <div class="stat-container">
             {% for stat in statistiques %}
             <div class="stat-card">
