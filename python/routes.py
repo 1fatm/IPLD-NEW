@@ -43,7 +43,6 @@ def Inscriptionetupage():
 def ConnexionP():
     return render_template('pageEtudiant.html')
 
-
 @app.route('/info_devcode',methods=['POST'])
 def Infodev():
     return infodev()
@@ -117,6 +116,21 @@ def statistiques():
 def examen():
     return afficher_examens()
 
+@app.route("/accueiletudiant")
+def accueiletudiant():
+    return render_template('pageaccueil_etudiant.html')
+
+@app.route('/devoirs')
+def devoirs():
+    return render_template('devoir.html')
+
+@app.route('/notes')
+def notes():
+    return render_template('mesnotes.html')
+
+@app.route('/notifications')
+def notifications():
+    return render_template('notification.html')
 
 @app.route('/deconnection')
 def deconnecter():
