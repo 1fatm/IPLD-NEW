@@ -460,7 +460,6 @@ def generer_statistiques():
     if not resultats:
         return "Aucune donnée disponible."
 
-    # Transformer les résultats en un dictionnaire {classe: [notes]}
     notes_par_classe = {}
     for row in resultats:
         classe = row["classe"]
