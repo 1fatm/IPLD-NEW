@@ -5,79 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil Étudiant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
-    <script defer src="../scripts/script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <div class="dashboard">
-    
-        <nav class="sidebar">
-            <h2><i class="fas fa-graduation-cap"></i> Étudiant</h2>
-            <ul>
-                <li><a href="#" data-target="home"><i class="fas fa-home"></i> Accueil</a></li>
-                <li><a href="#" data-target="exam-topics"><i class="fas fa-tasks"></i> Devoirs</a></li>
-                <li><a href="#" data-target="grades"><i class="fas fa-file-alt"></i> Mes notes</a></li>
-                <li><a href="#" data-target="notifications"><i class="fas fa-envelope"></i> Notifications</a></li>
-                <li><a href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Déconnexion</a></li>
-            </ul>
-        </nav>
-
-        <div class="main-content">
- 
-<section id="home" class="home-section">
-    <h2>Accueil</h2>
-    <div class="welcome-message">
-        <p>Bienvenue, <span id="studentName">Étudiant</span> ! Voici un aperçu de votre progression.</p>
-    </div>
-
-
-        <div class="stat-box">
-            <h3><i class="fas fa-tasks"></i> Devoirs à rendre</h3>
-            <p>Devoirs en attente</p>
-            {% for devoir in devoirs %}  
-            <h2>Mes devoirs</h2>
-                <div class="salle"> 
-                    <h2>Nom:{{ devoir[1] }}</h2>
-                    <p>description:{{ devoir[2] }}</p>
-                    <p>Type:{{ devoir[3] }}</p>
-                    {% if prof_nom %}
-                    <p style="color: rgb(0, 0, 0);">Prof:{{ prof_nom }}</p>{%endif%}
-                    <p>Date limite:{{ devoir[7] }}</p>
-                    <a href="{{ devoir[5] }}" download="{{ devoir[1] }}.pdf">Télécharger le fichier</a>
-                    <form action="/info_devcode" method="post">
-                        <input type="text" name="id"value="{{devoir[0]}}" readonly hidden>
-                        <input type="submit" value="Détails">
-                    </form>
-    
-                </div>
-            {% endfor %}
-        </div>
-        <div class="stat-box">
-            <h3><i class="fas fa-chart-line"></i> Progression globale</h3>
-            <div class="progress-bar">
-                <div class="progress" style="width: 75%;">75%</div>
+        <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-gray-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold flex items-center space-x-3">
+                    <i class="fas fa-graduation-cap text-2xl"></i>
+                    <span>Étudiant</span>
+                </h2>
+                <ul class="mt-6 space-y-4">
+                    <li><a href="/accueiletudiant" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-home text-xl"></i> <span>Accueil</span></a></li>
+                    <li><a href="/devoirs" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-tasks text-xl"></i> <span>Devoirs</span></a></li>
+                    <li><a href="/notes" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-file-alt text-xl"></i> <span>Mes notes</span></a></li>
+                    <li><a href="/notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-envelope text-xl"></i> <span>Notifications</span></a></li>
+                </ul>
             </div>
-            <p>Vous avez complété 75% de vos objectifs ce semestre.</p>
+            <div class="p-6">
+                <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 px-4 py-3 bg-red-600 hover:bg-red-700 transition rounded-md w-full"><i class="fas fa-sign-out-alt text-xl"></i> <span>Déconnexion</span></a>
+            </div>
+        </nav>
+        <div class="main-content">
+            <section id="home" class="home-section">
+                <h2>Accueil</h2>
+                <div class="welcome-message">
+                    <p>Bienvenue, <span id="studentName"></span> ! Voici un aperçu de vos projets et activités.</p>
+                </div>
+                <div class="stats-container" id="stats-container">
+                    <div class="stat-card stat-card-orange"><i class="fas fa-tasks"></i><p>Travaux à rendre: <span id="assignmentsDue">5</span></p></div>
+                    <div class="stat-card stat-card-red"><i class="fas fa-exclamation-triangle"></i><p>Travaux en retard: <span id="assignmentsLate">2</span></p></div>
+                    <div class="stat-card stat-card-green"><i class="fas fa-check-circle"></i><p>Travaux soumis: <span id="assignmentsSubmitted">10</span></p></div>
+                </div>
+            </section>
         </div>
     </div>
-
-  
-   
-</section><section id="submit-exam" class="submit-exam-section">
-    <h2>Soumettre un Devoir</h2>
-    <form action="upload.php" method="post" enctype="multipart/form-data">
-        <label for="examFile">Sélectionner un fichier PDF :</label>
-        <input type="file" name="examFile" id="examFile" accept="application/pdf" required>
-        <button type="submit"><i class="fas fa-upload"></i> Envoyer</button>
-    </form>
-</section>
-
-
-
-<button id="openChatbot" class="chatbot-toggle">
-    <i class="fas fa-comments"></i>
-</button>
-        </div>
-    </div>
+    <script src="../scripts/script.js"></script>
 </body>
 </html>
