@@ -469,7 +469,7 @@ def generer_statistiques():
             notes_par_classe[classe] = []
         notes_par_classe[classe].append(note)
 
-    # Générer les statistiques
+   
     statistiques = []
     histogrammes = {}
 
