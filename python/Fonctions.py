@@ -96,7 +96,7 @@ def connexionprof():
             return render_template('accueilp.html', sess_username=session['username'])
         else:
             erreur_message="Identifiants incorrects"
-            return render_template('connexion_prof.html',erreur_message=erreur_message,sess_username=session['username'])
+            return render_template('connexion_prof.html',erreur_message=erreur_message)
 
 def connexionetudiant():
     if request.method == 'POST':
