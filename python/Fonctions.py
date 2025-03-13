@@ -124,7 +124,7 @@ def timeline_eleve():
         cursor.execute("SELECT * FROM examens WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)", (sess_id,))
         devoirs = cursor.fetchall()
         if devoirs:
-            id_prof = devoirs[0][6]  # Vérifiez bien que la colonne 6 est correcte
+            id_prof = devoirs[0][6]  
         cursor.close()
         cursor = db.cursor()
         cursor.execute("SELECT nom_complet FROM enseignants WHERE id=%s", (id_prof,))
@@ -133,7 +133,6 @@ def timeline_eleve():
         cursor.close()
         return render_template('pageaccueil_etudiant.html', sess_username=sess_username, devoirs=devoirs,prof_nom=prof_nom)
     except Exception as e:
-        # En cas d'erreur, fermer le curseur et la connexion, puis afficher un message d'erreur
         cursor.close()
         db.close()
         return f"Une erreur est survenue : {e}"
