@@ -148,7 +148,7 @@ def timeline_prof():
     sess_username = session.get('username')
     sess_id = session.get('id')
     cursor = db.cursor()
-    print(sess_id)  # This line prints sess_id to the terminal
+    print(sess_id)  
     requete = """
     SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id
     FROM copies c
@@ -158,7 +158,7 @@ def timeline_prof():
     """
     cursor.execute(requete, (sess_id,))
     devoirsoumis = cursor.fetchall()
-    print(devoirsoumis)  # This line prints devoirsoumis to the terminal
+    print(devoirsoumis)  
 
     db.commit()
     db.close()
