@@ -14,7 +14,7 @@ try:
         host="localhost",
         user="root",
         password="",
-        database="gestion_examens",
+        database="gestion_examens"
         )
     print("Connexion réussie à la base de données.")
 except mysql.connector.Error as err:
