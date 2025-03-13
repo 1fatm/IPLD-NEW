@@ -13,6 +13,7 @@
                 <p style="color: rgb(0, 0, 0);">Prof:{{ prof_nom }}</p>{%endif%}
                 <p>Date limite:{{ devoir[7] }}</p>
                 <a href="{{ devoir[5] }}" download="{{ devoir[1] }}.pdf">Télécharger le fichier</a>
+                {%if soumis==False %}
                 <section id="submit-exam" class="submit-exam-section">
                     <h2>Soumettre un Devoir</h2>
                     <form action="/soumettre" method="post" enctype="multipart/form-data">
@@ -23,6 +24,10 @@
                         <button type="submit"><i class="fas fa-upload"></i> Envoyer</button>
                     </form>
                 </section>
+                {%else%}
+                <section id="submit-exam" class="submit-exam-section">
+                    <h2>Devoir déjà soumis</h2>
+                {%endif%}
             </div>
         {% endfor %}
     </div>
