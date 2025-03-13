@@ -478,7 +478,7 @@ def generer_statistiques():
         moyenne = round(np.mean(notes_array), 2)
         taux_reussite = round((np.sum(notes_array >= 10) / len(notes_array)) * 100, 2)  # % d'élèves ayant >= 10
 
-        # Générer un histogramme
+       
         plt.figure(figsize=(6, 4))
         plt.hist(notes_array, bins=5, color='skyblue', edgecolor='black', alpha=0.7)
         plt.xlabel('Notes')
