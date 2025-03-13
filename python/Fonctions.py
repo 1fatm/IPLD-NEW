@@ -16,7 +16,7 @@ try:
         password="",
         database="gestion_examens",
         port=3308
-    )
+        )
     print("Connexion réussie à la base de données.")
 except mysql.connector.Error as err:
     print(f"Erreur de connexion : {err}")
@@ -416,11 +416,11 @@ def afficher_note():
     curseur = db.cursor()
 
     requete = """
-    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note
+    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note,c.commentaire
     FROM copies cop
     JOIN etudiants e ON cop.id_etudiant = e.id
     JOIN corrections c ON cop.id = c.id_copie
-    JOIN examens ex ON cop.id_examen = ex.id
+    JOIN examens ex ON cop.id_examen = ex.id    
     WHERE ex.idprof = %s
     """
     
