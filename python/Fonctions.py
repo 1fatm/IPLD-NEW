@@ -277,6 +277,7 @@ def infodev():
     curseur.execute("Select * from examens where id=%s",(id,))
     infodevoirs=curseur.fetchall()
     db.commit()
+    print(infodevoirs)
     curseur.close()
     db.close()
     return render_template('info_dev.html',sess_username=sess_username,infodevoirs=infodevoirs)
