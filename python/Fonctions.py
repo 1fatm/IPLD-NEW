@@ -433,8 +433,12 @@ def afficher_examens():
     cursor=db.cursor()
     cursor.execute("SELECT nom,description,type,classe,chemin FROM examens where idprof=%s",(sess_id,))
     examens=cursor.fetchall()
+    db.commit()
+    verif=True
+    if not examens:
+        verif=False
     cursor.close()
-    return render_template('examen.html',examens=examens)
+    return render_template('examen.html',examens=examens,verif=verif)
 
 def generer_statistiques():
     sess_id = session.get('id')  # ID du professeur connecté
