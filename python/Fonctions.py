@@ -139,7 +139,6 @@ def timeline_eleve():
         return f"Une erreur est survenue : {e}"
     
     finally:
-        # S'assurer que la connexion à la base de données est fermée après utilisation
         db.close()
 
 
