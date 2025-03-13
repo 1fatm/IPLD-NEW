@@ -202,7 +202,6 @@ from flask import request, render_template
 from werkzeug.utils import secure_filename
 
 def ajouter_devoir():
-    # Define the directory for saving files
     repertoire = os.path.join('python', 'static', 'images')  # Use os.path.join for cross-platform compatibility
     if not os.path.exists(repertoire):
         print(f"Creating directory: {repertoire}")
