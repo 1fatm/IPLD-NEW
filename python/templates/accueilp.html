@@ -41,18 +41,18 @@
             <h2 class="text-2xl font-semibold mb-4">Accueil</h2>
 
             <div class="bg-blue-100 p-4 shadow rounded mb-4">
-                <p class="text-lg font-semibold">Bienvenue, <span id="studentName" class="text-blue-600">Enseignant</span> !</p>
+                <p class="text-lg font-semibold">Bienvenue, <span id="studentName" class="text-blue-600">{{sess_username}}</span> !</p>
                 <p class="text-gray-700">Voici un aperçu de vos dernières activités :</p>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-orange-200 p-4 shadow rounded flex items-center gap-3">
-                    <i class="fas fa-tasks text-orange-600 text-2xl"></i>
-                    <p class="text-gray-700">Devoirs non corrigés : <span id="assignmentsDue" class="font-semibold text-orange-600">0</span></p>
+                    <i class="fas fa-tasks text-orange-600 text-4xl"></i>
+                    <p class="text-gray-700 text-xl font-semibold">Devoirs non corrigés : <span id="assignmentsDue" class="font-bold text-orange-600 text-2xl">{{copiesnonnotees}}</span></p>
                 </div>
                 <div class="bg-red-200 p-4 shadow rounded flex items-center gap-3">
-                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
-                    <p class="text-gray-700">Examens en cours : <span id="assignmentsLate" class="font-semibold text-red-600">2</span></p>
+                    <i class="fas fa-exclamation-triangle text-red-600 text-4xl"></i>
+                    <p class="text-gray-700 text-xl font-semibold">Examens en cours : <span id="assignmentsLate" class="font-bold text-red-600 text-2xl">{{examenencours}}</span></p>
                 </div>
             </div>
         </div>

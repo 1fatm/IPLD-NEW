@@ -89,11 +89,13 @@ def connexionprof():
         cursor = db.cursor()
         cursor.execute("SELECT * FROM enseignants WHERE email = %s", (email,))
         enseignant = cursor.fetchone()
-
+        requete="Select count(*) from copies join examens on copies.id_examen=examens.id where examens.idprof=%s and copies.id not in (select id_copie from corrections)"
+        cursor.execute(requete,(enseignant[0],))
+        copiesnonnotees=cursor.fetchone()
         if enseignant and check_password_hash(enseignant[3], mot_de_passe):
             session['username'] = enseignant[1]
             session['id'] = enseignant[0]
-            return render_template('accueilp.html', sess_username=session['username'])
+            return countcopiesnonnotees()
         else:
             erreur_message = "Identifiants incorrects"
             return render_template('connexion_prof.html', erreur_message=erreur_message)
@@ -558,3 +560,38 @@ def trier_classe():
         verif=False
     curseur.close()
     return render_template('examen.html',examens=devoirsoumistrié,verif=verif)
+
+
+def countcopiesnonnotees():
+    sess_id = session.get('id')  # ID du professeur connecté
+    sess_username=session.get('username')
+    curseur = db.cursor()
+    requete="Select count(*) from copies join examens on copies.id_examen=examens.id where examens.idprof=%s and copies.id not in (select id_copie from corrections)"
+    curseur.execute(requete,(sess_id,))
+    copiesnonnotees=curseur.fetchone()
+    requete2="Select count(*) from examens where idprof=%s and datedesoumission>now()"
+    curseur.execute(requete2,(sess_id,))    
+    examenencours=curseur.fetchone()
+    db.commit()
+    curseur.close()
+    db.close()
+    return render_template('accueilp.html',copiesnonnotees=copiesnonnotees[0],examenencours=examenencours[0],sess_username=sess_username)
+
+
+def trier_date():
+    sess_id = session.get('id')  # ID du professeur connecté
+    curseur = db.cursor()
+    date = request.form.get('date')
+    verif=True
+    print(date)
+    if (date=="passe"):
+         curseur.execute("SELECT nom,description,type,classe,chemin FROM examens where idprof=%s and datedesoumission<now()",(sess_id,))
+         devoirsoumistriédate = curseur.fetchall()
+    else:
+        curseur.execute("SELECT nom,description,type,classe,chemin FROM examens where idprof=%s and datedesoumission>now()",(sess_id,))
+        devoirsoumistriédate = curseur.fetchall()
+    print(devoirsoumistriédate)
+    if not devoirsoumistriédate:
+        verif=False
+    curseur.close()
+    return render_template('examen.html',examens=devoirsoumistriédate,verif=verif)
