@@ -93,17 +93,7 @@ def connexionprof():
         if enseignant and check_password_hash(enseignant[3], mot_de_passe):
             session['username'] = enseignant[1]
             session['id'] = enseignant[0]
-            requete = """
-            SELECT COUNT(*) 
-            FROM examens 
-            JOIN corrections ON examens.id = corrections.id_copie 
-            WHERE idprof = %s 
-            AND id_examen NOT IN (SELECT id_examen FROM copies)
-            """
-            cursor.execute(requete, (session['id'],))
-            examens_non_corriges = cursor.fetchone()[0]
-            print(examens_non_corriges)
-            return render_template('accueilp.html', sess_username=session['username'],examens_non_corriges=examens_non_corriges)
+            return render_template('accueilp.html', sess_username=session['username'])
         else:
             erreur_message = "Identifiants incorrects"
             return render_template('connexion_prof.html', erreur_message=erreur_message)
