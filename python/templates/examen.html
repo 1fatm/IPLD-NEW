@@ -43,19 +43,47 @@
             </div>
             <div class="mt-6">
                 <h3 class="text-xl font-semibold mb-2">Examens donnés</h3>
+                <form action="/trier_classe" method="post" class="flex items-center gap-2 mb-4">
+                    <select name="classe" id="classe" class="p-2 border border-gray-300 rounded">
+                        <option value="DUT1">DUT1</option>
+                        <option value="DUT2">DUT2</option>
+                        <option value="DIC1">DIC1</option>
+                        <option value="DIC2">DIC2</option>
+                        <option value="DIC3">DIC3</option>
+                    </select>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-1">
+                        <i class="ph-funnel"></i> Trier
+                    </button>
+                </form>
+
                 {% if verif==True %}
-                <ul class="bg-white p-4 shadow rounded">
-                    {% for examen in examens %}
-                    <p class="text-gray-700">Nom : {{ examen[0] }}</p>
-                    <p class="text-gray-700">Description de l'examen : {{ examen[1] }}</p>
-                    <p class="text-gray-700">Type : {{ examen[2] }}</p>
-                    <p class="text-gray-700">Classe de  : {{ examen[3] }}</p>
-                    <a href="{{ examen[5] }}" download="{{ examen[5] }}.pdf" class="text-blue-600 hover:text-blue-800">Voir l'examen</a>
-                    {% endfor %}
+                <table class="table-auto w-full bg-white shadow rounded">
+                    <thead class="bg-blue-600 text-white">
+                        <tr>
+                            <th class="p-2">Nom</th>
+                            <th class="p-2">Description</th>
+                            <th class="p-2">Type</th>
+                            <th class="p-2">Classe</th>
+                            <th class="p-2">Fichier</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for examen in examens %}
+                        <tr class="border-b hover:bg-blue-100">
+                            <td class="p-2">{{ examen[0] }}</td>
+                            <td class="p-2">{{ examen[1] }}</td>
+                            <td class="p-2">{{ examen[2] }}</td>
+                            <td class="p-2">{{ examen[3] }}</td>
+                            <td class="p-2">
+                                <a href="{{ examen[4] }}" download="{{ examen[4] }}.pdf" class="text-blue-600 hover:text-blue-800">Voir l'examen</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 {% else %}
                 <p class="text-gray-700">Vous n'avez pas encore créé d'examen.</p>
                 {% endif %}
-                </ul>
             </div>
         </div>
     </div>

@@ -37,11 +37,23 @@
             </a>
         </div>
 
-        
         <div class="flex-1 p-6">
             <h2 class="text-2xl font-semibold mb-4">Accueil</h2>
-            <div class="bg-white p-4 shadow rounded">
-                <p>Bienvenue sur votre tableau de bord enseignant. Vous pouvez gérer vos examens, consulter les copies soumises, et modifier les notes.</p>
+
+            <div class="bg-blue-100 p-4 shadow rounded mb-4">
+                <p class="text-lg font-semibold">Bienvenue, <span id="studentName" class="text-blue-600">Enseignant</span> !</p>
+                <p class="text-gray-700">Voici un aperçu de vos dernières activités :</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-orange-200 p-4 shadow rounded flex items-center gap-3">
+                    <i class="fas fa-tasks text-orange-600 text-2xl"></i>
+                    <p class="text-gray-700">Devoirs non corrigés : <span id="assignmentsDue" class="font-semibold text-orange-600">{{examens_non_corriges}}</span></p>
+                </div>
+                <div class="bg-red-200 p-4 shadow rounded flex items-center gap-3">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                    <p class="text-gray-700">Examens en cours : <span id="assignmentsLate" class="font-semibold text-red-600">2</span></p>
+                </div>
             </div>
         </div>
     </div>
