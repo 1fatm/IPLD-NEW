@@ -89,9 +89,6 @@ def connexionprof():
         cursor = db.cursor()
         cursor.execute("SELECT * FROM enseignants WHERE email = %s", (email,))
         enseignant = cursor.fetchone()
-        requete="Select count(*) from copies join examens on copies.id_examen=examens.id where examens.idprof=%s and copies.id not in (select id_copie from corrections)"
-        cursor.execute(requete,(enseignant[0],))
-        copiesnonnotees=cursor.fetchone()
         if enseignant and check_password_hash(enseignant[3], mot_de_passe):
             session['username'] = enseignant[1]
             session['id'] = enseignant[0]
@@ -111,7 +108,7 @@ def connexionetudiant():
         if etudiants and check_password_hash(etudiants[3], mot_de_passe):
             session['username']=etudiants[1]
             session['id']=etudiants[0]
-            return timeline_eleve()
+            return render_template('pageaccueil_etudiant.html', sess_username=session['username'])
         else:
             erreur_message="Identifiants incorrects"
             return render_template('connexion_etudiant.html',erreur_message=erreur_message)
@@ -585,8 +582,8 @@ def trier_date():
     verif=True
     print(date)
     if (date=="passe"):
-         curseur.execute("SELECT nom,description,type,classe,chemin FROM examens where idprof=%s and datedesoumission<now()",(sess_id,))
-         devoirsoumistriédate = curseur.fetchall()
+        curseur.execute("SELECT nom,description,type,classe,chemin FROM examens where idprof=%s and datedesoumission<now()",(sess_id,))
+        devoirsoumistriédate = curseur.fetchall()
     else:
         curseur.execute("SELECT nom,description,type,classe,chemin FROM examens where idprof=%s and datedesoumission>now()",(sess_id,))
         devoirsoumistriédate = curseur.fetchall()
@@ -595,3 +592,34 @@ def trier_date():
         verif=False
     curseur.close()
     return render_template('examen.html',examens=devoirsoumistriédate,verif=verif)
+
+def statistiques_etudiant():
+    sess_id = session.get('id')  # ID de l'étudiant connecté
+    curseur = db.cursor()
+    # Récupérer les statistiques des examens donnés par ce professeur
+    requete = """
+    select count(*) from  copies where id_etudiant=%s
+
+    """
+    curseur.execute(requete, (sess_id,))
+    soumis = curseur.fetchone()[0]
+    requete = """SELECT COUNT(*) 
+        FROM examens 
+        JOIN etudiants ON examens.classe = etudiants.classe 
+        WHERE etudiants.id = %s 
+        AND etudiants.id NOT IN (SELECT id_etudiant FROM copies)
+    """
+    curseur.execute(requete, (sess_id,))
+    non_soumis = curseur.fetchone()[0]
+    requete = """SELECT COUNT(*) 
+        FROM examens 
+        JOIN etudiants ON examens.classe = etudiants.classe 
+        WHERE etudiants.id = %s 
+        AND etudiants.id NOT IN (SELECT id_etudiant FROM copies)
+        AND examens.datedesoumission < NOW()
+    """
+    curseur.execute(requete, (sess_id,))
+    enretard = curseur.fetchone()[0]
+    curseur.close()
+
+    return render_template('pageaccueil_etudiant.html',soumis=soumis,non_soumis=non_soumis,enretard=enretard)

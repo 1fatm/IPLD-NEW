@@ -37,9 +37,9 @@
                     <p>Bienvenue, <span id="studentName">Étudiant</span> ! Voici un aperçu de votre progression.</p>
                 </div>
                 <div class="stats-container" id="stats-container">
-                    <div class="stat-card stat-card-orange"><i class="fas fa-tasks"></i><p>Travaux à rendre: <span id="assignmentsDue">5</span></p></div>
-                    <div class="stat-card stat-card-red"><i class="fas fa-exclamation-triangle"></i><p>Travaux en retard: <span id="assignmentsLate">2</span></p></div>
-                    <div class="stat-card stat-card-green"><i class="fas fa-check-circle"></i><p>Travaux soumis: <span id="assignmentsSubmitted">10</span></p></div>
+                    <div class="stat-card stat-card-orange"><i class="fas fa-tasks"></i><p>Travaux à rendre: <span id="assignmentsDue">{{non_soumis}}</span></p></div>
+                    <div class="stat-card stat-card-red"><i class="fas fa-exclamation-triangle"></i><p>Travaux en retard: <span id="assignmentsLate">{{enretard}}</span></p></div>
+                    <div class="stat-card stat-card-green"><i class="fas fa-check-circle"></i><p>Travaux soumis: <span id="assignmentsSubmitted">{{soumis}}</span></p></div>
                 </div>
             </section>
         </div>

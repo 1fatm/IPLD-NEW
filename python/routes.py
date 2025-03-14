@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date, statistiques_etudiant
 
 @app.route('/')
 def index():
@@ -118,7 +118,7 @@ def examen():
 
 @app.route("/accueiletudiant")
 def accueiletudiant():
-    return render_template('pageaccueil_etudiant.html')
+    return statistiques_etudiant()
 
 @app.route('/devoirs')
 def devoirs():
@@ -143,3 +143,4 @@ def triparclasse():
 @app.route('/trier_date',methods=['POST'])
 def tripardate():
     return trier_date()
+
