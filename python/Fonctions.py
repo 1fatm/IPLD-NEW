@@ -289,7 +289,6 @@ def infodev():
     curseur.execute("Select * from examens where id=%s",(id,))
     infodevoirs=curseur.fetchall()
     db.commit()
-    print(infodevoirs)
     curseur=db.cursor()
     verificationsoumission=curseur.execute("Select * from copies where id_examen=%s and id_etudiant=%s",(id,sess_id))
     verificationsoumission=curseur.fetchall()
