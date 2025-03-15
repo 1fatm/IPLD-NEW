@@ -661,3 +661,34 @@ def afficher_devoirs():
     except mysql.connector.Error as err:
         flash(f"Erreur lors de la récupération des devoirs : {err}", "danger")
         return redirect('/accueiletudiant')
+
+def afficher_notifications():
+    if 'id' not in session:
+        return redirect('/connexion_etudiant')
+
+    id_etudiant = session['id']
+    
+    cursor = db.cursor(dictionary=True)
+    
+    cursor.execute("SELECT classe FROM etudiants WHERE id = %s", (id_etudiant,))
+    etudiant = cursor.fetchone()
+    
+    if not etudiant:
+        return "Étudiant non trouvé", 404
+    
+    classe_etudiant = etudiant['classe']
+
+    cursor.execute("""
+        SELECT e.id, e.nom, e.datedesoumission, e.date_creation, ens.nom_complet AS prof,
+            CASE 
+            WHEN c.id IS NOT NULL THEN 'Soumis'
+                ELSE 'Non soumis'
+            END AS statut
+        FROM examens e
+        LEFT JOIN copies c ON e.id = c.id_examen AND c.id_etudiant = %s
+        JOIN enseignants ens ON e.idprof = ens.id
+        WHERE e.classe = %s
+    """, (id_etudiant, classe_etudiant))
+
+    examens = cursor.fetchall()
+    return render_template('notification.html', examens=examens)
