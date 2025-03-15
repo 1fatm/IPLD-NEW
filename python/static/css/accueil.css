@@ -164,3 +164,13 @@ p {
     border-radius: 50%;  /* Rend l'icône circulaire */
     margin-bottom: 10px; /* Ajoute un espace entre l'icône et le titre */
 }
+
+@media (min-width: 600px) {
+    .role-selection {
+        flex-direction: row;
+        justify-content: center;
+    }
+    .role-card {
+        width: 45%;
+    }
+}
