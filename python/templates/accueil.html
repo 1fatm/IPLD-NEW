@@ -14,7 +14,10 @@
 
     <!-- Main Content -->
     <div class="container">
-        <h1 id="typewriter">Bienvenue sur Academix</h1>
+        <div class="logo-container">
+            <img src="{{ url_for('static', filename='images/favicon.png') }}" alt="Logo" class="favicon">
+            <h1 id="typewriter">Bienvenue sur Academix</h1>
+        </div>                
         <p>Êtes-vous un étudiant ou un enseignant ?</p>
 
         <div class="role-selection">

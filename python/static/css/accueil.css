@@ -149,3 +149,18 @@ p {
         height: 100px;
     }
 }
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    margin-top: 20px; /* Ajuste l'espace en haut si nécessaire */
+}
+
+.favicon {
+    width: 80px;  /* Augmente la taille */
+    height: 80px;
+    border-radius: 50%;  /* Rend l'icône circulaire */
+    margin-bottom: 10px; /* Ajoute un espace entre l'icône et le titre */
+}
