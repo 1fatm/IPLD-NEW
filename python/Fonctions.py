@@ -692,3 +692,23 @@ def afficher_notifications():
 
     examens = cursor.fetchall()
     return render_template('notification.html', examens=examens)
+
+def afficher_notes():
+    if 'id' not in session:
+        return redirect('/connexion_etudiant')
+
+    id_etudiant = session['id']
+    cursor = db.cursor(dictionary=True)
+    
+    cursor.execute("""
+        SELECT e.nom AS nom_examen, c.date_soumission, co.note, ex.type
+        FROM copies c
+        JOIN examens e ON c.id_examen = e.id
+        LEFT JOIN corrections co ON c.id = co.id_copie
+        JOIN examens ex ON c.id_examen = ex.id
+        WHERE c.id_etudiant = %s
+    """, (id_etudiant,))
+    
+    notes = cursor.fetchall()
+    
+    return render_template('mesnotes.html', notes=notes)

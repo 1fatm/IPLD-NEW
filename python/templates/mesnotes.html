@@ -27,10 +27,18 @@
             <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 px-4 py-3 bg-red-600 hover:bg-red-700 transition rounded-md w-full"><i class="fas fa-sign-out-alt text-xl"></i> <span>Déconnexion</span></a>
         </div>
     </nav>
-    <div class="main-content">
+    <div class="main-content p-6">
         <section id="grades" class="grades-section">
-            <h2>📑 Notes Corrigées</h2>
-            <div id="grades-list"></div>
+            <h2 class="text-2xl font-semibold">📑 Notes Corrigées</h2>
+            <div id="grades-list" class="mt-4">
+                {% for note in notes %}
+                <div class="p-4 bg-white shadow-md rounded-md mb-4">
+                    <h3 class="text-lg font-bold">{{ note.type }} : {{ note.nom_examen }}</h3>
+                    <p><strong>Vous l'avez soumis le :</strong> {{ note.date_soumission }}</p>
+                    <p><strong>Note :</strong> {% if note.note is not none %} {{ note.note }}/20 {% else %} Note indisponible pour le moment {% endif %}</p>
+                </div>
+                {% endfor %}
+            </div>
         </section>
     </div>
 </body>
