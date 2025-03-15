@@ -42,12 +42,13 @@
         <div class="flex-1 p-6 overflow-y-auto">
             <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
                 <h2 class="text-2xl font-semibold text-blue-900 mb-4">Informations des devoirs</h2>
-                {% for copie in infocopie %}
+                {% for copie in infocopies %}
                 <div class="mb-6">
                     <h3 class="text-xl font-semibold text-blue-900">Etudiant: {{ copie[0] }}</h3>
                     <p class="text-gray-600">Classe: {{ copie[1] }}</p>
                     <p class="text-gray-600">Nom devoir: {{ copie[2] }}</p>
-                    <p class="text-gray-600">Date limite: {{ copie[4] }}</p>
+                    <p class="text-gray-600">Date limite de soumission : {{ copie[6] }}</p>
+                    <p class="text-gray-600">Date de soumission par l'élève: {{ copie[4] }}</p>
                     <a href="{{ copie[3] }}" download="{{ copie[2] }}_Etudiant_{{ copie[0] }}.pdf" class="text-blue-600 hover:text-blue-800">Télécharger la copie</a>
                 </div>
 

@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector,os,re
 import io
 import base64
+from mysql.connector import Error
 
 
 app = Flask(__name__)
@@ -16,9 +17,9 @@ try:
         password="",
         database="gestion_examens"
         )
-    print("Connexion réussie à la base de données.")
-except mysql.connector.Error as err:
-    print(f"Erreur de connexion : {err}")
+    cursor = db.cursor()
+except Error as e:
+    print(f"Error connecting to MySQL: {e}")
 
 if db.is_connected():
     cursor = db.cursor()
@@ -143,7 +144,7 @@ def timeline_prof():
     cursor = db.cursor()
     print(sess_id)  
     requete = """
-    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id
+    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
     FROM copies c
     JOIN etudiants e ON c.id_etudiant = e.id
     JOIN examens ex ON c.id_examen = ex.id
@@ -307,14 +308,14 @@ def infocopiecode():
     sess_id = session.get('id')
     curseur=db.cursor()
     requete = """
-    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id
+    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
     FROM copies c
     JOIN etudiants e ON c.id_etudiant = e.id
     JOIN examens ex ON c.id_examen = ex.id
     WHERE ex.idprof = %s and c.id=%s
     """
     curseur.execute(requete, (sess_id,idcopie))
-    infocopie=curseur.fetchall()
+    infocopies=curseur.fetchall()
     db.commit()
     requete="""select note from corrections where id_copie=%s"""
     curseur.execute(requete,(idcopie,))
@@ -324,7 +325,7 @@ def infocopiecode():
     db.commit()
     curseur.close()
     db.close()
-    return render_template('info_copie.html',sess_username=sess_username,infocopie=infocopie,note=note)
+    return render_template('info_copie.html',sess_username=sess_username,infocopies=infocopies,note=note)
 
 def soumettrefichier():
         # Define the directory for saving files
@@ -389,31 +390,62 @@ def soumettrefichier():
     return render_template("info_dev.html", success_message="Devoir soumis avec succès.",sess_id=session['id'])
 
 def notercopie():
+    sess_id = session.get('id')
     idcopie=request.form['id']
     note=request.form['note']
     commentaire=request.form['commentaire']
     curseur=db.cursor()
-    requete = '''
-    insert into corrections (id_copie,note,commentaire) values (%s,%s,%s)
-    '''
-    values = (idcopie,note, commentaire)
-    curseur.execute(requete, values)
-    db.commit()
-    curseur.close()
-    db.close()
-    return render_template("info_copie.html", success_message="Note ajoutée avec succès.",note=note)
+    requete='''select note from corrections where id_copie=%s'''
+    curseur.execute(requete,(idcopie,))
+    verifnote=curseur.fetchall()
+
+    if verifnote and verifnote[0]:
+        verifnote=verifnote[0][0]
+        requete= requete = """
+        SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
+        FROM copies c
+        JOIN etudiants e ON c.id_etudiant = e.id
+        JOIN examens ex ON c.id_examen = ex.id
+        WHERE ex.idprof = %s and c.id=%s
+        """
+        curseur.execute(requete, (sess_id,idcopie))
+        infocopies=curseur.fetchall()
+        db.commit()
+        return render_template("info_copie.html",infocopies=infocopies,note=verifnote)
+    else:
+        requete = '''
+        insert into corrections (id_copie,note,commentaire) values (%s,%s,%s)
+        '''
+        values = (idcopie,note, commentaire)
+        curseur.execute(requete, values)
+        db.commit()
+        curseur.execute("Select * from examens where id=%s",(idcopie,))
+        infocopies=curseur.fetchall()
+        db.commit()
+        return render_template("info_copie.html",infocopies=infocopies,note=note)
 
 def updatenote():
     idcopie=request.form['id']
     newnote=request.form['newnote']
     sess_id = session.get('id')
-    sess_username = session.get('username')
     curseur=db.cursor()
     requete = '''
     update corrections set note=%s where id_copie=%s
     '''
     values = (newnote,idcopie)
     curseur.execute(requete, values)
+    requete= requete = """
+        SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
+        FROM copies c
+        JOIN etudiants e ON c.id_etudiant = e.id
+        JOIN examens ex ON c.id_examen = ex.id
+        WHERE ex.idprof = %s and c.id=%s
+        """
+    curseur.execute(requete, (sess_id,idcopie))
+    infocopies=curseur.fetchall()
+
+    db.commit()
+    return render_template("info_copie.html",infocopies=infocopies,note=newnote)
     db.commit()
     curseur.close()
     db.close()

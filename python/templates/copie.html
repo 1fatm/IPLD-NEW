@@ -47,7 +47,8 @@
                         <h3 class="text-xl font-semibold text-blue-800">Etudiant : {{ devoir[0] }}</h3>
                         <p class="text-gray-700">Classe : {{ devoir[1] }}</p>
                         <p class="text-gray-700">Nom de l'examen : {{ devoir[2] }}</p>
-                        <p class="text-gray-700">Date de soumission : {{ devoir[4] }}</p>
+                        <p class="text-gray-700">Date limite de soumission : {{ devoir[6] }}</p>
+                        <p class="text-gray-700">Date de soumission par l'élève : {{ devoir[4] }}</p>
                         <a href="{{ devoir[3] }}" download="{{ devoir[2] }}_CopieEtudiant_{{ devoir[0] }}.pdf" class="text-blue-600 hover:text-blue-800">Télécharger la copie</a>
 
                         <form action="/info_copiecode" method="post" class="mt-4">
