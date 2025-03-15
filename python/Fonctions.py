@@ -606,30 +606,33 @@ def trier_date():
 def statistiques_etudiant():
     sess_id = session.get('id')  # ID de l'étudiant connecté
     curseur = db.cursor()
-    # Récupérer les statistiques des examens donnés par ce professeur
-    requete = """
-    select count(*) from  copies where id_etudiant=%s
 
-    """
+    # Nombre d'examens soumis par l'étudiant
+    requete = "SELECT COUNT(*) FROM copies WHERE id_etudiant = %s"
     curseur.execute(requete, (sess_id,))
     soumis = curseur.fetchone()[0]
-    requete = """SELECT COUNT(*) 
+
+    # Nombre d'examens non soumis par l'étudiant
+    requete = """
+        SELECT COUNT(*) 
         FROM examens 
-        JOIN etudiants ON examens.classe = etudiants.classe 
-        WHERE etudiants.id = %s 
-        AND etudiants.id NOT IN (SELECT id_etudiant FROM copies)
+        WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)
+        AND id NOT IN (SELECT id_examen FROM copies WHERE id_etudiant = %s)
     """
-    curseur.execute(requete, (sess_id,))
+    curseur.execute(requete, (sess_id, sess_id))
     non_soumis = curseur.fetchone()[0]
-    requete = """SELECT COUNT(*) 
+
+    # Nombre d'examens en retard (non soumis et date dépassée)
+    requete = """
+        SELECT COUNT(*) 
         FROM examens 
-        JOIN etudiants ON examens.classe = etudiants.classe 
-        WHERE etudiants.id = %s 
-        AND etudiants.id NOT IN (SELECT id_etudiant FROM copies)
-        AND examens.datedesoumission < NOW()
+        WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)
+        AND id NOT IN (SELECT id_examen FROM copies WHERE id_etudiant = %s)
+        AND datedesoumission < NOW()
     """
-    curseur.execute(requete, (sess_id,))
+    curseur.execute(requete, (sess_id, sess_id))
     enretard = curseur.fetchone()[0]
+
     curseur.close()
 
     return render_template('pageaccueil_etudiant.html',soumis=soumis,non_soumis=non_soumis,enretard=enretard,sess_username=session['username'])
