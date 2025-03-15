@@ -4,45 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil Étudiant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-<body>
-    <div class="dashboard">
-        <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-gray-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
-            <div class="p-6">
-                <h2 class="text-xl font-semibold flex items-center space-x-3">
-                    <i class="fas fa-graduation-cap text-2xl"></i>
-                    <span>Étudiant</span>
-                </h2>
-                <ul class="mt-6 space-y-4">
-                    <li><a href="/accueiletudiant" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-home text-xl"></i> <span>Accueil</span></a></li>
-                    <li><a href="/devoirs" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-tasks text-xl"></i> <span>Devoirs</span></a></li>
-                    <li><a href="/notes" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-file-alt text-xl"></i> <span>Mes notes</span></a></li>
-                    <li><a href="/notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-envelope text-xl"></i> <span>Notifications</span></a></li>
-                </ul>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
+            <div class="flex items-center mb-6">
+                <i class="fas fa-graduation-cap text-3xl mr-2"></i>
+                <h1 class="text-2xl font-bold">Étudiant</h1>
             </div>
-            <div class="p-6">
-                <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 px-4 py-3 bg-red-600 hover:bg-red-700 transition rounded-md w-full"><i class="fas fa-sign-out-alt text-xl"></i> <span>Déconnexion</span></a>
-            </div>
-        </nav>
-        <div class="main-content">
-            <section id="home" class="home-section">
-                <h2>Accueil</h2>
-                <div class="welcome-message">
+            <nav class="space-y-2">
+                <a href="/accueiletudiant" class="flex items-center py-2 px-4 bg-gray-700 rounded">
+                    <i class="fas fa-home mr-2"></i> Accueil
+                </a>
+                <a href="/devoirs" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
+                    <i class="fas fa-tasks mr-2"></i> Devoirs
+                </a>
+                <a href="/notes" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
+                    <i class="fas fa-file-alt mr-2"></i> Mes notes
+                </a>
+                <a href="/notifications" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
+                    <i class="fas fa-envelope mr-2"></i> Notifications
+                </a>
+            </nav>
+            <a href="/deconnection" class="mt-auto py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
+                <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <h2 class="text-2xl font-semibold mb-4">📑 Accueil</h2>
+            <div class="bg-white p-6 shadow rounded">
+                <div class="welcome-message mb-6">
                     <p>Bienvenue, <span id="studentName">Étudiant</span> ! Voici un aperçu de votre progression.</p>
                 </div>
-                <div class="stats-container" id="stats-container">
-                    <div class="stat-card stat-card-orange"><i class="fas fa-tasks"></i><p>Travaux à rendre: <span id="assignmentsDue">{{non_soumis}}</span></p></div>
-                    <div class="stat-card stat-card-red"><i class="fas fa-exclamation-triangle"></i><p>Travaux en retard: <span id="assignmentsLate">{{enretard}}</span></p></div>
-                    <div class="stat-card stat-card-green"><i class="fas fa-check-circle"></i><p>Travaux soumis: <span id="assignmentsSubmitted">{{soumis}}</span></p></div>
-                </div>
-            </section>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-20 " id="stats-container">
+                    <div class="stat-card bg-orange-100 p-8 rounded-lg shadow-xl ">
+                        <i class="fas fa-tasks text-3xl text-orange-500 mb-4"></i>
+                        <p class="text-lg font-semibold">Travaux à rendre:</p>
+                        <span id="assignmentsDue" class="text-2xl font-bold">{{non_soumis}}</span>
+                    </div>
+                    <div class="stat-card bg-red-100 p-8 rounded-lg shadow-xl ">
+                        <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-4"></i>
+                        <p class="text-lg font-semibold">Travaux en retard:</p>
+                        <span id="assignmentsLate" class="text-2xl font-bold">{{enretard}}</span>
+                    </div>
+                    <div class="stat-card bg-green-100 p-8 rounded-lg shadow-xl ">
+                        <i class="fas fa-check-circle text-3xl text-green-500 mb-4"></i>
+                        <p class="text-lg font-semibold">Travaux soumis:</p>
+                        <span id="assignmentsSubmitted" class="text-2xl font-bold">{{soumis}}</span>
+                    </div>
+                </div>                                            
+                </div>                
+            </div>
         </div>
     </div>
     <script src="../scripts/script.js"></script>

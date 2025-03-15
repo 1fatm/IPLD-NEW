@@ -4,42 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes Notes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-gray-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
-        <div class="p-6">
-            <h2 class="text-xl font-semibold flex items-center space-x-3">
-                <i class="fas fa-graduation-cap text-2xl"></i>
-                <span>Étudiant</span>
-            </h2>
-            <ul class="mt-6 space-y-4">
-                <li><a href="/accueiletudiant" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-home text-xl"></i> <span>Accueil</span></a></li>
-                <li><a href="/devoirs" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-tasks text-xl"></i> <span>Devoirs</span></a></li>
-                <li><a href="/notes" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-file-alt text-xl"></i> <span>Mes notes</span></a></li>
-                <li><a href="/notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-envelope text-xl"></i> <span>Notifications</span></a></li>
-            </ul>
-        </div>
-        <div class="p-6">
-            <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 px-4 py-3 bg-red-600 hover:bg-red-700 transition rounded-md w-full"><i class="fas fa-sign-out-alt text-xl"></i> <span>Déconnexion</span></a>
-        </div>
-    </nav>
-    <div class="main-content p-6">
-        <section id="grades" class="grades-section">
-            <h2 class="text-2xl font-semibold">📑 Notes Corrigées</h2>
-            <div id="grades-list" class="mt-4">
-                {% for note in notes %}
-                <div class="p-4 bg-white shadow-md rounded-md mb-4">
-                    <h3 class="text-lg font-bold">{{ note.type }} : {{ note.nom_examen }}</h3>
-                    <p><strong>Vous l'avez soumis le :</strong> {{ note.date_soumission }}</p>
-                    <p><strong>Note :</strong> {% if note.note is not none %} {{ note.note }}/20 {% else %} Note indisponible pour le moment {% endif %}</p>
-                </div>
-                {% endfor %}
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
+            <div class="flex items-center mb-6">
+                <i class="fas fa-graduation-cap text-3xl mr-2"></i>
+                <h1 class="text-2xl font-bold">Étudiant</h1>
             </div>
-        </section>
+            <nav class="space-y-2">
+                <a href="/accueiletudiant" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
+                    <i class="fas fa-home mr-2"></i> Accueil
+                </a>
+                <a href="/devoirs" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
+                    <i class="fas fa-tasks mr-2"></i> Devoirs
+                </a>
+                <a href="/notes" class="flex items-center py-2 px-4 bg-gray-700 rounded">
+                    <i class="fas fa-file-alt mr-2"></i> Mes notes
+                </a>
+                <a href="/notifications" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
+                    <i class="fas fa-envelope mr-2"></i> Notifications
+                </a>
+            </nav>
+            <a href="/deconnection" class="mt-auto py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
+                <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <h2 class="text-2xl font-semibold mb-4">📑 Notes Corrigées</h2>
+            <div class="bg-white p-6 shadow rounded">
+                <h3 class="text-xl font-semibold mb-4"><i class="fas fa-file-alt"></i> Liste des Notes</h3>
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                    <thead>
+                        <tr class="bg-gray-900 text-white">
+                            <th class="py-2 px-4">Type</th>
+                            <th class="py-2 px-4">Nom</th>
+                            <th class="py-2 px-4">Date de soumission</th>
+                            <th class="py-2 px-4">Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for note in notes %}
+                        <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200">
+                            <td class="py-2 px-4">{{ note.type }}</td>
+                            <td class="py-2 px-4">{{ note.nom_examen }}</td>
+                            <td class="py-2 px-4">{{ note.date_soumission }}</td>
+                            <td class="py-2 px-4">
+                                {% if note.note is not none %}
+                                    {{ note.note }}/20
+                                {% else %}
+                                    <span class="text-gray-500">Note indisponible pour le moment</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if not notes %}
+                <p class="text-center text-gray-500 mt-4">Aucune note disponible.</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </body>
 </html>
