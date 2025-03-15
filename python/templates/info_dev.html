@@ -1,35 +1,83 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
-    </head>
-    <body>
-        {% for devoir in infodevoirs %}
-        <div class="infodevoirs"> 
-            <div class="salle"> 
-                <h2>Nom:{{ devoir[1] }}</h2>
-                <p>description:{{ devoir[2] }}</p>
-                <p>Type:{{ devoir[3] }}</p>
-                {% if prof_nom %}
-                <p style="color: rgb(0, 0, 0);">Prof:{{ prof_nom }}</p>{%endif%}
-                <p>Date limite:{{ devoir[7] }}</p>
-                <a href="{{ devoir[5] }}" download="{{ devoir[1] }}.pdf">Télécharger le fichier</a>
-                {%if soumis==False %}
-                <section id="submit-exam" class="submit-exam-section">
-                    <h2>Soumettre un Devoir</h2>
-                    <form action="/soumettre" method="post" enctype="multipart/form-data">
-                        <label for="copie">Sélectionner un fichier PDF :</label>
-                        <input type="file" name="copie" id="copie" accept="application/pdf" required>
-                        <input type="text" name="idev"value="{{devoir[0]}}" readonly hidden>
-                        <input type="text" name="ideleve"value="{{session['id']}}" readonly hidden>
-                        <button type="submit"><i class="fas fa-upload"></i> Envoyer</button>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Devoir</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-blue-50">
+    <div class="flex h-screen">
+        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
+            <div class="flex items-center mb-6">
+                <i class="fas fa-user-tie text-3xl mr-2"></i>
+                <h1 class="text-2xl font-bold">Enseignant</h1>
+            </div>
+            <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-gray-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+                <div class="p-6">
+                    <h2 class="text-xl font-semibold flex items-center space-x-3">
+                        <i class="fas fa-graduation-cap text-2xl"></i>
+                        <span>Étudiant</span>
+                    </h2>
+                    <ul class="mt-6 space-y-4">
+                        <li><a href="/accueiletudiant" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-home text-xl"></i> <span>Accueil</span></a></li>
+                        <li><a href="/devoirs" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-tasks text-xl"></i> <span>Devoirs</span></a></li>
+                        <li><a href="/notes" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-file-alt text-xl"></i> <span>Mes notes</span></a></li>
+                        <li><a href="/notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800"><i class="fas fa-envelope text-xl"></i> <span>Notifications</span></a></li>
+                    </ul>
+                </div>
+                <div class="p-6">
+                    <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 px-4 py-3 bg-red-600 hover:bg-red-700 transition rounded-md w-full"><i class="fas fa-sign-out-alt text-xl"></i> <span>Déconnexion</span></a>
+                </div>
+            </nav>
+        </div>
+
+        <div class="flex-1 p-6">
+            <h2 class="text-2xl font-semibold mb-4">Détails du Devoir</h2>
+
+            <div class="bg-white p-6 shadow-lg rounded-lg">
+                {% for devoir in infodevoirs %}
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-blue-900">{{ devoir[1] }}</h3>
+                    <p class="text-gray-700 mt-2"><strong>Description :</strong> {{ devoir[2] }}</p>
+                    <p class="text-gray-700"><strong>Type :</strong> {{ devoir[3] }}</p>
+                    {% if prof_nom %}
+                    <p class="text-gray-700"><strong>Professeur :</strong> {{ prof_nom }}</p>
+                    {% endif %}
+                    <p class="text-gray-700"><strong>Date limite :</strong> {{ devoir[7] }}</p>
+                    <a href="{{ devoir[5] }}" download="{{ devoir[1] }}.pdf" class="inline-block mt-4 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-download mr-2"></i> Télécharger le fichier
+                    </a>
+                </div>
+
+                {% if soumis == False %}
+                <section class="mt-6 p-6 bg-white shadow-md rounded-lg">
+                    <h2 class="text-xl font-semibold text-gray-800">Soumettre un Devoir</h2>
+                    <form action="/soumettre" method="post" enctype="multipart/form-data" class="mt-4 space-y-4">
+                        <label for="copie" class="text-gray-700">Sélectionner un fichier PDF :</label>
+                        <input type="file" name="copie" id="copie" accept="application/pdf" required class="block w-full border border-gray-300 p-3 rounded-lg">
+                        <input type="hidden" name="idev" value="{{ devoir[0] }}">
+                        <input type="hidden" name="ideleve" value="{{ session['id'] }}">
+                        <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                            <i class="fas fa-upload mr-2"></i> Soumettre
+                        </button>
                     </form>
                 </section>
-                {%else%}
-                <section id="submit-exam" class="submit-exam-section">
-                    <h2>Devoir déjà soumis</h2>
-                {%endif%}
+                {% else %}
+                <section class="mt-6 p-6 bg-green-100 shadow-md rounded-lg text-green-800">
+                    <h2 class="text-xl font-semibold">Devoir déjà soumis</h2>
+                </section>
+                {% endif %}
+                {% endfor %}
+
+                <div class="mt-6 text-center">
+                    <a href="/devoirs" class="inline-block px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                        <i class="fas fa-arrow-left"></i> Retour aux devoirs
+                    </a>
+                </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
-    </body>
+</body>
 </html>

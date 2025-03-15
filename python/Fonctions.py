@@ -108,14 +108,13 @@ def connexionetudiant():
         if etudiants and check_password_hash(etudiants[3], mot_de_passe):
             session['username']=etudiants[1]
             session['id']=etudiants[0]
-            return render_template('pageaccueil_etudiant.html', sess_username=session['username'])
+            return statistiques_etudiant()
         else:
             erreur_message="Identifiants incorrects"
             return render_template('connexion_etudiant.html',erreur_message=erreur_message)
 
 
 def timeline_eleve():
-
     try:
         sess_id=session['id']
         sess_username=session['username']
@@ -135,11 +134,8 @@ def timeline_eleve():
         cursor.close()
         db.close()
         return f"Une erreur est survenue : {e}"
-    
     finally:
         db.close()
-
-
 
 def timeline_prof():
     sess_username = session.get('username')
@@ -185,9 +181,7 @@ def connexionetu():
 
 
 def nettoyer_nom_fichier(filename):
-    # Remove invalid characters
     filename = re.sub(r'[<>:"/\\|?*]', '', filename)
-    # Replace spaces with underscores
     filename = filename.replace(' ', '_')
     return filename
 
@@ -201,12 +195,11 @@ from flask import request, render_template
 from werkzeug.utils import secure_filename
 
 def ajouter_devoir():
-    repertoire = os.path.join('python', 'static', 'images','examens')  # Use os.path.join for cross-platform compatibility
+    repertoire = os.path.join('python', 'static', 'images','examens')  
     if not os.path.exists(repertoire):
         print(f"Creating directory: {repertoire}")
         os.makedirs(repertoire)
 
-    # Collect all form data
     nom = request.form.get('nom')
     description = request.form.get('description')
     type_devoir = request.form.get('typedevoir')
@@ -216,67 +209,55 @@ def ajouter_devoir():
     prof = request.form.get('id')
     date = request.form.get('date')
 
-    # Validate file upload
     if not fichier or fichier.filename == '':
         errorfichier = "Fichier non téléchargé"
         return render_template("Ajoutdevoir.html", errorfichier=errorfichier)
 
-    # Validate file extension
     allowed_extensions = {'pdf', 'docx', 'doc'}
     file_extension = fichier.filename.rsplit('.', 1)[1].lower() if '.' in fichier.filename else ''
     if file_extension not in allowed_extensions:
         errorfichier = "Format de fichier non autorisé"
         return render_template("Ajoutdevoir.html", errorfichier=errorfichier)
 
-    # Clean the filename and ensure safe filename
     fichier_filename = secure_filename(fichier.filename)
     print(f"Cleaned filename: {fichier_filename}")
 
-    # Save the file to the directory
     file_path = os.path.join(repertoire, fichier_filename)
     print(f"Saving file to: {file_path}")
     fichier.save(file_path)
 
-    # Verify if the file was saved
     if not os.path.exists(file_path):
         errorfichier = "Échec de l'enregistrement du fichier."
         return render_template("Ajoutdevoir.html", errorfichier=errorfichier)
 
-    # Get the relative path for the database
     chemin1 = os.path.join('static', 'images', fichier_filename)
     print(f"Relative path for database: {chemin1}")
 
     repertoire_correction = os.path.join('python', 'static', 'images','corrections')  # Use os.path.join for cross-platform compatibility
     if not os.path.exists(repertoire_correction):
-     print(f"Creating directory correction: {repertoire_correction}")
-     os.makedirs(repertoire_correction)
-     # Validate file upload
+        print(f"Creating directory correction: {repertoire_correction}")
+        os.makedirs(repertoire_correction)
     if not fichier_correction or fichier_correction.filename == '':
         errorfichier_correction = "Correction non téléchargé"
         return render_template("Ajoutdevoir.html", errorfichier_correction=errorfichier_correction)
 
-    # Validate file extension
     allowed_extensions = {'pdf', 'docx', 'doc'}
     file_extension = fichier_correction.filename.rsplit('.', 1)[1].lower() if '.' in fichier_correction.filename else ''
     if file_extension not in allowed_extensions:
         errorfichier_correction = "Format de fichier correction non autorisé"
         return render_template("Ajoutdevoir.html", errorfichier_correction=errorfichier_correction)
 
-    # Clean the filename and ensure safe filename
     fichier_correction_filename = secure_filename(fichier_correction.filename)
     print(f"Cleaned filename: {fichier_correction_filename}")
 
-    # Save the file to the directory
     file_path = os.path.join(repertoire_correction, fichier_correction_filename)
     print(f"Saving file to: {file_path}")
     fichier_correction.save(file_path)
 
-    # Verify if the file was saved
     if not os.path.exists(file_path):
         errorfichier_correction = "Échec de l'enregistrement du fichier_correction."
         return render_template("Ajoutdevoir.html", errorfichier_correction=errorfichier_correction)
 
-    # Get the relative path for the database
     chemin2 = os.path.join('static', 'images', fichier_correction_filename)
     print(f"Relative path for database: {chemin2}")
 
@@ -284,7 +265,6 @@ def ajouter_devoir():
     try:
         
 
-        # Insert data into the database
         requete = '''
         INSERT INTO examens (nom, description, type, classe, chemin,chemin_correction, idprof, datedesoumission)
         VALUES (%s, %s, %s, %s, %s, %s, %s,%s)
@@ -297,7 +277,6 @@ def ajouter_devoir():
         db.rollback()
         return render_template("Ajoutdevoir.html", errorfichier=f"Erreur MySQL : {err}",)
     finally:
-        # Close the resources
         curseur.close()
     return render_template("Ajoutdevoir.html", success_message="Devoir ajouté avec succès.",sess_id=session['id'])
 
@@ -515,7 +494,6 @@ def generer_statistiques():
         moyenne = round(np.mean(notes_array), 2)
         taux_reussite = round((np.sum(notes_array >= 10) / len(notes_array)) * 100, 2)  # % d'élèves ayant >= 10
 
-       
         plt.figure(figsize=(6, 4))
         plt.hist(notes_array, bins=5, color='skyblue', edgecolor='black', alpha=0.7)
         plt.xlabel('Notes')
@@ -622,4 +600,32 @@ def statistiques_etudiant():
     enretard = curseur.fetchone()[0]
     curseur.close()
 
-    return render_template('pageaccueil_etudiant.html',soumis=soumis,non_soumis=non_soumis,enretard=enretard)
+    return render_template('pageaccueil_etudiant.html',soumis=soumis,non_soumis=non_soumis,enretard=enretard,sess_username=session['username'])
+
+def afficher_devoirs():
+    if 'id' not in session:
+        flash("Veuillez vous connecter.", "warning")
+        return redirect('/')
+
+    cursor = db.cursor()
+    try:
+        user_id = session['id']
+        cursor.execute("SELECT classe FROM etudiants WHERE id = %s", (user_id,))
+        classe = cursor.fetchone()[0]
+        requete = """ Select examens.nom, examens.description, examens.type, examens.classe, examens.chemin, examens.datedesoumission, enseignants.nom_complet, examens.id
+        FROM examens 
+        JOIN enseignants on examens.idprof=enseignants.id
+        WHERE examens.classe = %s
+        """
+        cursor.execute(requete, (classe,))
+        devoirs = cursor.fetchall()
+        print(devoirs[0][7])
+        if devoirs:
+            verifdevoir=True
+            return render_template('devoir.html', devoirs=devoirs,verifdevoir=verifdevoir)
+        else:
+            verifdevoir=False
+            return render_template('devoir.html',verifdevoir=verifdevoir)
+    except mysql.connector.Error as err:
+        flash(f"Erreur lors de la récupération des devoirs : {err}", "danger")
+        return redirect('/accueiletudiant')

@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date, statistiques_etudiant
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs
 
 @app.route('/')
 def index():
@@ -120,9 +120,10 @@ def examen():
 def accueiletudiant():
     return statistiques_etudiant()
 
+
 @app.route('/devoirs')
-def devoirs():
-    return render_template('devoir.html')
+def devoirs_page():
+    return afficher_devoirs()
 
 @app.route('/notes')
 def notes():
