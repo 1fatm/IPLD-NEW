@@ -6,12 +6,15 @@
     <title>Accueil - Veuillez choisir votre rôle</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/accueil.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body>
-    <div id="particles-js"></div>
-    
+    <!-- Container for the particles -->
+    <div id="particles-js" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div>
+
+    <!-- Main Content -->
     <div class="container">
-        <h1>Bienvenue sur notre Plateforme</h1>
+        <h1 id="typewriter">Bienvenue sur Academix</h1>
         <p>Êtes-vous un étudiant ou un enseignant ?</p>
 
         <div class="role-selection">
@@ -27,31 +30,39 @@
         </div>
     </div>
 
-    <script src="particles.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS("particles-js", {
             "particles": {
                 "number": { "value": 80 },
                 "size": { "value": 3 },
-                "move": { "speed": 2 }
+                "move": { "speed": 2 },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                }
             },
             "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    }
+                }
             }
         });
 
-        function redirectTo(role) 
-        {
-            if (role === 'etudiant') 
-            {
+        function redirectTo(role) {
+            if (role === 'etudiant') {
                 window.location.href = "/connectionetudiantpage";
-            } 
-            else if (role === 'enseignant') 
-            {
+            } else if (role === 'enseignant') {
                 window.location.href = "/connectionprofpage";
             }
         }
-
     </script>
 </body>
 </html>
