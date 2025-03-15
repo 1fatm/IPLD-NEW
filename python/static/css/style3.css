@@ -34,6 +34,16 @@ body {
     margin-bottom: 30px;
 }
 
+.stats-container2 {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 30px;
+    width: 100%; /* Assurez-vous que la div occupe toute la largeur disponible */
+    max-width: 1200px; /* Vous pouvez ajuster cette valeur selon vos besoins */
+    margin: 0 auto; /* Centrer la div si vous utilisez un max-width */
+}
+
+
 .stat-box {
     flex: 1;
     background-color: #f9f9f9;
