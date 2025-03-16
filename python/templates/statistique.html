@@ -8,34 +8,6 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        h1 {
-            text-align: center;
-        }
-        .stat-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            margin: 10px;
-            width: 300px;
-            text-align: center;
-        }
-        img {
-            width: 100%;
-            border-radius: 5px;
-        }
-    </style>
 </head>
 <body class="bg-blue-50">
     <div class="flex h-screen">
@@ -67,22 +39,23 @@
             </a>
         </div>
 
-        <h1>Statistiques des Examens</h1>
+        <div class="flex-1 p-8 overflow-y-auto">
+            <h1 class="text-2xl font-bold mb-6">Statistiques des Examens</h1>
 
-        {% if message %}
-            <p class="message">{{ message }}</p>
-        {% else %}
-        <div class="stat-container">
-            {% for stat in statistiques %}
-            <div class="stat-card">
-                <h2>Classe : {{ stat.classe }}</h2>
-                <p><strong>Moyenne :</strong> {{ stat.moyenne }}</p>
-                <p><strong>Taux de Réussite :</strong> {{ stat.taux_reussite }}%</p>
-                <img src="data:image/png;base64,{{ histogrammes[stat.classe] }}" alt="Histogramme des notes">
-            </div>
-            {% endfor %}
+            {% if statistiques %}
+                {% for stat in statistiques %}
+                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                        <h2 class="text-xl font-semibold mb-4">Classe : {{ stat.classe }}</h2>
+                        <p class="mb-2"><strong>Moyenne :</strong> {{ stat.moyenne }}</p>
+                        <p class="mb-4"><strong>Taux de Réussite :</strong> {{ stat.taux_reussite }}%</p>
+                        <img src="data:image/png;base64,{{ stat.plot_url }}" alt="Histogramme des notes" class="w-full h-64 object-contain">
+                    </div>
+                    <hr class="my-6 border-t border-gray-300">
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-600">Aucune statistique disponible pour le moment.</p>
+            {% endif %}
         </div>
-    {% endif %}
     </div>
 </body>
 </html>
