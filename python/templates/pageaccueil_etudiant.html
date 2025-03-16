@@ -63,7 +63,82 @@
                 </div>                
             </div>
         </div>
+
+        <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header" style="display:none;">
+        <h3>Chatbot d'Assistance</h3>
+        <button id="closeChatbot"><i class="fas fa-times"></i></button>
     </div>
-    <script src="../scripts/script.js"></script>
+    <div class="chatbot-body">
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="message bot-message">Bonjour ! Comment puis-je vous aider aujourd'hui ?</div>
+        </div>
+        <div class="chatbot-input">
+            <form action="/chatbot">
+                <input type="text" id="chatbotInput" placeholder="Tapez votre message...">
+                <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<button id="openChatbot" class="chatbot-toggle">
+    <i class="fas fa-comments"></i>
+</button>
+        
+        <script>
+            document.getElementById("sendMessage").addEventListener("click", async function (event) {
+                event.preventDefault();
+    const inputField = document.getElementById("chatbotInput");
+    const userMessage = inputField.value.trim();
+    if (userMessage === "") return;
+
+    // Affiche le message de l'utilisateur
+    const chatbox = document.getElementById("chatbotMessages");
+    const userDiv = document.createElement("div");
+    userDiv.classList.add("message", "user-message");
+    userDiv.innerText = userMessage;
+    chatbox.appendChild(userDiv);
+
+    // Vide l'input
+    inputField.value = "";
+
+    // Envoie la question au backend
+    try {
+        const response = await fetch("/chatbot", { // URL du backend
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: userMessage }),
+        });
+
+        const data = await response.json();
+
+        // Affiche la réponse du chatbot
+        const botDiv = document.createElement("div");
+        botDiv.classList.add("message", "bot-message");
+        botDiv.innerText = data.response || "Le chatbot ne peut pas répondre.";
+        chatbox.appendChild(botDiv);
+
+        // Scroll automatique vers le bas
+        chatbox.scrollTop = chatbox.scrollHeight;
+    } catch (error) {
+        console.error("Erreur avec le chatbot:", error);
+    }
+});
+
+// Active le chatbot au clic sur le bouton
+document.getElementById("openChatbot").addEventListener("click", function () {
+    document.getElementById("chatbotWindow").style.display = "block";
+});
+
+// Ferme le chatbot au clic sur le bouton X
+document.getElementById("closeChatbot").addEventListener("click", function () {
+    document.getElementById("chatbotWindow").style.display = "none";
+});
+
+
+        </script>
+    </div>
 </body>
 </html>

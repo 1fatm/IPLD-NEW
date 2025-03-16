@@ -1,6 +1,10 @@
 from flask import Flask, render_template,session
 from python import app
+<<<<<<< HEAD
 from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes
+=======
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,statistiques_etudiant,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,afficher_devoirs,statistiquesp,afficher_notifications,afficher_notes,chatbot
+>>>>>>> 2dc57a92c49c48cbf9ee36f20006459ac05c3e21
 
 
 @app.route('/')
@@ -37,8 +41,7 @@ def Inscriptionprofpage():
 
 @app.route('/inscriptionetudiantpage')
 def Inscriptionetupage():
-        return render_template('inscription_etudiant.html')
-
+    return render_template('inscription_etudiant.html')
 
 @app.route('/pageEtudiant')
 def ConnexionP():
@@ -76,18 +79,13 @@ def Updatenote():
 def Ajoutdevoir_route():
     return ajouter_devoir()
 
-
 @app.route('/soumettre',methods=['POST'])
 def Soumettre():
     return soumettrefichier()
 
-
 @app.route('/timelineP')
 def timelineprof_route():
     return timeline_prof()
-
-if __name__ == '__main__':
-    app.run(debug=True)
 
 @app.route('/examen')
 def examen_route():
@@ -111,15 +109,15 @@ def note_prof():
 
 @app.route('/statistiquesp')
 def statistiques():
-    return generer_statistiques()
-
-@app.route("/examen")
-def examen():
-    return afficher_examens()
+    return statistiquesp()
 
 @app.route("/accueiletudiant")
 def accueiletudiant():
     return statistiques_etudiant()
+
+@app.route("/examen")
+def examen():
+    return afficher_examens()
 
 @app.route('/devoirs')
 def devoirs_page():
@@ -145,6 +143,15 @@ def triparclasse():
 def tripardate():
     return trier_date()
 
+<<<<<<< HEAD
 @app.route('/noteexam',methods=['POST'])
 def voirnotes():
    return voirlesnotes()
+=======
+@app.route('/chatbot', methods=['POST'])
+def ollama():
+    return chatbot()
+
+if __name__ == '__main__':
+    app.run(debug=True)
+>>>>>>> 2dc57a92c49c48cbf9ee36f20006459ac05c3e21

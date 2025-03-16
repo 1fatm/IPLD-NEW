@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector,os,re
 import io
 import base64
 from mysql.connector import Error
+import subprocess
+import matplotlib.pyplot as plt
 
 
 app = Flask(__name__)
@@ -113,6 +115,41 @@ def connexionetudiant():
         else:
             erreur_message="Identifiants incorrects"
             return render_template('connexion_etudiant.html',erreur_message=erreur_message)
+
+def statistiques_etudiant():
+    sess_id = session.get('id')  # ID de l'étudiant connecté
+    curseur = db.cursor()
+
+    # Nombre d'examens soumis par l'étudiant
+    requete = "SELECT COUNT(*) FROM copies WHERE id_etudiant = %s"
+    curseur.execute(requete, (sess_id,))
+    soumis = curseur.fetchone()[0]
+
+    # Nombre d'examens non soumis par l'étudiant
+    requete = """
+        SELECT COUNT(*) 
+        FROM examens 
+        WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)
+        AND id NOT IN (SELECT id_examen FROM copies WHERE id_etudiant = %s)
+    """
+    curseur.execute(requete, (sess_id, sess_id))
+    non_soumis = curseur.fetchone()[0]
+
+    # Nombre d'examens en retard (non soumis et date dépassée)
+    requete = """
+        SELECT COUNT(*) 
+        FROM examens 
+        WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)
+        AND id NOT IN (SELECT id_examen FROM copies WHERE id_etudiant = %s)
+        AND datedesoumission < NOW()
+    """
+    curseur.execute(requete, (sess_id, sess_id))
+    enretard = curseur.fetchone()[0]
+
+    curseur.close()
+
+    return render_template('pageaccueil_etudiant.html',soumis=soumis,non_soumis=non_soumis,enretard=enretard,sess_username=session['username'])
+
 
 
 def timeline_eleve():
@@ -610,39 +647,70 @@ def trier_date():
     curseur.close()
     return render_template('examen.html',examens=devoirsoumistriédate,verif=verif)
 
-def statistiques_etudiant():
-    sess_id = session.get('id')  # ID de l'étudiant connecté
-    curseur = db.cursor()
 
-    # Nombre d'examens soumis par l'étudiant
-    requete = "SELECT COUNT(*) FROM copies WHERE id_etudiant = %s"
-    curseur.execute(requete, (sess_id,))
-    soumis = curseur.fetchone()[0]
+def get_statistiques(id_prof):
+        # Récupérer les examens créés par le professeur
+        cursor.execute("""
+            SELECT e.id, e.nom, e.classe 
+            FROM examens e 
+            WHERE e.idprof = %s
+        """, (id_prof,))
+        examens = cursor.fetchall()
 
-    # Nombre d'examens non soumis par l'étudiant
-    requete = """
-        SELECT COUNT(*) 
-        FROM examens 
-        WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)
-        AND id NOT IN (SELECT id_examen FROM copies WHERE id_etudiant = %s)
-    """
-    curseur.execute(requete, (sess_id, sess_id))
-    non_soumis = curseur.fetchone()[0]
+        statistiques = []
+        # Supposant que l'ID est le premier élément du tuple
 
-    # Nombre d'examens en retard (non soumis et date dépassée)
-    requete = """
-        SELECT COUNT(*) 
-        FROM examens 
-        WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)
-        AND id NOT IN (SELECT id_examen FROM copies WHERE id_etudiant = %s)
-        AND datedesoumission < NOW()
-    """
-    curseur.execute(requete, (sess_id, sess_id))
-    enretard = curseur.fetchone()[0]
+        for examen in examens:
+            examen_id = examen[0]
+            # Récupérer les notes des étudiants pour cet examen
+            cursor.execute("""
+                SELECT c.note 
+                FROM corrections c 
+                JOIN copies cp ON c.id_copie = cp.id 
+                WHERE cp.id_examen = %s
+            """, (examen_id,))
+            notes = [row['note'] for row in cursor.fetchall()]
 
-    curseur.close()
+            if not notes:
+                continue
 
-    return render_template('pageaccueil_etudiant.html',soumis=soumis,non_soumis=non_soumis,enretard=enretard,sess_username=session['username'])
+            # Calculer la moyenne
+            moyenne = sum(notes) / len(notes)
+
+            # Calculer le taux de réussite (supposons que la note de réussite est 10)
+            taux_reussite = (sum(1 for note in notes if note >= 10) / len(notes) * 100)
+
+            # Générer l'histogramme
+            plt.figure()
+            plt.hist(notes, bins=10, edgecolor='black')
+            plt.title(f"Distribution des notes - {examen['nom']}")
+            plt.xlabel('Notes')
+            plt.ylabel('Nombre d\'étudiants')
+            img = io.BytesIO()
+            plt.savefig(img, format='png')
+            img.seek(0)
+            plot_url = base64.b64encode(img.getvalue()).decode()
+
+            statistiques.append({
+                'classe': examen['classe'],
+                'moyenne': round(moyenne, 2),
+                'taux_reussite': round(taux_reussite, 2),
+                'plot_url': plot_url
+            })
+
+        cursor.close()
+        db.close()
+
+        return statistiques
+
+def statistiquesp():
+    if 'id' not in session:
+        return redirect('/connexion_prof')
+
+    id_prof = session['id']
+    statistiques = get_statistiques(id_prof)
+
+    return render_template('statistique.html', statistiques=statistiques)
 
 def afficher_devoirs():
     if 'id' not in session:
@@ -722,3 +790,34 @@ def afficher_notes():
     notes = cursor.fetchall()
     
     return render_template('mesnotes.html', notes=notes)
+
+@app.route('/chatbot', methods=['POST'])
+def ask_ollama(question):
+    prompt = f"""
+Tu es un assistant pédagogique spécialisé dans les examens et les études. Tu réponds principalement aux questions en rapport avec les examens, les corrections, les notes, ou les sujets d'étude. 
+Si la question n'est pas liée à ces sujets, tu peux essayer de demander à l'étudiant ce qu'il veut savoir et sur quelle matière. S'il te demande des réponses concernatndes questions sur un devoir tu lui dis que tu ne peux pas lui fournir les réponses des examens
+
+Question : {question}
+"""
+
+    result = subprocess.run(
+        ["ollama", "run", "gemma3:1b", prompt],
+        capture_output=True,
+        text=True
+    )
+    return result.stdout.strip()
+
+
+def chatbot():
+    data = request.json  # Récupérer les données envoyées en JSON
+    question = data.get('question', '')  # Extraire la question
+
+    if not question:
+        return jsonify({"error": "Aucune question fournie"}), 400
+
+    response = ask_ollama(question)  # Appel à Ollama
+    return jsonify({"response": response})  # Renvoi de la réponse en JSON
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
