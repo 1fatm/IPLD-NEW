@@ -445,10 +445,6 @@ def updatenote():
 
     db.commit()
     return render_template("info_copie.html",infocopies=infocopies,note=newnote)
-    db.commit()
-    curseur.close()
-    db.close()
-    return render_template("info_copie.html")
 
 def afficher_note():
     sess_id = session.get('id')  # Récupération de l'ID du professeur
@@ -457,20 +453,32 @@ def afficher_note():
 
     curseur = db.cursor()
 
+    requete="""
+    Select examens.nom,examens.classe,examens.description,examens.type,examens.id from examens where idprof=%s
+    """
+    curseur.execute(requete,(sess_id,))
+    examens=curseur.fetchall()
+    db.commit()
+    curseur.close()
+    return render_template('notep.html',examens=examens)
+
+def voirlesnotes(): 
+    sess_id = session.get('id')  # ID du professeur connecté
+    id=request.form['id']
+    curseur = db.cursor()
     requete = """
     SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note,c.commentaire
     FROM copies cop
     JOIN etudiants e ON cop.id_etudiant = e.id
     JOIN corrections c ON cop.id = c.id_copie
     JOIN examens ex ON cop.id_examen = ex.id    
-    WHERE ex.idprof = %s
+    WHERE ex.idprof = %s and ex.id=%s
     """
-    
-    curseur.execute(requete, (sess_id,))
+    curseur.execute(requete, (sess_id,id))
     notes = curseur.fetchall()
-    
+    db.commit()
     curseur.close()
-    return render_template('notep.html', notes=notes)
+    return render_template('voirnote.html',notes=notes)
 
 def afficher_examens():
     sess_id = session.get('id')  # ID du professeur connecté
