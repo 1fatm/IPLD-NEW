@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, session, flash, jsonify,send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector,os,re
 import io
@@ -6,7 +6,8 @@ import base64
 from mysql.connector import Error
 import subprocess
 import matplotlib.pyplot as plt
-
+import pandas as pd
+from io import BytesIO
 
 app = Flask(__name__)
 app.secret_key = 'your_love'
@@ -504,7 +505,7 @@ def voirlesnotes():
     id=request.form['id']
     curseur = db.cursor()
     requete = """
-    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note,c.commentaire
+    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note,c.commentaire,ex.id
     FROM copies cop
     JOIN etudiants e ON cop.id_etudiant = e.id
     JOIN corrections c ON cop.id = c.id_copie
@@ -818,6 +819,39 @@ def chatbot():
     response = ask_ollama(question)  # Appel à Ollama
     return jsonify({"response": response})  # Renvoi de la réponse en JSON
 
+
+
+def generernote():
+    sess_id = session.get('id')  # ID du professeur connecté
+    id=request.form['idexam']
+    cursor=db.cursor()
+    requete ="""
+    SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note,c.commentaire,ex.id
+    FROM copies cop
+    JOIN etudiants e ON cop.id_etudiant = e.id
+    JOIN corrections c ON cop.id = c.id_copie
+    JOIN examens ex ON cop.id_examen = ex.id    
+    WHERE ex.idprof = %s and ex.id=%s
+    """
+    cursor.execute(requete, (sess_id,id))
+    notes = cursor.fetchall()
+    columns=[desc[0] for desc in cursor.description]
+    db.commit()
+    cursor.close()
+    df=pd.DataFrame(notes,columns=columns)
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='Notes')
+
+    output.seek(0)
+    return send_file(
+            output,
+            as_attachment=True,
+            download_name=f'Notes_{notes[0][2]} {notes[0][1]}.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

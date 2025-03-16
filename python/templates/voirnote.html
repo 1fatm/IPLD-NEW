@@ -41,6 +41,10 @@
         </div> 
         {%if notes %}
         <div class="flex-1 p-6 overflow-y-auto">
+            <form action="/generernote" method="post">
+                <input type="text" name="idexam" value="{{notes[0][5]}}" hidden>
+                <button class="bg-blue-800 text-white py-2 px-4 rounded hover:bg-blue-700">Telecharger les notes</button>
+            </form>
             <h2 class="text-3xl font-bold text-blue-800 mb-6">Notes des élèves  de {{notes[0][1]}} pour {{notes[0][2]}} </h2>
             <div class="overflow-x-auto shadow-lg rounded-lg border border-gray-200">
                 <table class="min-w-full bg-white">

@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes,statistiquesp,chatbot
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes,statistiquesp,chatbot,generernote
 
 
 @app.route('/')
@@ -145,6 +145,10 @@ def voirnotes():
 @app.route('/chatbot', methods=['POST'])
 def ollama():
     return chatbot()
+
+@app.route('/generernote',methods=['POST'])
+def genererfichiernote():
+    return generernote()
 
 if __name__ == '__main__':
     app.run(debug=True)
