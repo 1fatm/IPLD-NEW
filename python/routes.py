@@ -1,10 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-<<<<<<< HEAD
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes
-=======
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,statistiques_etudiant,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,afficher_devoirs,statistiquesp,afficher_notifications,afficher_notes,chatbot
->>>>>>> 2dc57a92c49c48cbf9ee36f20006459ac05c3e21
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes,statistiquesp,chatbot
 
 
 @app.route('/')
@@ -143,15 +139,12 @@ def triparclasse():
 def tripardate():
     return trier_date()
 
-<<<<<<< HEAD
 @app.route('/noteexam',methods=['POST'])
 def voirnotes():
    return voirlesnotes()
-=======
 @app.route('/chatbot', methods=['POST'])
 def ollama():
     return chatbot()
 
 if __name__ == '__main__':
     app.run(debug=True)
->>>>>>> 2dc57a92c49c48cbf9ee36f20006459ac05c3e21
