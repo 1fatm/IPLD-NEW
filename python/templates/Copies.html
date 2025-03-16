@@ -41,9 +41,8 @@
             </a>
         </div>
 
-        <!-- Contenu principal -->
         <div class="flex-1 p-6 overflow-y-auto">
-            <h2 class="text-3xl font-bold text-blue-800 mb-6 text-center">Notes des élèves</h2>
+            <h2 class="text-3xl font-bold text-blue-800 mb-6 text-center">Copies</h2>
 
             {% if examens %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 justify-center">
@@ -55,10 +54,10 @@
                         <p class="text-lg">Type : <span class="font-medium">{{ examen[3] }}</span></p>
                         <p class="text-lg mb-4">Description : <span class="font-medium">{{ examen[2] }}</span></p>
                     </div>
-                    <form action="/noteexam" method="post" class="mt-auto">
+                    <form action="/copie" method="post" class="mt-auto">
                         <input type="hidden" name="id" value="{{ examen[4] }}">
                         <button type="submit" class="mt-4 bg-blue-900 text-white py-2 px-4 rounded hover:bg-blue-700 w-full">
-                            Voir les notes
+                            Voir les copies
                         </button>
                     </form>
                 </div>

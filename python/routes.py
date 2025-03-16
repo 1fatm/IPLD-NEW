@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes,statistiquesp,chatbot,generernote
+from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes,statistiquesp,chatbot,generernote,copieparexam
 
 
 @app.route('/')
@@ -95,7 +95,11 @@ def accueilp_route():
 def AjoutAdmin_route():
     return render_template('Ajoutdevoir.html',sess_username=session['username'],sess_id=session['id'])
 
-@app.route('/copie')
+@app.route('/copies')
+def copiesexamen():
+    return copieparexam()
+
+@app.route('/copie' ,methods=['POST'])
 def copie_examen():
     return timeline_prof()
 

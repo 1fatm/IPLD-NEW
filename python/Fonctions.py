@@ -178,6 +178,7 @@ def timeline_eleve():
 
 def timeline_prof():
     sess_username = session.get('username')
+    id=request.form['id']
     sess_id = session.get('id')
     cursor = db.cursor()
     print(sess_id)  
@@ -186,9 +187,9 @@ def timeline_prof():
     FROM copies c
     JOIN etudiants e ON c.id_etudiant = e.id
     JOIN examens ex ON c.id_examen = ex.id
-    WHERE ex.idprof = %s
+    WHERE ex.idprof = %s and ex.id=%s  
     """
-    cursor.execute(requete, (sess_id,))
+    cursor.execute(requete, (sess_id,id))
     devoirsoumis = cursor.fetchall()
     print(devoirsoumis)  
 
@@ -851,7 +852,17 @@ def generernote():
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
 
-    
+def copieparexam():
+    sess_id = session.get('id')  # ID du professeur connecté
+    curseur = db.cursor()
+    requete="""
+    Select examens.nom,examens.classe,examens.description,examens.type,examens.id from examens where idprof=%s
+    """
+    curseur.execute(requete,(sess_id,))
+    examens=curseur.fetchall()
+    db.commit()
+    curseur.close()
+    return render_template('Copies.html',examens=examens)
 
 if __name__ == '__main__':
     app.run(debug=True)
