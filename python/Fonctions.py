@@ -759,7 +759,7 @@ def afficher_notifications():
     classe_etudiant = etudiant['classe']
 
     cursor.execute("""
-        SELECT e.id, e.nom, e.datedesoumission, e.date_creation, ens.nom_complet AS prof,
+        SELECT e.id, e.nom, e.datedesoumission, c.date_soumission, ens.nom_complet AS prof,
             CASE 
             WHEN c.id IS NOT NULL THEN 'Soumis'
                 ELSE 'Non soumis'
