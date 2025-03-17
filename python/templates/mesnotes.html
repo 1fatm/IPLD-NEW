@@ -8,11 +8,23 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <style>
+        .sticky-nav {
+            position: fixed;
+            height: 100vh;
+            width: 16rem;
+        }
+        .content {
+            margin-left: 17rem;
+            width: calc(100% - 17rem);
+        }
+        
+    </style>
 </head>
 <body class="bg-gray-50">
-    <div class="flex h-screen">
+    <div class="flex flex-col lg:flex-row h-screen">
         <!-- Sidebar -->
-        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
+        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col sticky-nav">
             <div class="flex items-center mb-6">
                 <i class="fas fa-graduation-cap text-3xl mr-2"></i>
                 <h1 class="text-2xl font-bold">Étudiant</h1>
@@ -37,36 +49,38 @@
         </div>
 
         <!-- Main Content -->
-        <div class="flex-1 p-6">
+        <div class="flex-1 p-6 content">
             <h2 class="text-2xl font-semibold mb-4">📑 Notes Corrigées</h2>
             <div class="bg-white p-6 shadow rounded">
                 <h3 class="text-xl font-semibold mb-4"><i class="fas fa-file-alt"></i> Liste des Notes</h3>
-                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                    <thead>
-                        <tr class="bg-gray-900 text-white">
-                            <th class="py-2 px-4">Type</th>
-                            <th class="py-2 px-4">Nom</th>
-                            <th class="py-2 px-4">Date de soumission</th>
-                            <th class="py-2 px-4">Note</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for note in notes %}
-                        <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200">
-                            <td class="py-2 px-4">{{ note.type }}</td>
-                            <td class="py-2 px-4">{{ note.nom_examen }}</td>
-                            <td class="py-2 px-4">{{ note.date_soumission }}</td>
-                            <td class="py-2 px-4">
-                                {% if note.note is not none %}
-                                    {{ note.note }}/20
-                                {% else %}
-                                    <span class="text-gray-500">Note indisponible pour le moment</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                        <thead>
+                            <tr class="bg-gray-900 text-white">
+                                <th class="py-3 px-5">Type</th>
+                                <th class="py-3 px-5">Nom</th>
+                                <th class="py-3 px-5">Date de soumission</th>
+                                <th class="py-3 px-5">Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for note in notes %}
+                            <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200">
+                                <td class="py-3 px-5">{{ note.type }}</td>
+                                <td class="py-3 px-5">{{ note.nom_examen }}</td>
+                                <td class="py-3 px-5">{{ note.date_soumission }}</td>
+                                <td class="py-3 px-5">
+                                    {% if note.note is not none %}
+                                        {{ note.note }}/20
+                                    {% else %}
+                                        <span class="text-gray-500">Note indisponible</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% if not notes %}
                 <p class="text-center text-gray-500 mt-4">Aucune note disponible.</p>
                 {% endif %}

@@ -796,8 +796,13 @@ def afficher_notes():
 @app.route('/chatbot', methods=['POST'])
 def ask_ollama(question):
     prompt = f"""
-Tu es un assistant pédagogique spécialisé dans les examens et les études. Tu réponds principalement aux questions en rapport avec les examens, les corrections, les notes, ou les sujets d'étude. 
+Tu es un assistant pédagogique spécialisé dans les examens et les études.Tu es dans un site nommé Academix et l'éléve peut soumettre des copies d'axemens,voir ses notes et des notifications.
+La page devoirs ou  y'a les devoirs à soumettre,la page notes ou l'élève peut voir ses notes et la page notifications ou il peut voir le recap genre les devoirs soumis ou non soumis et leur info.
+Tu réponds principalement aux questions en rapport avec les examens, les corrections, les notes, ou les sujets d'étude. 
 Si la question n'est pas liée à ces sujets, tu peux essayer de demander à l'étudiant ce qu'il veut savoir et sur quelle matière. S'il te demande des réponses concernatndes questions sur un devoir tu lui dis que tu ne peux pas lui fournir les réponses des examens
+Si il te dit des choses inappropriées tu lui dis que tu ne peux pas répondre à ce genre de questions.
+Si il te demande des informations sur les e4xamens tu lui dis que tu peux lui donner des informations sur les examens et les notes.
+Si il te demande des choses qui n'ont rien avoir avec le site dit lui que ton role est de l'aider par rapport au site et pas autre chose.
 
 Question : {question}
 """
@@ -812,15 +817,15 @@ Question : {question}
 
 def chatbot():
     data = request.json  # Récupérer les données envoyées en JSON
-    question = data.get('question', '')  # Extraire la question
+    question = data.get('question', '').strip()  # Nettoyer la question
 
     if not question:
         return jsonify({"error": "Aucune question fournie"}), 400
 
     response = ask_ollama(question)  # Appel à Ollama
-    return jsonify({"response": response})  # Renvoi de la réponse en JSON
 
-
+    # S'assurer que la réponse est encodée correctement en UTF-8
+    return jsonify({"response": response}), 200
 
 def generernote():
     sess_id = session.get('id')  # ID du professeur connecté
