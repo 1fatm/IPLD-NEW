@@ -413,8 +413,8 @@ def noteria(ideleve, iddevoir, chemincopie, id_copie):
     if note is not None:
         cursor = db.cursor()
         try:
-            requete = '''INSERT INTO corrections (note, commentaire, correction_automatique) VALUES (%s, %s, %s)'''
-            values = (note, "Correction automatique", True)
+            requete = '''INSERT INTO corrections (id_copie, note, commentaire, correction_automatique) VALUES (%s, %s, %s, %s)'''
+            values = (id_copie, note, "Correction automatique", True)
             cursor.execute(requete, values)
             db.commit()
         except mysql.connector.Error as err:
