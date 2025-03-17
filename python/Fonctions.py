@@ -425,6 +425,7 @@ def soumettrefichier():
         return render_template("info_dev.html", errorfichier=f"Erreur MySQL : {err}")
     finally:
         curseur.close()
+        noteria(ideleve,idev,chemin1)
     return render_template("info_dev.html", success_message="Devoir soumis avec succès.",sess_id=session['id'])
 
 def notercopie():
@@ -563,7 +564,6 @@ def generer_statistiques():
             notes_par_classe[classe] = []
         notes_par_classe[classe].append(note)
 
-   
     statistiques = []
     histogrammes = {}
 
@@ -809,6 +809,7 @@ Question : {question}
 
     result = subprocess.run(
         ["ollama", "run", "gemma3:1b", prompt],
+        encoding="utf-8",
         capture_output=True,
         text=True
     )
@@ -871,3 +872,36 @@ def copieparexam():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+def noteria(ideleve,iddevoir,chemincopie):
+    cursor=db.cursor()
+    requete="""select chemin from examens where id=%s"""
+    cursor.execute(requete,(iddevoir,))
+    cheminexamen=cursor.fetchall()
+    cheminexamen=cheminexamen[0][0]
+    requete="""select chemin_correction from examens where id=%s"""
+    cursor.execute(requete,(iddevoir,))
+    chemincorrection=cursor.fetchall()
+    chemincorrection=chemincorrection[0][0]
+    chemindebase="c:/Users/HP/OneDrive/Desktop/tcpl/python/"
+
+    with open(os.path.join(chemindebase,cheminexamen), "r", encoding="utf-8",errors="replace") as f:
+        cheminexamen=f.read()
+
+    with open(os.path.join(chemindebase,chemincorrection), "r", encoding="utf-8",errors="replace") as f:
+        chemincorrection=f.read()
+    with open(os.path.join(chemindebase,chemincopie), "r",  encoding="utf-8",errors="replace") as f:
+        chemincopie=f.read()
+    print(chemincopie)
+
+    def clean_string(input_string):
+        return input_string.replace("\0", "")
+
+    cheminexamen = clean_string(cheminexamen)
+    chemincorrection = clean_string(chemincorrection)
+    chemincopie = clean_string(chemincopie)
+
+
+    prompt = f"Tu dois me donner une note en corrigeant la feuille de l'élève à partir du sujet d'examen donne moi juste une note rien d'autre:\n\nEnoncé examen:\n{cheminexamen}\n\nFeuille de l'élève:\n{chemincorrection}"
+    reponse=ask_ollama(prompt)
+    print(reponse)
