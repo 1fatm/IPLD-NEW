@@ -695,60 +695,77 @@ def trier_date():
     return render_template('examen.html',examens=devoirsoumistriédate,verif=verif)
 
 
+
 def get_statistiques(id_prof):
-        # Récupérer les examens créés par le professeur
-        cursor.execute("""
-            SELECT e.id, e.nom, e.classe 
-            FROM examens e 
-            WHERE e.idprof = %s
-        """, (id_prof,))
-        examens = cursor.fetchall()
+    cursor = db.cursor()
 
-        statistiques = []
-        # Supposant que l'ID est le premier élément du tuple
+    # Récupérer les examens créés par le professeur
+    cursor.execute("""
+        SELECT e.id, e.nom, e.classe 
+        FROM examens e 
+        WHERE e.idprof = %s
+    """, (id_prof,))
+    examens = cursor.fetchall()
 
-        for examen in examens:
-            examen_id = examen[0]
-            # Récupérer les notes des étudiants pour cet examen
-            cursor.execute("""
-                SELECT c.note 
-                FROM corrections c 
-                JOIN copies cp ON c.id_copie = cp.id 
-                WHERE cp.id_examen = %s
-            """, (examen_id,))
-            notes = [row['note'] for row in cursor.fetchall()]
+    statistiques = []
 
-            if not notes:
-                continue
+    for examen in examens:
+        examen_id, examen_nom, examen_classe = examen
 
-            # Calculer la moyenne
-            moyenne = sum(notes) / len(notes)
+        # Compter le nombre de notes
+        requete = """
+            SELECT COUNT(*)
+            FROM copies c
+            JOIN corrections co ON c.id = co.id_copie
+            WHERE c.id_examen = %s
+        """
+        cursor.execute(requete, (examen_id,))
+        nombre_notes = cursor.fetchone()[0]
 
-            # Calculer le taux de réussite (supposons que la note de réussite est 10)
-            taux_reussite = (sum(1 for note in notes if note >= 10) / len(notes) * 100)
+        # S'il n'y a pas de notes, on passe à l'examen suivant
+        if nombre_notes == 0:
+            continue
 
-            # Générer l'histogramme
-            plt.figure()
-            plt.hist(notes, bins=10, edgecolor='black')
-            plt.title(f"Distribution des notes - {examen['nom']}")
-            plt.xlabel('Notes')
-            plt.ylabel('Nombre d\'étudiants')
-            img = io.BytesIO()
-            plt.savefig(img, format='png')
-            img.seek(0)
-            plot_url = base64.b64encode(img.getvalue()).decode()
+        # Récupérer toutes les notes
+        requete = """
+            SELECT co.note
+            FROM copies c
+            JOIN corrections co ON c.id = co.id_copie
+            WHERE c.id_examen = %s
+        """
+        cursor.execute(requete, (examen_id,))
+        notes = [note[0] for note in cursor.fetchall()]
 
-            statistiques.append({
-                'classe': examen['classe'],
-                'moyenne': round(moyenne, 2),
-                'taux_reussite': round(taux_reussite, 2),
-                'plot_url': plot_url
-            })
+        # Calculer la moyenne
+        moyenne = sum(notes) / nombre_notes
 
-        cursor.close()
-        db.close()
+        # Générer l'histogramme
+        plt.figure()
+        plt.hist(notes, bins=10, edgecolor='black')
+        plt.title(f"Distribution des notes - {examen_nom}")
+        plt.xlabel('Notes')
+        plt.ylabel('Nombre d\'étudiants')
 
-        return statistiques
+        # Convertir le graphique en image encodée
+        img = io.BytesIO()
+        plt.savefig(img, format='png')
+        img.seek(0)
+        plot_url = base64.b64encode(img.getvalue()).decode()
+        plt.close()  # Éviter la fuite de mémoire
+
+        # Ajouter les statistiques de cet examen
+        statistiques.append({
+            'classe': examen_classe,
+            'nom': examen_nom,
+            'moyenne': round(moyenne, 2),
+            'plot_url': plot_url
+        })
+
+    # Fermer la connexion proprement
+    cursor.close()
+    db.close()
+
+    return statistiques
 
 def statistiquesp():
     if 'id' not in session:
@@ -758,6 +775,93 @@ def statistiquesp():
     statistiques = get_statistiques(id_prof)
 
     return render_template('statistique.html', statistiques=statistiques)
+def get_statistiques(id_prof):
+    cursor = db.cursor()
+
+    # Récupérer les examens créés par le professeur
+    cursor.execute("""
+        SELECT e.id, e.nom, e.classe 
+        FROM examens e 
+        WHERE e.idprof = %s
+    """, (id_prof,))
+    examens = cursor.fetchall()
+
+    statistiques = []
+
+    for examen in examens:
+        examen_id, examen_nom, examen_classe = examen
+
+        # Récupérer toutes les notes
+        requete = """
+            SELECT co.note
+            FROM copies c
+            JOIN corrections co ON c.id = co.id_copie
+            WHERE c.id_examen = %s
+        """
+        cursor.execute(requete, (examen_id,))
+        notes = [note[0] for note in cursor.fetchall()]
+
+        if len(notes) == 0:
+            continue
+
+        moyenne = sum(notes) / len(notes)
+
+        # 📊 1. Histogramme
+        plt.figure(figsize=(14, 10))
+        plt.hist(notes, bins=10, edgecolor='black', color='skyblue')
+        plt.title(f"Histogramme des notes - {examen_nom}")
+        plt.xlabel('Notes')
+        plt.ylabel('Nombre d\'étudiants')
+        img_hist = io.BytesIO()
+        plt.savefig(img_hist, format='png')
+        img_hist.seek(0)
+        plot_url_hist = base64.b64encode(img_hist.getvalue()).decode()
+        plt.close()
+
+        # 🥧 2. Diagramme circulaire (camembert)
+        notes_range = ["0-5", "6-10", "11-15", "16-20"]
+        counts = [sum(0 <= n <= 5 for n in notes),
+                  sum(6 <= n <= 10 for n in notes),
+                  sum(11 <= n <= 15 for n in notes),
+                  sum(16 <= n <= 20 for n in notes)]
+
+        plt.figure(figsize=(14, 10))
+        plt.pie(counts, labels=notes_range, autopct='%1.1f%%', startangle=140)
+        plt.title(f"Répartition des notes - {examen_nom}")
+        img_pie = io.BytesIO()
+        plt.savefig(img_pie, format='png')
+        img_pie.seek(0)
+        plot_url_pie = base64.b64encode(img_pie.getvalue()).decode()
+        plt.close()
+
+        # 📌 3. Diagramme en barres
+        plt.figure(figsize=(14, 10))
+        categories = ['0-5', '6-10', '11-15', '16-20']
+        plt.bar(categories, counts, color='orange')
+        plt.title(f"Notes par tranche - {examen_nom}")
+        plt.xlabel('Tranches de notes')
+        plt.ylabel('Nombre d\'étudiants')
+        img_bar = io.BytesIO()
+        plt.savefig(img_bar, format='png')
+        img_bar.seek(0)
+        plot_url_bar = base64.b64encode(img_bar.getvalue()).decode()
+        plt.close()
+
+        # Ajouter toutes les statistiques de cet examen
+        statistiques.append({
+            'classe': examen_classe,
+            'nom': examen_nom,
+            'moyenne': round(moyenne, 2),
+            'plot_url_hist': plot_url_hist,
+            'plot_url_pie': plot_url_pie,
+            'plot_url_bar': plot_url_bar
+        })
+
+    cursor.close()
+    db.close()
+
+    return statistiques
+
 
 def afficher_devoirs():
     if 'id' not in session:
