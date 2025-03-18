@@ -13,17 +13,20 @@ app = Flask(__name__)
 app.secret_key = 'your_love'
 import mysql.connector
 
-try:
-    db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="gestion_examens"
+def connect():
+    try:
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="",
+            database="gestion_examens"
         )
-    cursor = db.cursor()
-except Error as e:
-    print(f"Error connecting to MySQL: {e}")
+        return connection
+    except mysql.connector.Error as err:
+        print(f"Erreur de connexion : {err}")
+        return None
 
+db=connect()
 if db.is_connected():
     cursor = db.cursor()
     curseur = db.cursor()
@@ -39,7 +42,7 @@ def inscriptionetu():
             return render_template('inscription_etudiant.html', erreur_password=erreur_password)
 
         mot_de_passe_hash = generate_password_hash(mot_de_passe)
-
+        db=connect()
         cursor = db.cursor()
         cursor.execute("SELECT * FROM etudiants WHERE email = %s", (email,))
         utilisateur_exist = cursor.fetchone()
@@ -68,7 +71,7 @@ def inscriptionprof():
             return render_template('inscription_prof.html', erreur_password=erreur_password)
 
         mot_de_passe_hash = generate_password_hash(mot_de_passe)
-
+        db=connect()
         cursor = db.cursor()
         cursor.execute("SELECT * FROM enseignants WHERE email = %s", (email,))
         utilisateur_exist = cursor.fetchone()
@@ -105,6 +108,7 @@ def connexionetudiant():
     if request.method == 'POST':
         email = request.form['username']
         mot_de_passe = request.form['password']
+        db=connect()
         cursor = db.cursor()
         cursor.execute("SELECT * FROM etudiants WHERE email = %s", (email,))
         etudiants = cursor.fetchone()
@@ -118,7 +122,10 @@ def connexionetudiant():
             return render_template('connexion_etudiant.html',erreur_message=erreur_message)
 
 def statistiques_etudiant():
-    sess_id = session.get('id')  # ID de l'étudiant connecté
+    sess_id = session.get('id') 
+     # ID de l'étudiant connecté
+    db=connect()
+
     curseur = db.cursor()
 
     # Nombre d'examens soumis par l'étudiant
@@ -157,6 +164,7 @@ def timeline_eleve():
     try:
         sess_id=session['id']
         sess_username=session['username']
+        db=connect()
         cursor = db.cursor()
         cursor.execute("SELECT * FROM examens WHERE classe = (SELECT classe FROM etudiants WHERE id = %s)", (sess_id,))
         devoirs = cursor.fetchall()
@@ -180,6 +188,7 @@ def timeline_prof():
     sess_username = session.get('username')
     id=request.form['id']
     sess_id = session.get('id')
+    db=connect()
     cursor = db.cursor()
     print(sess_id)  
     requete = """
@@ -202,7 +211,7 @@ def connexionetu():
     if request.method == 'POST':
         email = request.form['username']
         mot_de_passe = request.form['password']
-
+        db=connect()
         cursor = db.cursor()
         cursor.execute("SELECT * FROM etudiants WHERE email = %s", (email,))
         utilisateur = cursor.fetchone()
@@ -300,7 +309,7 @@ def ajouter_devoir():
 
     chemin2 = os.path.join('static', 'images', fichier_correction_filename)
     print(f"Relative path for database: {chemin2}")
-
+    db=connect()
     curseur = db.cursor()
     try:
         
@@ -345,6 +354,7 @@ def soumettrefichier():
         return render_template("info_dev.html", errorfichier="Échec de l'enregistrement du fichier.")
     
     chemin1 = os.path.join('python','static', 'images', 'copies', fichier_filename)
+    db=connect()
     curseur = db.cursor()
     
     try:
@@ -363,6 +373,7 @@ def soumettrefichier():
     return render_template("info_dev.html", success_message="Devoir soumis avec succès.", sess_id=session['id'])                              
 
 def noteria(ideleve, iddevoir, chemincopie, id_copie):
+    db=connect()
     cursor = db.cursor()
     
     cursor.execute("SELECT chemin, chemin_correction FROM examens WHERE id=%s", (iddevoir,))
@@ -431,6 +442,7 @@ def infodev():
     sess_username=session.get('username')
     id=request.form['id']
     sess_id = session.get('id')
+    db=connect()
     curseur=db.cursor()
     curseur.execute("Select * from examens where id=%s",(id,))
     infodevoirs=curseur.fetchall()
@@ -451,6 +463,7 @@ def infocopiecode():
     sess_username=session.get('username')
     idcopie=request.form['id']
     sess_id = session.get('id')
+    db=connect()
     curseur=db.cursor()
     requete = """
     SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
@@ -477,6 +490,7 @@ def notercopie():
     idcopie=request.form['id']
     note=request.form['note']
     commentaire=request.form['commentaire']
+    db=connect()
     curseur=db.cursor()
     requete='''select note from corrections where id_copie=%s'''
     curseur.execute(requete,(idcopie,))
@@ -511,6 +525,7 @@ def updatenote():
     idcopie=request.form['id']
     newnote=request.form['newnote']
     sess_id = session.get('id')
+    db=connect()
     curseur=db.cursor()
     requete = '''
     update corrections set note=%s where id_copie=%s
@@ -534,7 +549,7 @@ def afficher_note():
     sess_id = session.get('id')  # Récupération de l'ID du professeur
     if not sess_id:
         return "Erreur : utilisateur non authentifié"
-
+    db=connect()
     curseur = db.cursor()
 
     requete="""
@@ -549,6 +564,7 @@ def afficher_note():
 def voirlesnotes(): 
     sess_id = session.get('id')  # ID du professeur connecté
     id=request.form['id']
+    db=connect()
     curseur = db.cursor()
     requete = """
     SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note,c.commentaire,ex.id
@@ -566,6 +582,7 @@ def voirlesnotes():
 
 def afficher_examens():
     sess_id = session.get('id')  # ID du professeur connecté
+    db=connect()
     cursor=db.cursor()
     cursor.execute("SELECT nom,description,type,classe,chemin FROM examens where idprof=%s",(sess_id,))
     examens=cursor.fetchall()
@@ -580,7 +597,7 @@ def generer_statistiques():
     sess_id = session.get('id')  # ID du professeur connecté
     if not sess_id:
         return "Erreur : utilisateur non authentifié"
-
+    db=connect()
     curseur = db.cursor(dictionary=True)
 
     # Récupérer les statistiques des examens donnés par ce professeur
@@ -646,6 +663,7 @@ def deconnection():
 
 def trier_classe():
     sess_id = session.get('id')  # ID du professeur connecté
+    db=connect()
     curseur = db.cursor()
     classe = request.form.get('classe')
     verif=True
@@ -662,6 +680,7 @@ def trier_classe():
 def countcopiesnonnotees():
     sess_id = session.get('id')  # ID du professeur connecté
     sess_username=session.get('username')
+    db=connect()
     curseur = db.cursor()
     requete="Select count(*) from copies join examens on copies.id_examen=examens.id where examens.idprof=%s and copies.id not in (select id_copie from corrections)"
     curseur.execute(requete,(sess_id,))
@@ -677,6 +696,7 @@ def countcopiesnonnotees():
 
 def trier_date():
     sess_id = session.get('id')  # ID du professeur connecté
+    db=connect()
     curseur = db.cursor()
     date = request.form.get('date')
     verif=True
@@ -696,6 +716,7 @@ def trier_date():
 
 
 def get_statistiques(id_prof):
+    db=connect()
     cursor = db.cursor()
 
     # Récupérer les examens créés par le professeur
@@ -775,6 +796,7 @@ def statistiquesp():
 
     return render_template('statistique.html', statistiques=statistiques)
 def get_statistiques(id_prof):
+    db=connect()
     cursor = db.cursor()
 
     # Récupérer les examens créés par le professeur
@@ -866,7 +888,7 @@ def afficher_devoirs():
     if 'id' not in session:
         flash("Veuillez vous connecter.", "warning")
         return redirect('/')
-
+    db=connect()
     cursor = db.cursor()
     try:
         user_id = session['id']
@@ -895,7 +917,7 @@ def afficher_notifications():
         return redirect('/connexion_etudiant')
 
     id_etudiant = session['id']
-    
+    db=connect()
     cursor = db.cursor(dictionary=True)
     
     cursor.execute("SELECT classe FROM etudiants WHERE id = %s", (id_etudiant,))
@@ -926,6 +948,7 @@ def afficher_notes():
         return redirect('/connexion_etudiant')
 
     id_etudiant = session['id']
+    db=connect()
     cursor = db.cursor(dictionary=True)
     
     cursor.execute("""
@@ -991,6 +1014,7 @@ def chatbot():
 def generernote():
     sess_id = session.get('id')  # ID du professeur connecté
     id=request.form['idexam']
+    db=connect()
     cursor=db.cursor()
     requete ="""
     SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.note,c.commentaire,ex.id
@@ -1020,6 +1044,7 @@ def generernote():
 
 def copieparexam():
     sess_id = session.get('id')  # ID du professeur connecté
+    db=connect()
     curseur = db.cursor()
     requete="""
     Select examens.nom,examens.classe,examens.description,examens.type,examens.id from examens where idprof=%s
