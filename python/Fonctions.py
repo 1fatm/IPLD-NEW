@@ -320,6 +320,113 @@ def ajouter_devoir():
         curseur.close()
     return render_template("Ajoutdevoir.html", success_message="Devoir ajouté avec succès.",sess_id=session['id'])
 
+def soumettrefichier():
+    repertoire = os.path.join('python','static', 'images', 'copies')
+    if not os.path.exists(repertoire):
+        os.makedirs(repertoire)
+    
+    ideleve = request.form.get('ideleve')
+    idev = request.form.get('idev')
+    fichier = request.files.get('copie')
+    
+    if not fichier or fichier.filename == '':
+        return render_template("info_dev.html", errorfichier="Fichier non téléchargé")
+    
+    allowed_extensions = {'pdf', 'docx', 'doc'}
+    file_extension = fichier.filename.rsplit('.', 1)[1].lower() if '.' in fichier.filename else ''
+    if file_extension not in allowed_extensions:
+        return render_template("info_dev.html", errorfichier="Format de fichier non autorisé")
+    
+    fichier_filename = secure_filename(fichier.filename)
+    file_path = os.path.join(repertoire, fichier_filename)
+    fichier.save(file_path)
+    
+    if not os.path.exists(file_path):
+        return render_template("info_dev.html", errorfichier="Échec de l'enregistrement du fichier.")
+    
+    chemin1 = os.path.join('python','static', 'images', 'copies', fichier_filename)
+    curseur = db.cursor()
+    
+    try:
+        requete = '''INSERT INTO copies (id_examen, id_etudiant, fichier_pdf) VALUES (%s, %s, %s)'''
+        values = (idev, ideleve, chemin1)
+        curseur.execute(requete, values)
+        db.commit()
+        id_copie = curseur.lastrowid
+    except mysql.connector.Error as err:
+        db.rollback()
+        return render_template("info_dev.html", errorfichier=f"Erreur MySQL : {err}")
+    finally:
+        curseur.close()
+    
+    noteria(ideleve, idev, chemin1, id_copie)
+    return render_template("info_dev.html", success_message="Devoir soumis avec succès.", sess_id=session['id'])                              
+
+def noteria(ideleve, iddevoir, chemincopie, id_copie):
+    cursor = db.cursor()
+    
+    cursor.execute("SELECT chemin, chemin_correction FROM examens WHERE id=%s", (iddevoir,))
+    result = cursor.fetchone()
+    cursor.close()
+    
+    if not result:
+        return "Examen introuvable"
+    
+    cheminexamen, chemincorrection = result
+    
+    try:
+        with open(cheminexamen, "r", encoding="utf-8", errors="replace") as f:
+            contenu_examen = f.read()
+        with open(chemincorrection, "r", encoding="utf-8", errors="replace") as f:
+            contenu_correction = f.read()
+        with open(chemincopie, "r", encoding="utf-8", errors="replace") as f:
+            contenu_copie = f.read()
+    except FileNotFoundError as e:
+        return f"Erreur : fichier introuvable - {e}"
+    
+    def clean_string(input_string):
+        return input_string.replace("\0", "")
+    
+    contenu_examen = clean_string(contenu_examen)
+    contenu_correction = clean_string(contenu_correction)
+    contenu_copie = clean_string(contenu_copie)
+    
+    prompt = f"""
+    Tu dois me donner une note en corrigeant la feuille de l'élève à partir du corrigé de l'examen. Tu compares la correction avec ce que l'étudiant a soumis pour chaque réponse trouvé tu lui donne une note. Enfin tu me donnes une note sur 20 pour cette copie.
+    Donne-moi juste une note sur 20, rien d'autre.
+    
+    Correction examen :
+    {contenu_correction}
+    
+    Feuille de l'élève :
+    {contenu_copie}
+    """
+    
+    reponse = ask_ollama(prompt)
+    print(reponse)
+    
+    try:
+        note = float(reponse.strip())
+    except ValueError:
+        note = None
+    
+    if note is not None:
+        cursor = db.cursor()
+        try:
+            requete = '''INSERT INTO corrections (id_copie, note, commentaire, correction_automatique) VALUES (%s, %s, %s, %s)'''
+            values = (id_copie, note, "Correction automatique", True)
+            cursor.execute(requete, values)
+            db.commit()
+        except mysql.connector.Error as err:
+            db.rollback()
+            print(f"Erreur MySQL : {err}")
+        finally:
+            cursor.close()
+    else:
+        print("Erreur : L'IA n'a pas retourné une note valide.")
+    
+    return reponse
+
 def infodev():
     sess_username=session.get('username')
     id=request.form['id']
@@ -364,69 +471,6 @@ def infocopiecode():
     curseur.close()
     db.close()
     return render_template('info_copie.html',sess_username=sess_username,infocopies=infocopies,note=note)
-
-def soumettrefichier():
-        # Define the directory for saving files
-    repertoire = os.path.join('python', 'static', 'images','copies')  # Use os.path.join for cross-platform compatibility
-    if not os.path.exists(repertoire):
-        print(f"Creating directory: {repertoire}")
-        os.makedirs(repertoire)
-
-    # Collect all form data
-    ideleve= request.form.get('ideleve')
-    idev= request.form.get('idev')
-    fichier = request.files.get('copie')  # Use request.files for file uploads)
-
-    # Validate file upload
-    if not fichier or fichier.filename == '':
-        errorfichier = "Fichier non téléchargé"
-        return render_template("info_dev.html", errorfichier=errorfichier)
-
-    # Validate file extension
-    allowed_extensions = {'pdf', 'docx', 'doc'}
-    file_extension = fichier.filename.rsplit('.', 1)[1].lower() if '.' in fichier.filename else ''
-    if file_extension not in allowed_extensions:
-        errorfichier = "Format de fichier non autorisé"
-        return render_template("info_dev.html", errorfichier=errorfichier)
-
-    # Clean the filename and ensure safe filename
-    fichier_filename = secure_filename(fichier.filename)
-    print(f"Cleaned filename: {fichier_filename}")
-    print(f"Cleaned filename: {ideleve}")
-    print(f"Cleaned filename: {idev}")
-
-
-    # Save the file to the directory
-    file_path = os.path.join(repertoire, fichier_filename)
-    print(f"Saving file to: {file_path}")
-    fichier.save(file_path)
-
-    # Verify if the file was saved
-    if not os.path.exists(file_path):
-        errorfichier = "Échec de l'enregistrement du fichier."
-        return render_template("info_dev.html", errorfichier=errorfichier)
-
-    # Get the relative path for the database
-    chemin1 = os.path.join('static', 'images','copies',fichier_filename)
-    print(f"Relative path for database: {chemin1}")
-    curseur = db.cursor()
-
-    # Database connection (using the already defined `db`)
-    try:
-        requete = '''
-        INSERT INTO copies (id_examen,id_etudiant,fichier_pdf)
-        VALUES (%s, %s, %s)
-        '''
-        values = (idev, ideleve, chemin1)
-        curseur.execute(requete, values)
-        db.commit()
-    except mysql.connector.Error as err:
-        db.rollback()
-        return render_template("info_dev.html", errorfichier=f"Erreur MySQL : {err}")
-    finally:
-        curseur.close()
-        noteria(ideleve,idev,chemin1)
-    return render_template("info_dev.html", success_message="Devoir soumis avec succès.",sess_id=session['id'])
 
 def notercopie():
     sess_id = session.get('id')
@@ -897,40 +941,52 @@ def afficher_notes():
     
     return render_template('mesnotes.html', notes=notes)
 
-@app.route('/chatbot', methods=['POST'])
 def ask_ollama(question):
     prompt = f"""
-Tu es un assistant pédagogique spécialisé dans les examens et les études.Tu es dans un site nommé Academix et l'éléve peut soumettre des copies d'axemens,voir ses notes et des notifications.
-La page devoirs ou  y'a les devoirs à soumettre,la page notes ou l'élève peut voir ses notes et la page notifications ou il peut voir le recap genre les devoirs soumis ou non soumis et leur info.
-Tu réponds principalement aux questions en rapport avec les examens, les corrections, les notes, ou les sujets d'étude. 
-Si la question n'est pas liée à ces sujets, tu peux essayer de demander à l'étudiant ce qu'il veut savoir et sur quelle matière. S'il te demande des réponses concernatndes questions sur un devoir tu lui dis que tu ne peux pas lui fournir les réponses des examens
-Si il te dit des choses inappropriées tu lui dis que tu ne peux pas répondre à ce genre de questions.
-Si il te demande des informations sur les e4xamens tu lui dis que tu peux lui donner des informations sur les examens et les notes.
-Si il te demande des choses qui n'ont rien avoir avec le site dit lui que ton role est de l'aider par rapport au site et pas autre chose.
+Tu es un assistant pédagogique spécialisé dans les examens et les études. Tu es intégré à un site nommé Academix où l'élève peut :
+- Soumettre des copies d'examens
+- Voir ses notes
+- Recevoir des notifications sur les devoirs soumis ou non soumis.
 
-Question : {question}
+**Règles de réponse :**
+- Réponds uniquement aux questions liées aux examens, corrections, notes ou sujets d'étude.
+- Si la question concerne un devoir spécifique, dis que tu ne peux pas fournir les réponses des examens.
+- Si la question est inappropriée, refuse d’y répondre.
+- Si la question n’a rien à voir avec le site, informe l’utilisateur de ton rôle limité.
+
+**Question de l'élève** : {question}
 """
 
-    result = subprocess.run(
-        ["ollama", "run", "gemma3:1b", prompt],
-        encoding="utf-8",
-        capture_output=True,
-        text=True
-    )
-    return result.stdout.strip()
+    try:
+        result = subprocess.run(
+            ["ollama", "run", "gemma3:1b", prompt],
+            capture_output=True,
+            text=True,
+            timeout=10  # Empêche un blocage si Ollama met trop de temps
+        )
 
+        if result.returncode != 0:
+            return "Je rencontre un problème technique. Veuillez réessayer plus tard."
 
+        return result.stdout.strip()
+
+    except Exception as e:
+        print(f"Erreur lors de l'appel à Ollama : {e}")
+        return "Une erreur est survenue. Merci de réessayer."
+
+@app.route('/chatbot', methods=['POST'])
 def chatbot():
-    data = request.json  # Récupérer les données envoyées en JSON
-    question = data.get('question', '').strip()  # Nettoyer la question
-
-    if not question:
+    data = request.get_json()
+    if not data or 'question' not in data:
         return jsonify({"error": "Aucune question fournie"}), 400
 
-    response = ask_ollama(question)  # Appel à Ollama
+    question = data['question'].strip()
+    if not question:
+        return jsonify({"error": "La question est vide"}), 400
 
-    # S'assurer que la réponse est encodée correctement en UTF-8
+    response = ask_ollama(question)
     return jsonify({"response": response}), 200
+
 
 def generernote():
     sess_id = session.get('id')  # ID du professeur connecté
@@ -973,39 +1029,3 @@ def copieparexam():
     db.commit()
     curseur.close()
     return render_template('Copies.html',examens=examens)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-def noteria(ideleve,iddevoir,chemincopie):
-    cursor=db.cursor()
-    requete="""select chemin from examens where id=%s"""
-    cursor.execute(requete,(iddevoir,))
-    cheminexamen=cursor.fetchall()
-    cheminexamen=cheminexamen[0][0]
-    requete="""select chemin_correction from examens where id=%s"""
-    cursor.execute(requete,(iddevoir,))
-    chemincorrection=cursor.fetchall()
-    chemincorrection=chemincorrection[0][0]
-    chemindebase="c:/Users/HP/OneDrive/Desktop/tcpl/python/"
-
-    with open(os.path.join(chemindebase,cheminexamen), "r", encoding="utf-8",errors="replace") as f:
-        cheminexamen=f.read()
-
-    with open(os.path.join(chemindebase,chemincorrection), "r", encoding="utf-8",errors="replace") as f:
-        chemincorrection=f.read()
-    with open(os.path.join(chemindebase,chemincopie), "r",  encoding="utf-8",errors="replace") as f:
-        chemincopie=f.read()
-    print(chemincopie)
-
-    def clean_string(input_string):
-        return input_string.replace("\0", "")
-
-    cheminexamen = clean_string(cheminexamen)
-    chemincorrection = clean_string(chemincorrection)
-    chemincopie = clean_string(chemincopie)
-
-
-    prompt = f"Tu dois me donner une note en corrigeant la feuille de l'élève à partir du sujet d'examen donne moi juste une note rien d'autre:\n\nEnoncé examen:\n{cheminexamen}\n\nFeuille de l'élève:\n{chemincorrection}"
-    reponse=ask_ollama(prompt)
-    print(reponse)
