@@ -28,8 +28,11 @@ try:
         user="root",
         password="",
         database="gestion_examens",
+<<<<<<< HEAD
         port="3308"
 >>>>>>> 9173cf5d458ee5aa215df838fdf78ef8b22f77d7
+=======
+>>>>>>> 40274161fe0b9934701c518d9ce4597ecbd8e1be
         )
         return connection
     except mysql.connector.Error as err:
