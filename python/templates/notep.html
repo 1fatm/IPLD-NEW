@@ -10,29 +10,29 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 
-<body class="bg-blue-50">
+<body class="bg-gray-50">
     <div class="flex h-screen">
         
         <!-- Barre latérale -->
-        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
+        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
             <div class="flex items-center mb-6">
                 <i class="fas fa-user-tie text-3xl mr-2"></i>
                 <h1 class="text-2xl font-bold">Enseignant</h1>
             </div>
             <nav>
-                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-house-light mr-2"></i> Accueil
                 </a>
-                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-file-text-light mr-2"></i> Examens
                 </a>
-                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-files-light mr-2"></i> Copies soumises
                 </a>
-                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-pencil-light mr-2"></i> Notes et corrections
                 </a>
-                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-chart-bar-light mr-2"></i> Statistiques
                 </a>
             </nav>
@@ -43,12 +43,12 @@
 
         <!-- Contenu principal -->
         <div class="flex-1 p-6 overflow-y-auto">
-            <h2 class="text-3xl font-bold text-blue-800 mb-6 text-center">Notes des élèves</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Notes des élèves</h2>
 
             {% if examens %}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 justify-center">
                 {% for examen in examens %}
-                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition transform hover:scale-105 text-blue-800 flex flex-col justify-between h-full">
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition transform hover:scale-105 text-gray-800 flex flex-col justify-between h-full">
                     <div>
                         <h3 class="text-2xl font-semibold mb-2">{{ examen[0] }}</h3>
                         <p class="text-lg">Classe : <span class="font-medium">{{ examen[1] }}</span></p>
@@ -57,7 +57,7 @@
                     </div>
                     <form action="/noteexam" method="post" class="mt-auto">
                         <input type="hidden" name="id" value="{{ examen[4] }}">
-                        <button type="submit" class="mt-4 bg-blue-900 text-white py-2 px-4 rounded hover:bg-blue-700 w-full">
+                        <button type="submit" class="mt-4 bg-gray-700 text-white py-2 px-4 rounded hover:bg-gray-600 w-full">
                             Voir les notes
                         </button>
                     </form>

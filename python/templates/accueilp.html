@@ -9,27 +9,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-<body class="bg-blue-50">
+<body class="bg-gray-50">
     <div class="flex h-screen">
-        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
+        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
             <div class="flex items-center mb-6">
                 <i class="fas fa-user-tie text-3xl mr-2"></i>
                 <h1 class="text-2xl font-bold">Enseignant</h1>
             </div>
             <nav>
-                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-house-light mr-2"></i> Accueil
                 </a>
-                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-file-text-light mr-2"></i> Examens
                 </a>
-                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-files-light mr-2"></i> Copies soumises
                 </a>
-                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-pencil-light mr-2"></i> Notes et corrections
                 </a>
-                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-chart-bar-light mr-2"></i> Statistiques
                 </a>
             </nav>
@@ -41,8 +41,8 @@
         <div class="flex-1 p-6">
             <h2 class="text-2xl font-semibold mb-4">Accueil</h2>
 
-            <div class="bg-blue-100 p-4 shadow rounded mb-4">
-                <p class="text-lg font-semibold">Bienvenue, <span id="studentName" class="text-blue-600">{{sess_username}}</span> !</p>
+            <div class="bg-gray-100 p-4 shadow rounded mb-4">
+                <p class="text-lg font-semibold">Bienvenue, <span id="studentName" class="text-gray-600">{{sess_username}}</span> !</p>
                 <p class="text-gray-700">Voici un aperçu de vos dernières activités :</p>
             </div>
 

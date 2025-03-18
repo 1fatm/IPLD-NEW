@@ -371,7 +371,17 @@ def soumettrefichier():
         curseur.close()
     
     noteria(ideleve, idev, chemin1, id_copie)
-    return render_template("info_dev.html", success_message="Devoir soumis avec succès.", sess_id=session['id'])                              
+    curseur.execute("Select * from examens where id=%s",(idev,))
+    infodevoirs=curseur.fetchall()
+    db.commit()
+    verificationsoumission=curseur.execute("Select * from copies where id_examen=%s and id_etudiant=%s",(id,sess_id))
+    verificationsoumission=curseur.fetchall()
+    if verificationsoumission:
+        soumis=True
+    else:
+        soumis=False
+    db.commit()
+    return render_template("info_dev.html", success_message="Devoir soumis avec succès.", sess_id=session['id'],infodevoirs=infodevoirs,soumis=soumis)                              
 
 def noteria(ideleve, iddevoir, chemincopie, id_copie):
     db=connect()
