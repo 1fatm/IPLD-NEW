@@ -9,28 +9,29 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-<body class="bg-blue-50">
+<body class="bg-gray-100">
+
     <div class="flex h-screen">
-        
-        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
             <div class="flex items-center mb-6">
                 <i class="fas fa-user-tie text-3xl mr-2"></i>
                 <h1 class="text-2xl font-bold">Enseignant</h1>
             </div>
             <nav>
-                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-house-light mr-2"></i> Accueil
                 </a>
-                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-file-text-light mr-2"></i> Examens
                 </a>
-                <a href="/copie" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-files-light mr-2"></i> Copies soumises
                 </a>
-                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-pencil-light mr-2"></i> Notes et corrections
                 </a>
-                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
+                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
                     <i class="ph-chart-bar-light mr-2"></i> Statistiques
                 </a>
             </nav>
@@ -39,23 +40,43 @@
             </a>
         </div>
 
+        <!-- Main content -->
         <div class="flex-1 p-8 overflow-y-auto">
-            <h1 class="text-2xl font-bold mb-6">Statistiques des Examens</h1>
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Statistiques des Examens</h1>
 
             {% if statistiques %}
                 {% for stat in statistiques %}
-                    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                        <h2 class="text-xl font-semibold mb-4">Classe : {{ stat.classe }}</h2>
-                        <p class="mb-2"><strong>Moyenne :</strong> {{ stat.moyenne }}</p>
-                        <p class="mb-4"><strong>Taux de Réussite :</strong> {{ stat.taux_reussite }}%</p>
-                        <img src="data:image/png;base64,{{ stat.plot_url }}" alt="Histogramme des notes" class="w-full h-64 object-contain">
+                    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                        <h2 class="text-xl font-semibold mb-2 text-gray-800">Classe : {{ stat.classe }}</h2>
+                        <h2 class="text-xl font-semibold mb-4 text-gray-700">Examen: {{ stat.nom }}</h2>
+                        <p class="mb-4 text-gray-600"><strong>Moyenne :</strong> {{ stat.moyenne }}</p>
+
+                        <div class="space-y-6">
+                            <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-white mb-2 text-center">Histogramme</h3>
+                                <img src="data:image/png;base64,{{ stat.plot_url_hist }}" 
+                                     alt="Histogramme des notes" class="w-full h-96 object-contain rounded-md">
+                            </div>
+
+                            <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-white mb-2 text-center">Répartition</h3>
+                                <img src="data:image/png;base64,{{ stat.plot_url_pie }}" 
+                                     alt="Camembert" class="w-full h-96 object-contain rounded-md">
+                            </div>
+
+                            <div class="bg-gray-800 p-4 rounded-lg shadow-md">
+                                <h3 class="text-lg font-semibold text-white mb-2 text-center">Diagramme en Barres</h3>
+                                <img src="data:image/png;base64,{{ stat.plot_url_bar }}" 
+                                     alt="Diagramme en barres" class="w-full h-96 object-contain rounded-md">
+                            </div>
+                        </div>
                     </div>
-                    <hr class="my-6 border-t border-gray-300">
                 {% endfor %}
             {% else %}
                 <p class="text-gray-600">Aucune statistique disponible pour le moment.</p>
             {% endif %}
         </div>
     </div>
+
 </body>
 </html>
