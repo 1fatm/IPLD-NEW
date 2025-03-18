@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.secret_key = 'your_love'
 import mysql.connector
 
+<<<<<<< HEAD
 def connect():
     try:
         connection = mysql.connector.connect(
@@ -20,6 +21,15 @@ def connect():
             user="root",
             password="",
             database="gestion_examens"
+=======
+try:
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="",
+        database="gestion_examens",
+        port="3308"
+>>>>>>> 9173cf5d458ee5aa215df838fdf78ef8b22f77d7
         )
         return connection
     except mysql.connector.Error as err:
