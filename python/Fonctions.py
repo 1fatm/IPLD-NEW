@@ -18,7 +18,8 @@ try:
         host="localhost",
         user="root",
         password="",
-        database="gestion_examens"
+        database="gestion_examens",
+        port="3308"
         )
     cursor = db.cursor()
 except Error as e:
