@@ -124,7 +124,7 @@ def connexionetudiant():
 
 def statistiques_etudiant():
     sess_id = session.get('id') 
-     # ID de l'étudiant connecté
+    # ID de l'étudiant connecté
     db=connect()
 
     curseur = db.cursor()
@@ -331,6 +331,7 @@ def ajouter_devoir():
     return render_template("Ajoutdevoir.html", success_message="Devoir ajouté avec succès.",sess_id=session['id'])
 
 def soumettrefichier():
+    sess_id = session.get('id')
     repertoire = os.path.join('python','static', 'images', 'copies')
     if not os.path.exists(repertoire):
         os.makedirs(repertoire)
@@ -369,12 +370,13 @@ def soumettrefichier():
         return render_template("info_dev.html", errorfichier=f"Erreur MySQL : {err}")
     finally:
         curseur.close()
-    
+    curseur = db.cursor()
     noteria(ideleve, idev, chemin1, id_copie)
     curseur.execute("Select * from examens where id=%s",(idev,))
     infodevoirs=curseur.fetchall()
     db.commit()
-    verificationsoumission=curseur.execute("Select * from copies where id_examen=%s and id_etudiant=%s",(id,sess_id))
+    curseur=db.cursor()
+    curseur.execute("Select * from copies where id_examen=%s and id_etudiant=%s",(idev,sess_id))
     verificationsoumission=curseur.fetchall()
     if verificationsoumission:
         soumis=True
@@ -1019,11 +1021,13 @@ def chatbot():
         return jsonify({"error": "La question est vide"}), 400
 
     response = ask_ollama(question)
-    return jsonify({"response": response}), 200
 
+    # Retourne la réponse en forçant l'encodage UTF-8
+    #return jsonify({"response": response}), 200  
+    return jsonify({"response": response}), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 def generernote():
-    sess_id = session.get('id')  # ID du professeur connecté
+    sess_id = session.get('id')
     id=request.form['idexam']
     db=connect()
     cursor=db.cursor()

@@ -2,11 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil Étudiant</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <style>
@@ -17,16 +15,15 @@
             height: 100vh;
             overflow-y: auto;
         }
-        /* Styles du chatbot */
         .chatbot-window {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
+            bottom: 80px; 
+            right: 20px; 
             width: 300px;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: none; /* Initialement masqué */
+            display: none; 
         }
 
         .chatbot-header {
@@ -42,8 +39,8 @@
 
         .chatbot-body {
             padding: 10px;
-            max-height: 400px; /* Hauteur maximale de la fenêtre de chat */
-            overflow-y: auto; /* Permet le défilement vertical */
+            max-height: 400px; 
+            overflow-y: auto;
         }
 
         .chatbot-messages {
@@ -56,12 +53,19 @@
 
         .user-message {
             text-align: right;
-            color: #007BFF;
+            color: #01170a;
+            background-color: #4CAF50;
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .bot-message {
             text-align: left;
             color: #333;
+            background-color: #f1f1f1; 
+            margin-right: auto;
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .chatbot-input input {
@@ -92,7 +96,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Styles pour le bouton de fermeture */
         #closeChatbot {
             background: none;
             border: none;
@@ -101,15 +104,13 @@
             cursor: pointer;
         }
 
-        /* Espacement plus grand entre les cartes */
         #stats-container {
-            gap:100px /* Augmenter l'espacement entre les cartes */
+            gap:100px
         }
     </style>
 </head>
 <body class="bg-gray-50">
     <div class="flex h-screen">
-        <!-- Sidebar -->
         <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
             <div class="flex items-center mb-6">
                 <i class="fas fa-graduation-cap text-3xl mr-2"></i>
@@ -133,38 +134,36 @@
                 <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
             </a>
         </div>
-
-        <!-- Main Content -->
         <div class="flex-1 p-6">
             <h2 class="text-2xl font-semibold mb-4">📑 Accueil</h2>
             <div class="bg-gray-100 p-4 shadow rounded mb-4">
                 <p class="text-lg font-semibold">Bienvenue, <span id="studentName" class="text-gray-600">{{sess_username}}</span> ! Voici un aperçu de votre progression.</p>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="stats-container">
-                <div class="stat-card bg-orange-200 p-4 rounded-lg shadow flex items-center gap-3">
-                    <i class="fas fa-tasks text-orange-600 text-4xl"></i>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10" id="stats-container">
+                <div class="stat-card bg-orange-200 p-6 rounded-lg shadow flex items-center gap-4 w-full sm:w-3/4 lg:w-2/3">
+                    <i class="fas fa-tasks text-orange-600 text-5xl"></i>
                     <div>
                         <p class="text-gray-700 text-xl font-semibold">Travaux à rendre:</p>
-                        <span id="assignmentsDue" class="font-bold text-orange-600 text-2xl">{{non_soumis}}</span>
+                        <span id="assignmentsDue" class="font-bold text-orange-600 text-3xl">{{non_soumis}}</span>
                     </div>
                 </div>
-                <div class="stat-card bg-red-200 p-4 rounded-lg shadow flex items-center gap-3">
-                    <i class="fas fa-exclamation-triangle text-red-600 text-4xl"></i>
+                <div class="stat-card bg-red-200 p-6 rounded-lg shadow flex items-center gap-4 w-full sm:w-3/4 lg:w-2/3">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-5xl"></i>
                     <div>
                         <p class="text-gray-700 text-xl font-semibold">Travaux en retard:</p>
-                        <span id="assignmentsLate" class="font-bold text-red-600 text-2xl">{{enretard}}</span>
+                        <span id="assignmentsLate" class="font-bold text-red-600 text-3xl">{{enretard}}</span>
                     </div>
                 </div>
-                <div class="stat-card bg-green-200 p-4 rounded-lg shadow flex items-center gap-3">
-                    <i class="fas fa-check-circle text-green-600 text-4xl"></i>
+                <div class="stat-card bg-green-200 p-6 rounded-lg shadow flex items-center gap-4 w-full sm:w-3/4 lg:w-2/3">
+                    <i class="fas fa-check-circle text-green-600 text-5xl"></i>
                     <div>
                         <p class="text-gray-700 text-xl font-semibold">Travaux soumis:</p>
-                        <span id="assignmentsSubmitted" class="font-bold text-green-600 text-2xl">{{soumis}}</span>
+                        <span id="assignmentsSubmitted" class="font-bold text-green-600 text-3xl">{{soumis}}</span>
                     </div>
                 </div>
             </div>
         </div>
+    
         <div class="chatbot-window" id="chatbotWindow">
             <div class="chatbot-header" style="display:none;">
                 <h3>Chatbot d'Assistance</h3>
@@ -188,58 +187,50 @@
         </button>
 
         <script>
-            document.getElementById("sendMessage").addEventListener("click", async function (event) {
-                event.preventDefault();
-                const inputField = document.getElementById("chatbotInput");
-                const userMessage = inputField.value.trim();
-                if (userMessage === "") return;
-        
-                // Affiche le message de l'utilisateur
-                const chatbox = document.getElementById("chatbotMessages");
-                const userDiv = document.createElement("div");
-                userDiv.classList.add("message", "user-message");
-                userDiv.innerText = userMessage;
-                chatbox.appendChild(userDiv);
-        
-                // Vide l'input
-                inputField.value = "";
-        
-                // Envoie la question au backend
-                try {
-                    const response = await fetch("/chatbot", { // URL du backend
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ question: userMessage }),
-                    });
-        
-                    const data = await response.json();
-        
-                    // Affiche la réponse du chatbot
-                    const botDiv = document.createElement("div");
-                    botDiv.classList.add("message", "bot-message");
-                    botDiv.innerText = data.response || "Le chatbot ne peut pas répondre.";
-                    chatbox.appendChild(botDiv);
-        
-                    // Scroll automatique vers le bas
-                    chatbox.scrollTop = chatbox.scrollHeight;
-                } catch (error) {
-                    console.error("Erreur avec le chatbot:", error);
-                }
-            });
-        
-            // Active le chatbot au clic sur le bouton
-            document.getElementById("openChatbot").addEventListener("click", function () {
-                document.getElementById("chatbotWindow").style.display = "block";
-            });
-        
-            // Ferme le chatbot au clic sur le bouton X
-            document.getElementById("closeChatbot").addEventListener("click", function () {
-                document.getElementById("chatbotWindow").style.display = "none";
-            });
-        </script>
-    </div>
-    </div>
+        document.getElementById("sendMessage").addEventListener("click", async function (event) {
+            event.preventDefault();
+            const inputField = document.getElementById("chatbotInput");
+            const userMessage = inputField.value.trim();
+            if (userMessage === "") return;
+    
+            
+            const chatbox = document.getElementById("chatbotMessages");
+            const userDiv = document.createElement("div");
+            userDiv.classList.add("message", "user-message");
+            userDiv.innerText = userMessage;
+            chatbox.appendChild(userDiv);
+    
+            inputField.value = "";
+    
+            try {
+                const response = await fetch("/chatbot", { 
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: userMessage }),
+                });
+    
+                const data = await response.json();
+    
+                const botDiv = document.createElement("div");
+                botDiv.classList.add("message", "bot-message");
+                botDiv.innerText = data.response || "Le chatbot ne peut pas répondre.";
+                chatbox.appendChild(botDiv);
+    
+                chatbox.scrollTop = chatbox.scrollHeight;
+            } catch (error) {
+                console.error("Erreur avec le chatbot:", error);
+            }
+        });
+    
+        document.getElementById("openChatbot").addEventListener("click", function () {
+            const chatbotWindow = document.getElementById("chatbotWindow");
+            chatbotWindow.style.display = chatbotWindow.style.display === "block" ? "none" : "block";
+        });
 
-        
+        document.getElementById("closeChatbot").addEventListener("click", function () {
+            document.getElementById("chatbotWindow").style.display = "none";
+        });
+    </script>
+</div>
 </body>
 </html>
