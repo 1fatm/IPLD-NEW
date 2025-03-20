@@ -886,33 +886,53 @@ def get_statistiques(id_prof):
 
 
 def afficher_devoirs():
+    # Vérifier si l'utilisateur est connecté
     if 'id' not in session:
         flash("Veuillez vous connecter.", "warning")
         return redirect('/')
-    db=connect()
+
+    # Connexion à la base de données
+    db = connect()
     cursor = db.cursor()
+
     try:
+        # Récupérer la classe de l'étudiant
         user_id = session['id']
         cursor.execute("SELECT classe FROM etudiants WHERE id = %s", (user_id,))
-        classe = cursor.fetchone()[0]
-        requete = """ Select examens.nom, examens.description, examens.type, examens.classe, examens.chemin, examens.datedesoumission, enseignants.nom_complet, examens.id
-        FROM examens 
-        JOIN enseignants on examens.idprof=enseignants.id
-        WHERE examens.classe = %s
+        classe_result = cursor.fetchone()
+
+        if not classe_result:
+            flash("Classe non trouvée pour cet utilisateur.", "danger")
+            return redirect('/accueiletudiant')
+
+        classe = classe_result[0]
+
+        # Récupérer les devoirs de la classe
+        requete = """
+            SELECT examens.nom, examens.description, examens.type, examens.classe, examens.chemin, examens.datedesoumission, enseignants.nom_complet, examens.id
+            FROM examens
+            JOIN enseignants ON examens.idprof = enseignants.id
+            WHERE examens.classe = %s
         """
         cursor.execute(requete, (classe,))
         devoirs = cursor.fetchall()
-        print(devoirs[0][7])
+
+        # Vérifier si des devoirs ont été trouvés
         if devoirs:
-            verifdevoir=True
-            return render_template('devoir.html', devoirs=devoirs,verifdevoir=verifdevoir)
+            verifdevoir = True
+            return render_template('devoir.html', devoirs=devoirs, verifdevoir=verifdevoir)
         else:
-            verifdevoir=False
-            return render_template('devoir.html',verifdevoir=verifdevoir)
+            verifdevoir = False
+            return render_template('devoir.html', verifdevoir=verifdevoir)
+
     except mysql.connector.Error as err:
         flash(f"Erreur lors de la récupération des devoirs : {err}", "danger")
         return redirect('/accueiletudiant')
 
+    finally:
+       
+        cursor.close()
+        db.close()
 def afficher_notifications():
     if 'id' not in session:
         return redirect('/connexion_etudiant')

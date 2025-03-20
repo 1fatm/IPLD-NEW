@@ -5,98 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Examens - Tableau de Bord Enseignant</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body class="bg-blue-50">
-    <div class="flex h-screen">
-        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
-            <div class="flex items-center mb-6">
-                <i class="fas fa-user-tie text-3xl mr-2"></i>
-                <h1 class="text-2xl font-bold">Enseignant</h1>
+    <div class="dashboard">
+       
+        <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+            <div class="p-6">
+                <h2 class="text-8xl font-extrabold drop-shadow-2xl">
+                    <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
+                        DEMIX
+                    </span>
+                </h2>
+                
+            
+                <ul class="mt-6 space-y-4">
+                    <li>
+                        <a href="/accueilp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-home text-lg"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/examen" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-alt text-lg"></i>
+                            <span>Examens</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/copies" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-upload text-lg"></i>
+                            <span>Copies soumises</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notep" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-pen text-base"></i>
+                            <span>Notes et corrections</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/statistiquesp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-chart-bar text-base"></i>
+                            <span>Statistiques</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <nav>
-                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-house-light mr-2"></i> Accueil
+
+            <!-- Bouton de déconnexion -->
+            <div class="p-6">
+                <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                    <i class="fas fa-sign-out-alt text-lg"></i>
+                    <span>Déconnexion</span>
                 </a>
-                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-file-text-light mr-2"></i> Examens
-                </a>
-                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-files-light mr-2"></i> Copies soumises
-                </a>
-                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-pencil-light mr-2"></i> Notes et corrections
-                </a>
-                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-chart-bar-light mr-2"></i> Statistiques
-                </a>
-            </nav>
-            <a href="/deconnection" class="mt-auto text-sm py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
-                <i class="ph-sign-out-light mr-2"></i> Déconnexion
+            </div>
+        </nav>
+
+       <!-- Contenu Principal -->
+<div class="main-content min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 p-8 flex justify-center">
+    <section id="home" class="home-section w-full max-w-7xl bg-white shadow-2xl rounded-2xl p-8">
+        <h2 class="text-4xl font-bold text-gray-900 mb-8 text-center">📚 Examens</h2>
+
+        <!-- Bouton pour créer un nouvel examen -->
+        <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 shadow-xl rounded-xl mb-6 text-center">
+            <a href="/ajoutdevoirpage" class="text-white font-semibold px-6 py-3 bg-opacity-80 rounded-full inline-flex items-center gap-3 hover:bg-opacity-100 transition-all">
+                <i class="fas fa-plus text-xl"></i> Créer un nouvel examen
             </a>
         </div>
-        <div class="flex-1 p-6">
-            <h2 class="text-2xl font-semibold mb-4">Examens</h2>
-            <div class="bg-white p-4 shadow rounded">
-                <a href="/ajoutdevoirpage" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded inline-block">Créer un nouvel examen</a>
-            </div>
-            <div class="mt-6">
-                <h3 class="text-xl font-semibold mb-2">Examens donnés</h3>
-                <form action="/trier_classe" method="post" class="flex items-center gap-2 mb-4">
-                    <select name="classe" id="classe" class="p-2 border border-gray-300 rounded">
+
+        <div class="bg-white p-6 shadow-lg rounded-lg mb-6">
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">🎯 Filtrer les examens</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+               
+                <form action="/trier_classe" method="post" class="flex items-center gap-3">
+                    <select name="classe" id="classe" class="p-3 border border-gray-300 rounded w-full">
                         <option value="DUT1">DUT1</option>
                         <option value="DUT2">DUT2</option>
                         <option value="DIC1">DIC1</option>
                         <option value="DIC2">DIC2</option>
                         <option value="DIC3">DIC3</option>
                     </select>
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-1">
-                        <i class="ph-funnel"></i> Trier par classe
-                    </button>
-                </form>
-                <form action="/trier_date" method="post" class="flex items-center gap-2 mb-4">
-                    <select name="date" id="date" class="p-2 border border-gray-300 rounded">
-                        <option value="passe">Date passée</option>
-                        <option value="courant">Encours</option>
-                    </select>
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-1">
-                        <i class="ph-funnel"></i> Trier par date
+                    <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded-full flex items-center gap-2 hover:bg-blue-700 transition">
+                        <i class="fas fa-filter"></i> Trier
                     </button>
                 </form>
 
-                {% if verif==True %}
-                <table class="table-auto w-full bg-white shadow rounded">
+              
+                <form action="/trier_date" method="post" class="flex items-center gap-3">
+                    <select name="date" id="date" class="p-3 border border-gray-300 rounded w-full">
+                        <option value="passe">📅 Date passée</option>
+                        <option value="courant">⏳ En cours</option>
+                    </select>
+                    <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded-full flex items-center gap-2 hover:bg-blue-700 transition">
+                        <i class="fas fa-calendar-alt"></i> Trier
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 shadow-lg rounded-lg overflow-hidden">
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">📄 Examens donnés</h3>
+
+            {% if verif == True %}
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse rounded-lg shadow-md">
                     <thead class="bg-blue-600 text-white">
                         <tr>
-                            <th class="p-2">Nom</th>
-                            <th class="p-2">Description</th>
-                            <th class="p-2">Type</th>
-                            <th class="p-2">Classe</th>
-                            <th class="p-2">Fichier</th>
+                            <th class="p-4">📌 Nom</th>
+                            <th class="p-4">📝 Description</th>
+                            <th class="p-4">📂 Type</th>
+                            <th class="p-4">🏫 Classe</th>
+                            <th class="p-4">⬇️ Fichier</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-gray-700 text-lg">
                         {% for examen in examens %}
-                        <tr class="border-b hover:bg-blue-100">
-                            <td class="p-2">{{ examen[0] }}</td>
-                            <td class="p-2">{{ examen[1] }}</td>
-                            <td class="p-2">{{ examen[2] }}</td>
-                            <td class="p-2">{{ examen[3] }}</td>
-                            <td class="p-2">
-                                <a href="{{ examen[4] }}" download="{{ examen[4] }}.pdf" class="text-blue-600 hover:text-blue-800">Voir l'examen</a>
+                        <tr class="border-b hover:bg-blue-100 transition">
+                            <td class="p-4 font-semibold">{{ examen[0] }}</td>
+                            <td class="p-4">{{ examen[1] }}</td>
+                            <td class="p-4">{{ examen[2] }}</td>
+                            <td class="p-4">{{ examen[3] }}</td>
+                            <td class="p-4">
+                                <a href="{{ examen[4] }}" download="{{ examen[4] }}.pdf" class="text-blue-600 hover:text-blue-800 transition font-medium">
+                                    <i class="fas fa-download mr-2"></i> Télécharger
+                                </a>
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-                {% else %}
-                <p class="text-gray-700">Vous n'avez pas encore créé d'examen.</p>
-                {% endif %}
             </div>
-                </li>
+            {% else %}
+            <p class="text-gray-700 text-center text-xl mt-10"> Vous n'avez pas encore créé d'examen.</p>
+            {% endif %}
         </div>
-    </div>
+    </section>
+</div>
+
+    
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+    </script>
 </body>
 </html>

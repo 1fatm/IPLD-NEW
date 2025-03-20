@@ -7,78 +7,105 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <style>
-        .sticky-nav {
-            position: fixed;
-            height: 100vh;
-        }
-        .content {
-            margin-left: 16rem;
-            width: calc(100% - 16rem);
-        }
-    </style>
 </head>
 <body class="bg-gray-50">
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col sticky-nav">
-            <div class="flex items-center mb-6">
-                <i class="fas fa-user-graduate text-3xl mr-2"></i>
-                <h1 class="text-2xl font-bold">Étudiant</h1>
-            </div>
-            <nav class="space-y-2">
-                <a href="/accueiletudiant" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-home mr-2"></i> Accueil
-                </a>
-                <a href="/devoirs" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-tasks mr-2"></i> Devoirs
-                </a>
-                <a href="/notes" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-file-alt mr-2"></i> Mes notes
-                </a>
-                <a href="/notifications" class="flex items-center py-2 px-4 bg-gray-700 rounded">
-                    <i class="fas fa-envelope mr-2"></i> Notifications
-                </a>
-            </nav>
-            <a href="/deconnection" class="mt-auto py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
-                <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
-            </a>
-        </div>
+    <div class="dashboard">
         
-        <div class="flex-1 p-6 content">
-            <h2 class="text-2xl font-semibold mb-4">📢 Notifications</h2>
-            <div class="bg-white p-6 shadow rounded">
-                <h3 class="text-xl font-semibold mb-4"><i class="fas fa-bell"></i> Liste des notifications</h3>
-                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                    <thead>
-                        <tr class="bg-gray-900 text-white">
-                            <th class="py-2 px-4">Nom</th>
-                            <th class="py-2 px-4">Professeur</th>
-                            <th class="py-2 px-4">Date limite</th>
-                            <th class="py-2 px-4">Date de soumission</th>
-                            <th class="py-2 px-4">Statut</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for examen in examens %}
-                        <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200">
-                            <td class="py-2 px-4">{{ examen.nom }}</td>
-                            <td class="py-2 px-4">{{ examen.prof }}</td>
-                            <td class="py-2 px-4">{{ examen.datedesoumission }}</td>
-                            <td class="py-2 px-4">{{ examen.date_soumission }}</td>
-                            <td class="py-2 px-4 font-bold {% if examen.statut == 'Soumis' %}text-green-500{% else %}text-red-500{% endif %}">
-                                {{ examen.statut }}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <button id="sidebarToggle" aria-label="Ouvrir/fermer la barre latérale" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md shadow-lg hover:bg-gray-800 transition">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64  text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+            <div class="p-6">
+                <h2 class="text-8xl font-extrabold drop-shadow-2xl">
+                    <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
+                        DEMIX
+                    </span>
+                </h2>
+                <ul class="mt-6 space-y-4">
+                    <li>
+                        <a href="/accueiletudiant" data-target="home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-home text-xl"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/devoirs" data-target="exam-topics" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-tasks text-xl"></i>
+                            <span>Devoirs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notes" data-target="grades" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-alt text-xl"></i>
+                            <span>Mes notes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notifications" data-target="notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-envelope text-xl"></i>
+                            <span>Notifications</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="p-6">
+                <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+            
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="flex-1 p-6 ml-0 md:ml-64 transition-all">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">📢 Notifications</h2>
+            <div class="bg-white p-6 shadow-lg rounded-lg">
+                <h3 class="text-xl font-semibold mb-6 text-gray-800"><i class="fas fa-bell mr-2"></i> Liste des notifications</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                        <thead>
+                            <tr class="bg-gray-900 text-white">
+                                <th class="py-3 px-5">Nom</th>
+                                <th class="py-3 px-5">Professeur</th>
+                                <th class="py-3 px-5">Date limite</th>
+                                <th class="py-3 px-5">Date de soumission</th>
+                                <th class="py-3 px-5">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for examen in examens %}
+                            <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-200">
+                                <td class="py-3 px-5">{{ examen.nom }}</td>
+                                <td class="py-3 px-5">{{ examen.prof }}</td>
+                                <td class="py-3 px-5">{{ examen.datedesoumission }}</td>
+                                <td class="py-3 px-5">{{ examen.date_soumission }}</td>
+                                <td class="py-3 px-5 font-bold {% if examen.statut == 'Soumis' %}text-green-500{% else %}text-red-500{% endif %}">
+                                    {{ examen.statut }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% if not examens %}
-                <p class="text-center text-gray-500 mt-4">Aucune notification disponible.</p>
+                <p class="text-center text-gray-500 mt-6 py-8">Aucune notification disponible.</p>
                 {% endif %}
             </div>
-        </div>
+        </main>
     </div>
+
+    <!-- Script pour gérer la sidebar -->
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+    </script>
 </body>
 </html>

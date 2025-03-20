@@ -3,68 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notes et Corrections - Tableau de Bord Enseignant</title>
+    <title>Copies - Tableau de Bord Enseignant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-
 <body class="bg-blue-50">
-    <div class="flex h-screen">
+    <div class="dashboard min-h-screen flex">
+        <!-- Bouton pour ouvrir/fermer la sidebar -->
+        <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+            <div class="p-6">
+                <h2 class="text-8xl font-extrabold drop-shadow-2xl">
+                    <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
+                        DEMIX
+                    </span>
+                </h2>
+                
+                <!-- Menu de la sidebar -->
+                <ul class="mt-6 space-y-4">
+                    <li>
+                        <a href="/accueilp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-home text-lg"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/examen" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-alt text-lg"></i>
+                            <span>Examens</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/copies" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-upload text-lg"></i>
+                            <span>Copies soumises</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notep" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-pen text-base"></i>
+                            <span>Notes et corrections</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/statistiquesp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-chart-bar text-base"></i>
+                            <span>Statistiques</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Bouton de déconnexion -->
+            <div class="p-6">
+                <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                    <i class="fas fa-sign-out-alt text-lg"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Contenu Principal -->
+        <div class="flex-1 min-h-screen bg-gray-100 p-6 md:ml-64 transition-all">
+            <section class="w-full bg-white shadow-md rounded-lg p-6">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center space-x-3">
+                    <span class="text-3xl">📝</span> 
+                    <span class="drop-shadow-md">Copies des Examens</span>
+                </h2>
+                
         
-        <!-- Barre latérale -->
-        <div class="w-64 bg-blue-900 text-white p-5 flex flex-col">
-            <div class="flex items-center mb-6">
-                <i class="fas fa-user-tie text-3xl mr-2"></i>
-                <h1 class="text-2xl font-bold">Enseignant</h1>
-            </div>
-            <nav>
-                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-house-light mr-2"></i> Accueil
-                </a>
-                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-file-text-light mr-2"></i> Examens
-                </a>
-                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-files-light mr-2"></i> Copies soumises
-                </a>
-                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-pencil-light mr-2"></i> Notes et corrections
-                </a>
-                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-blue-700 rounded">
-                    <i class="ph-chart-bar-light mr-2"></i> Statistiques
-                </a>
-            </nav>
-            <a href="/deconnection" class="mt-auto text-sm py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
-                <i class="ph-sign-out-light mr-2"></i> Déconnexion
-            </a>
-        </div>
-
-        <div class="flex-1 p-6 overflow-y-auto">
-            <h2 class="text-3xl font-bold text-blue-800 mb-6 text-center">Copies</h2>
-
-            {% if examens %}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 justify-center">
-                {% for examen in examens %}
-                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition transform hover:scale-105 text-blue-800 flex flex-col justify-between h-full">
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-2">{{ examen[0] }}</h3>
-                        <p class="text-lg">Classe : <span class="font-medium">{{ examen[1] }}</span></p>
-                        <p class="text-lg">Type : <span class="font-medium">{{ examen[3] }}</span></p>
-                        <p class="text-lg mb-4">Description : <span class="font-medium">{{ examen[2] }}</span></p>
+                {% if examens %}
+                <div class="space-y-4">
+                    {% for examen in examens %}
+                    <div class="p-4 bg-gray-50 rounded-md shadow-sm border border-gray-200">
+                        <h3 class="text-xl font-semibold text-gray-800">{{ examen[0] }}</h3>
+                        <p class="text-gray-700"><strong>Classe :</strong> {{ examen[1] }}</p>
+                        <p class="text-gray-700"><strong>Type :</strong> {{ examen[3] }}</p>
+                        <p class="text-gray-700"><strong>Description :</strong> {{ examen[2] }}</p>
+                        
+                        <form action="/copie" method="post" class="mt-4">
+                            <input type="hidden" name="id" value="{{ examen[4] }}">
+                            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">
+                                Voir les copies
+                            </button>
+                        </form>
                     </div>
-                    <form action="/copie" method="post" class="mt-auto">
-                        <input type="hidden" name="id" value="{{ examen[4] }}">
-                        <button type="submit" class="mt-4 bg-blue-900 text-white py-2 px-4 rounded hover:bg-blue-700 w-full">
-                            Voir les copies
-                        </button>
-                    </form>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            </div>
-            {% endif %}
+                {% else %}
+                <p class="text-gray-700 text-center mt-6">Aucune copie disponible pour l'instant.</p>
+                {% endif %}
+            </section>
         </div>
     </div>
+   
+    <!-- Script pour gérer l'affichage du sidebar -->
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        });
+    </script>
 </body>
 </html>

@@ -9,231 +9,174 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <style>
-        .sticky-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-        /* Styles du chatbot */
-        .chatbot-window {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            width: 300px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: none; /* Initialement masqué */
-        }
-
-        .chatbot-header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .chatbot-body {
-            padding: 10px;
-            max-height: 400px; /* Hauteur maximale de la fenêtre de chat */
-            overflow-y: auto; /* Permet le défilement vertical */
-        }
-
-        .chatbot-messages {
-            margin-bottom: 10px;
-        }
-
-        .message {
-            margin-bottom: 10px;
-        }
-
-        .user-message {
-            text-align: right;
-            color: #007BFF;
-        }
-
-        .bot-message {
-            text-align: left;
-            color: #333;
-        }
-
-        .chatbot-input input {
-            width: 80%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        .chatbot-input button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .chatbot-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Styles pour le bouton de fermeture */
-        #closeChatbot {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        /* Espacement plus grand entre les cartes */
-        #stats-container {
-            gap:100px /* Augmenter l'espacement entre les cartes */
-        }
-    </style>
+   
 </head>
-<body class="bg-gray-50">
-    <div class="flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col sticky-nav">
-            <div class="flex items-center mb-6">
-                <i class="fas fa-graduation-cap text-3xl mr-2"></i>
-                <h1 class="text-2xl font-bold">Étudiant</h1>
-            </div>
-            <nav class="space-y-2">
-                <a href="/accueiletudiant" class="flex items-center py-2 px-4 bg-gray-700 rounded">
-                    <i class="fas fa-home mr-2"></i> Accueil
-                </a>
-                <a href="/devoirs" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-tasks mr-2"></i> Devoirs
-                </a>
-                <a href="/notes" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-file-alt mr-2"></i> Mes notes
-                </a>
-                <a href="/notifications" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-envelope mr-2"></i> Notifications
-                </a>
-            </nav>
-            <a href="/deconnection" class="mt-auto py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
-                <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
-            </a>
-        </div>
+<body >
+  
+  
+    <div class="dashboard">
+        
+        <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-6 ml-64">
-            <h2 class="text-2xl font-semibold mb-4">📑 Accueil</h2>
-            <div class="bg-white p-6 shadow rounded">
-                <div class="welcome-message mb-6">
-                    <p>Bienvenue, <span id="studentName" class="text-blue-600">{{sess_username}}</span> ! Voici un aperçu de votre progression.</p>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8" id="stats-container">
-                    <div class="stat-card bg-orange-100 p-8 rounded-lg shadow-xl">
-                        <i class="fas fa-tasks text-3xl text-orange-500 mb-4"></i>
-                        <p class="text-lg font-semibold">Travaux à rendre:</p>
-                        <span id="assignmentsDue" class="text-2xl font-bold">{{non_soumis}}</span>
-                    </div>
-                    <div class="stat-card bg-red-100 p-8 rounded-lg shadow-xl">
-                        <i class="fas fa-exclamation-triangle text-3xl text-red-500 mb-4"></i>
-                        <p class="text-lg font-semibold">Travaux en retard:</p>
-                        <span id="assignmentsLate" class="text-2xl font-bold">{{enretard}}</span>
-                    </div>
-                    <div class="stat-card bg-green-100 p-8 rounded-lg shadow-xl">
-                        <i class="fas fa-check-circle text-3xl text-green-500 mb-4"></i>
-                        <p class="text-lg font-semibold">Travaux soumis:</p>
-                        <span id="assignmentsSubmitted" class="text-2xl font-bold">{{soumis}}</span>
-                    </div>
-                </div>                                            
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64  text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+            <div class="p-6">
+                <h2 class="text-8xl font-extrabold drop-shadow-2xl">
+                    <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
+                        DEMIX
+                    </span>
+                </h2>
+                <ul class="mt-6 space-y-4">
+                    <li>
+                        <a href="/accueiletudiant" data-target="home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-home text-xl"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/devoirs" data-target="exam-topics" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-tasks text-xl"></i>
+                            <span>Devoirs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notes" data-target="grades" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-alt text-xl"></i>
+                            <span>Mes notes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notifications" data-target="notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-envelope text-xl"></i>
+                            <span>Notifications</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
 
-        <!-- Chatbot -->
-        <div class="chatbot-window" id="chatbotWindow">
-            <div class="chatbot-header" style="display:none;">
-                <h3>Chatbot d'Assistance</h3>
-                <button id="closeChatbot"><i class="fas fa-times"></i></button>
+            <div class="p-6">
+                <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                    <span>Déconnexion</span>
+                </a>
             </div>
-            <div class="chatbot-body">
-                <div class="chatbot-messages" id="chatbotMessages">
-                    <div class="message bot-message">Bonjour ! Comment puis-je vous aider aujourd'hui ?</div>
+            
+        </nav>
+
+      
+        <div class="main-content">
+            <section id="home" class="home-section">
+                <h2>Accueil</h2>
+                <div class="welcome-message">
+                    <p>Bienvenue, <span id="studentName" >{{sess_username}}</span>  ! Voici un aperçu de vos projets et activités.</p>
                 </div>
-                <div class="chatbot-input">
-                    <form action="/chatbot">
-                        <input type="text" id="chatbotInput" placeholder="Tapez votre message...">
-                        <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+                <div class="stats-container" id="stats-container">
+                    <div class="stat-card stat-card-orange">
+                        <i class="fas fa-tasks"></i>
+                        <p>Travaux à rendre:  <span id="assignmentsDue" class="text-2xl font-bold">{{non_soumis}}</span></p>
+                    </div>
+                    <div class="stat-card stat-card-red">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Travaux en retard:  <span id="assignmentsDue" class="text-2xl font-bold">{{enretard}}</span></p>
+                    </div>
+                    <div class="stat-card stat-card-green">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Travaux soumis:  <span id="assignmentsDue" class="text-2xl font-bold">{{soumis}}</span></p>
+                    </div>
+                </div>
+                <div class="reminders">
+                    <h3><i class="fas fa-bell"></i> Rappels importants</h3>
+                    <ul id="reminders-list"></ul>
+                </div>
+            </div>
+              
+            <div class="chatbot-window hidden fixed bottom-20 right-6 bg-white shadow-lg rounded-lg w-80 max-w-full h-96 flex flex-col" id="chatbotWindow">
+            
+                <div class="chatbot-header bg-gray-900 text-white p-4 rounded-t-lg flex justify-between items-center">
+                    <h3 class="text-lg font-semibold">Chatbot d'Assistance</h3>
+                    <button id="closeChatbot" class="text-white hover:text-gray-300">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="chatbot-body flex-1 p-4 overflow-y-auto" id="chatbotMessages">
+                
+                    <div class="message bot-message bg-gray-100 p-3 rounded-lg mb-2">
+                        Bonjour ! Comment puis-je vous aider aujourd'hui ?
+                    </div>
+                </div>
+
+
+                <div class="chatbot-input border-t p-4">
+                    <form id="chatbotForm" class="flex gap-2">
+                        <input type="text" id="chatbotInput" placeholder="Tapez votre message..." class="flex-1 p-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                        <button type="submit" id="sendMessage" class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
                     </form>
                 </div>
             </div>
+
+
+            <div id="chatbot-icon" class="fixed bottom-8 right-8 bg-blue-600 text-white p-4 rounded-full shadow-lg cursor-pointer hover:bg-blue-700 transition">
+                <i class="fas fa-comment-dots text-2xl"></i>
+            </div>
         </div>
-
-        <button id="openChatbot" class="chatbot-toggle">
-            <i class="fas fa-comments"></i>
-        </button>
-
-        <script>
-            document.getElementById("sendMessage").addEventListener("click", async function (event) {
-                event.preventDefault();
-                const inputField = document.getElementById("chatbotInput");
-                const userMessage = inputField.value.trim();
-                if (userMessage === "") return;
-        
-                // Affiche le message de l'utilisateur
-                const chatbox = document.getElementById("chatbotMessages");
-                const userDiv = document.createElement("div");
-                userDiv.classList.add("message", "user-message");
-                userDiv.innerText = userMessage;
-                chatbox.appendChild(userDiv);
-        
-                // Vide l'input
-                inputField.value = "";
-        
-                // Envoie la question au backend
-                try {
-                    const response = await fetch("/chatbot", { // URL du backend
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ question: userMessage }),
-                    });
-        
-                    const data = await response.json();
-        
-                    // Affiche la réponse du chatbot
-                    const botDiv = document.createElement("div");
-                    botDiv.classList.add("message", "bot-message");
-                    botDiv.innerText = data.response || "Le chatbot ne peut pas répondre.";
-                    chatbox.appendChild(botDiv);
-        
-                    // Scroll automatique vers le bas
-                    chatbox.scrollTop = chatbox.scrollHeight;
-                } catch (error) {
-                    console.error("Erreur avec le chatbot:", error);
-                }
-            });
-        
-            // Active le chatbot au clic sur le bouton
-            document.getElementById("openChatbot").addEventListener("click", function () {
-                document.getElementById("chatbotWindow").style.display = "block";
-            });
-        
-            // Ferme le chatbot au clic sur le bouton X
-            document.getElementById("closeChatbot").addEventListener("click", function () {
-                document.getElementById("chatbotWindow").style.display = "none";
-            });
-        </script>
     </div>
+
+
+<script>
+   
+    document.getElementById('chatbot-icon').addEventListener('click', () => {
+        document.getElementById('chatbotWindow').classList.remove('hidden');
+    });
+
+  
+    document.getElementById('closeChatbot').addEventListener('click', () => {
+        document.getElementById('chatbotWindow').classList.add('hidden');
+    });
+
+
+    document.getElementById('chatbotForm').addEventListener('submit', async (event) => {
+        event.preventDefault(); 
+
+        const inputField = document.getElementById('chatbotInput');
+        const userMessage = inputField.value.trim();
+
+        if (userMessage === "") return; 
+
+       
+        const chatbox = document.getElementById('chatbotMessages');
+        const userDiv = document.createElement('div');
+        userDiv.classList.add('message', 'user-message', 'bg-blue-100', 'p-3', 'rounded-lg', 'mb-2', 'self-end');
+        userDiv.innerText = userMessage;
+        chatbox.appendChild(userDiv);
+
+        inputField.value = '';
+
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+        try {
+            const response = await fetch('/chatbot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ question: userMessage }),
+            });
+
+            const data = await response.json();
+
+            const botDiv = document.createElement('div');
+            botDiv.classList.add('message', 'bot-message', 'bg-gray-100', 'p-3', 'rounded-lg', 'mb-2');
+            botDiv.innerText = data.response || "Le chatbot ne peut pas répondre.";
+            chatbox.appendChild(botDiv);
+
+          
+            chatbox.scrollTop = chatbox.scrollHeight;
+        } catch (error) {
+            console.error('Erreur avec le chatbot:', error);
+        }
+    });
+</script>
 </body>
-</html>

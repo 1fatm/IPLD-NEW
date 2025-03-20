@@ -8,51 +8,65 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style3.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
-    <style>
-        .sticky-nav {
-            position: fixed;
-            height: 100vh;
-            width: 16rem;
-        }
-        .content {
-            margin-left: 17rem;
-            width: calc(100% - 17rem);
-        }
-        
-    </style>
 </head>
-<body class="bg-gray-50">
-    <div class="flex flex-col lg:flex-row h-screen">
-        <!-- Sidebar -->
-        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col sticky-nav">
-            <div class="flex items-center mb-6">
-                <i class="fas fa-graduation-cap text-3xl mr-2"></i>
-                <h1 class="text-2xl font-bold">Étudiant</h1>
-            </div>
-            <nav class="space-y-2">
-                <a href="/accueiletudiant" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-home mr-2"></i> Accueil
-                </a>
-                <a href="/devoirs" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-tasks mr-2"></i> Devoirs
-                </a>
-                <a href="/notes" class="flex items-center py-2 px-4 bg-gray-700 rounded">
-                    <i class="fas fa-file-alt mr-2"></i> Mes notes
-                </a>
-                <a href="/notifications" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="fas fa-envelope mr-2"></i> Notifications
-                </a>
-            </nav>
-            <a href="/deconnection" class="mt-auto py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
-                <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
-            </a>
-        </div>
+<body >
+    <div class="dashboard">
+        <!-- Bouton pour ouvrir/fermer la sidebar -->
+        <button id="sidebarToggle" aria-label="Ouvrir/fermer la barre latérale" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md shadow-lg hover:bg-gray-800 transition">
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-        <!-- Main Content -->
-        <div class="flex-1 p-6 content">
-            <h2 class="text-2xl font-semibold mb-4">📑 Notes Corrigées</h2>
-            <div class="bg-white p-6 shadow rounded">
-                <h3 class="text-xl font-semibold mb-4"><i class="fas fa-file-alt"></i> Liste des Notes</h3>
+    
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64  text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+            <div class="p-6">
+                <h2 class="text-8xl font-extrabold drop-shadow-2xl">
+                    <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
+                        DEMIX
+                    </span>
+                </h2>
+                <ul class="mt-6 space-y-4">
+                    <li>
+                        <a href="/accueiletudiant" data-target="home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-home text-xl"></i>
+                            <span>Accueil</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/devoirs" data-target="exam-topics" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-tasks text-xl"></i>
+                            <span>Devoirs</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notes" data-target="grades" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-alt text-xl"></i>
+                            <span>Mes notes</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/notifications" data-target="notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-envelope text-xl"></i>
+                            <span>Notifications</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="p-6">
+                <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+            
+        </nav>
+
+        <!-- Contenu principal -->
+        <main class="flex-1 p-6 ml-0 md:ml-64 transition-all">
+            <h2 class="text-2xl font-semibold mb-6 text-gray-800">📑 Notes Corrigées</h2>
+            <div class="bg-white p-6 shadow-lg rounded-lg">
+                <h3 class="text-xl font-semibold mb-6 text-gray-800"><i class="fas fa-file-alt mr-2"></i> Liste des Notes</h3>
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                         <thead>
@@ -65,15 +79,15 @@
                         </thead>
                         <tbody>
                             {% for note in notes %}
-                            <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200">
+                            <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-200">
                                 <td class="py-3 px-5">{{ note.type }}</td>
                                 <td class="py-3 px-5">{{ note.nom_examen }}</td>
                                 <td class="py-3 px-5">{{ note.date_soumission }}</td>
                                 <td class="py-3 px-5">
                                     {% if note.note is not none %}
-                                        {{ note.note }}/20
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i>{{ note.note }}/20
                                     {% else %}
-                                        <span class="text-gray-500">Note indisponible</span>
+                                        <i class="fas fa-times-circle text-gray-500 mr-2"></i><span class="text-gray-500">Note indisponible</span>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -82,10 +96,18 @@
                     </table>
                 </div>
                 {% if not notes %}
-                <p class="text-center text-gray-500 mt-4">Aucune note disponible.</p>
+                <p class="text-center text-gray-500 mt-6 py-8">Aucune note disponible.</p>
                 {% endif %}
             </div>
-        </div>
+        </main>
     </div>
+
+    <!-- Script pour gérer la sidebar -->
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+    </script>
 </body>
 </html>
