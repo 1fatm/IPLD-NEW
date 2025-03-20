@@ -281,7 +281,7 @@ def ajouter_devoir():
         errorfichier = "Échec de l'enregistrement du fichier."
         return render_template("Ajoutdevoir.html", errorfichier=errorfichier)
 
-    chemin1 = os.path.join('static', 'images', fichier_filename)
+    chemin1 = os.path.join('static', 'images','examens', fichier_filename)
     print(f"Relative path for database: {chemin1}")
 
     repertoire_correction = os.path.join('python', 'static', 'images','corrections')  # Use os.path.join for cross-platform compatibility
@@ -309,7 +309,7 @@ def ajouter_devoir():
         errorfichier_correction = "Échec de l'enregistrement du fichier_correction."
         return render_template("Ajoutdevoir.html", errorfichier_correction=errorfichier_correction)
 
-    chemin2 = os.path.join('static', 'images', fichier_correction_filename)
+    chemin2 = os.path.join('static', 'images','corrections',fichier_correction_filename)
     print(f"Relative path for database: {chemin2}")
     db=connect()
     curseur = db.cursor()
@@ -333,7 +333,7 @@ def ajouter_devoir():
 
 def soumettrefichier():
     sess_id = session.get('id')
-    repertoire = os.path.join('python','static', 'images', 'copies')
+    repertoire = os.path.join('static', 'images', 'copies')
     if not os.path.exists(repertoire):
         os.makedirs(repertoire)
     
@@ -356,7 +356,7 @@ def soumettrefichier():
     if not os.path.exists(file_path):
         return render_template("info_dev.html", errorfichier="Échec de l'enregistrement du fichier.")
     
-    chemin1 = os.path.join('python','static', 'images', 'copies', fichier_filename)
+    chemin1 = os.path.join('static', 'images', 'copies', fichier_filename)
     db=connect()
     curseur = db.cursor()
     
