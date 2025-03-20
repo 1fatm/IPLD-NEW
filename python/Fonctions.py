@@ -371,10 +371,10 @@ def soumettrefichier():
         return render_template("info_dev.html", errorfichier=f"Erreur MySQL : {err}")
     finally:
         curseur.close()
-    curseur = db.cursor()
-    noteria(ideleve, idev, chemin1, id_copie)
-    curseur.execute("Select * from examens where id=%s",(idev,))
-    infodevoirs=curseur.fetchall()
+        curseur = db.cursor()
+        noteria(ideleve, idev, chemin1, id_copie)
+        curseur.execute("Select * from examens where id=%s",(idev,))
+        infodevoirs=curseur.fetchall()
     db.commit()
     curseur=db.cursor()
     curseur.execute("Select * from copies where id_examen=%s and id_etudiant=%s",(idev,sess_id))
@@ -386,71 +386,81 @@ def soumettrefichier():
     db.commit()
     return render_template("info_dev.html", success_message="Devoir soumis avec succès.", sess_id=session['id'],infodevoirs=infodevoirs,soumis=soumis)                              
 
-def noteria(ideleve, iddevoir, chemincopie, id_copie):
-    db=connect()
-    cursor = db.cursor()
-    
-    cursor.execute("SELECT chemin, chemin_correction FROM examens WHERE id=%s", (iddevoir,))
-    result = cursor.fetchone()
-    cursor.close()
-    
-    if not result:
-        return "Examen introuvable"
-    
-    cheminexamen, chemincorrection = result
-    
+import ollama
+import PyPDF2
+import os
+
+def extraire_texte_pdf(chemin_fichier):
+    """Extrait le texte d'un fichier PDF en gérant les erreurs."""
+    if not os.path.exists(chemin_fichier):
+        return f"Erreur : fichier introuvable {chemin_fichier}"
+
     try:
-        with open(cheminexamen, "r", encoding="utf-8", errors="replace") as f:
-            contenu_examen = f.read()
-        with open(chemincorrection, "r", encoding="utf-8", errors="replace") as f:
-            contenu_correction = f.read()
-        with open(chemincopie, "r", encoding="utf-8", errors="replace") as f:
-            contenu_copie = f.read()
-    except FileNotFoundError as e:
-        return f"Erreur : fichier introuvable - {e}"
+        with open(chemin_fichier, "rb") as fichier:
+            lecteur_pdf = PyPDF2.PdfReader(fichier)
+            texte = "\n".join(page.extract_text() or "" for page in lecteur_pdf.pages)
+        return texte.strip() if texte else "Aucun texte extrait du PDF."
+    except Exception as e:
+        return f"Erreur lors de la lecture du PDF : {e}"
+
+def noteria(id_etudiant, id_examen, chemin_copie, id_copie):
+    """Compare la copie de l'étudiant avec le corrigé et attribue une note."""
+    db = connect()
+    curseur = db.cursor()
+
+    # Récupérer le corrigé du professeur
+    curseur.execute("SELECT chemin_correction FROM examens WHERE id = %s", (id_examen,))
+    result = curseur.fetchone()
+    if not result:
+        return "Erreur : corrigé introuvable."
     
-    def clean_string(input_string):
-        return input_string.replace("\0", "")
-    
-    contenu_examen = clean_string(contenu_examen)
-    contenu_correction = clean_string(contenu_correction)
-    contenu_copie = clean_string(contenu_copie)
-    
+    chemin_correction = result[0]
+
+    # Extraire le texte des fichiers PDF
+    texte_copie = extraire_texte_pdf(chemin_copie)
+    texte_correction = extraire_texte_pdf(chemin_correction)
+
+    # Envoyer la requête à l'IA d'Ollama
     prompt = f"""
-    Tu dois me donner une note en corrigeant la feuille de l'élève à partir du corrigé de l'examen. Tu compares la correction avec ce que l'étudiant a soumis pour chaque réponse trouvé tu lui donne une note. Enfin tu me donnes une note sur 20 pour cette copie.
-    Donne-moi juste une note sur 20, rien d'autre.
-    
-    Correction examen :
-    {contenu_correction}
-    
-    Feuille de l'élève :
-    {contenu_copie}
+    Tu es un correcteur automatique d'examens. Compare les résultats de la copie de l'étudiant avec les résultats du corrigé et attribue une note en fonction du barème présent dans la correction. 
+    Le barème t'indiquera les points à donner à l'étudiant s'il trouve le bon résultat.
+    Donne un commentaire sur la qualité de la réponse et justifie la note attribuée.
+    Voici la copie de l'étudiant :
+    {texte_copie}
+
+    Voici le corrigé du professeur :
+    {texte_correction}
+
+    Réponds sous le format :
+    Note: X/20
+    Commentaire: [Justification de la note]
     """
     
-    reponse = ask_ollama(prompt)
-    print(reponse)
-    
+    reponse = ollama.chat(model="gemma3:1b", messages=[{"role": "user", "content": prompt}])
+    contenu = reponse['message']['content']
+
+    note = 0.0
+    commentaire = "Aucune analyse."
+    for ligne in contenu.split("\n"):
+        if ligne.startswith("Note:"):
+            note = float(ligne.split(":")[1].strip().replace("/20", ""))
+        elif ligne.startswith("Commentaire:"):
+            commentaire = ligne.split(":", 1)[1].strip()
+
+    # Enregistrer la correction dans la base de données
     try:
-        note = float(reponse.strip())
-    except ValueError:
-        note = None
-    
-    if note is not None:
-        cursor = db.cursor()
-        try:
-            requete = '''INSERT INTO corrections (id_copie, note, commentaire, correction_automatique) VALUES (%s, %s, %s, %s)'''
-            values = (id_copie, note, "Correction automatique", True)
-            cursor.execute(requete, values)
-            db.commit()
-        except mysql.connector.Error as err:
-            db.rollback()
-            print(f"Erreur MySQL : {err}")
-        finally:
-            cursor.close()
-    else:
-        print("Erreur : L'IA n'a pas retourné une note valide.")
-    
-    return reponse
+        curseur.execute(
+            "INSERT INTO corrections (id_copie, note, commentaire, correction_automatique) VALUES (%s, %s, %s, %s)",
+            (id_copie, note, commentaire, True)
+        )
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        return f"Erreur lors de l'enregistrement de la correction : {e}"
+    finally:
+        curseur.close()
+        db.close()
+
 
 def infodev():
     sess_username=session.get('username')
@@ -509,17 +519,9 @@ def notercopie():
     requete='''select note from corrections where id_copie=%s'''
     curseur.execute(requete,(idcopie,))
     verifnote=curseur.fetchall()
-    db.commit()
-    print(idcopie)
-    print(note)
-    print(sess_id)
-    print(commentaire)
-    
 
     if verifnote and verifnote[0]:
         verifnote=verifnote[0][0]
-        print(verifnote)
-        curseur=db.cursor()
         requete= requete = """
         SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
         FROM copies c
@@ -532,7 +534,6 @@ def notercopie():
         db.commit()
         return render_template("info_copie.html",infocopies=infocopies,note=verifnote)
     else:
-        curseur=db.cursor()
         requete = '''
         insert into corrections (id_copie,note,commentaire) values (%s,%s,%s)
         '''
@@ -540,7 +541,6 @@ def notercopie():
         curseur.execute(requete, values)
         db.commit()
         curseur.execute("Select * from examens where id=%s",(idcopie,))
-        curseur = db.cursor()
         infocopies=curseur.fetchall()
         db.commit()
         return render_template("info_copie.html",infocopies=infocopies,note=note)
@@ -907,53 +907,32 @@ def get_statistiques(id_prof):
 
     return statistiques
 def afficher_devoirs():
-    # Vérifier si l'utilisateur est connecté
     if 'id' not in session:
         flash("Veuillez vous connecter.", "warning")
         return redirect('/')
-
-    # Connexion à la base de données
-    db = connect()
+    db=connect()
     cursor = db.cursor()
-
     try:
-        # Récupérer la classe de l'étudiant
         user_id = session['id']
         cursor.execute("SELECT classe FROM etudiants WHERE id = %s", (user_id,))
-        classe_result = cursor.fetchone()
-
-        if not classe_result:
-            flash("Classe non trouvée pour cet utilisateur.", "danger")
-            return redirect('/accueiletudiant')
-
-        classe = classe_result[0]
-
-        # Récupérer les devoirs de la classe
-        requete = """
-            SELECT examens.nom, examens.description, examens.type, examens.classe, examens.chemin, examens.datedesoumission, enseignants.nom_complet, examens.id
-            FROM examens
-            JOIN enseignants ON examens.idprof = enseignants.id
-            WHERE examens.classe = %s
+        classe = cursor.fetchone()[0]
+        requete = """ Select examens.nom, examens.description, examens.type, examens.classe, examens.chemin, examens.datedesoumission, enseignants.nom_complet, examens.id
+        FROM examens 
+        JOIN enseignants on examens.idprof=enseignants.id
+        WHERE examens.classe = %s
         """
         cursor.execute(requete, (classe,))
         devoirs = cursor.fetchall()
-
-        # Vérifier si des devoirs ont été trouvés
         if devoirs:
-            verifdevoir = True
-            return render_template('devoir.html', devoirs=devoirs, verifdevoir=verifdevoir)
+            verifdevoir=True
+            return render_template('devoir.html', devoirs=devoirs,verifdevoir=verifdevoir)
         else:
-            verifdevoir = False
-            return render_template('devoir.html', verifdevoir=verifdevoir)
-
+            verifdevoir=False
+            return render_template('devoir.html',verifdevoir=verifdevoir)
     except mysql.connector.Error as err:
         flash(f"Erreur lors de la récupération des devoirs : {err}", "danger")
         return redirect('/accueiletudiant')
 
-    finally:
-       
-        cursor.close()
-        db.close()
 def afficher_notifications():
     if 'id' not in session:
         return redirect('/connexion_etudiant')
