@@ -74,7 +74,6 @@
     <section id="home" class="home-section w-full max-w-7xl bg-white shadow-2xl rounded-2xl p-8">
         <h2 class="text-4xl font-bold text-gray-900 mb-8 text-center">📊 Statistiques des Examens</h2>
 
-<<<<<<< HEAD
         {% if statistiques %}
         <div class="space-y-10">
             {% for stat in statistiques %}
@@ -90,27 +89,6 @@
                         <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">📈 Histogramme</h3>
                         <img src="data:image/png;base64,{{ stat.plot_url_hist }}" 
                              alt="Histogramme des notes" class="w-full h-56 object-cover rounded-lg shadow-md">
-=======
-                        <div class="space-y-6">
-                            <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-white mb-2 text-center">Histogramme</h3>
-                                <img src="data:image/png;base64,{{ stat.plot_url_hist }}" 
-                                    alt="Histogramme des notes" class="w-full h-96 object-contain rounded-md">
-                            </div>
-
-                            <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-white mb-2 text-center">Répartition</h3>
-                                <img src="data:image/png;base64,{{ stat.plot_url_pie }}" 
-                                    alt="Camembert" class="w-full h-96 object-contain rounded-md">
-                            </div>
-
-                            <div class="bg-gray-800 p-4 rounded-lg shadow-md">
-                                <h3 class="text-lg font-semibold text-white mb-2 text-center">Diagramme en Barres</h3>
-                                <img src="data:image/png;base64,{{ stat.plot_url_bar }}" 
-                                    alt="Diagramme en barres" class="w-full h-96 object-contain rounded-md">
-                            </div>
-                        </div>
->>>>>>> bb3d0f7ea916c719be27610acf3441f565af56a6
                     </div>
 
                     <!-- Répartition -->

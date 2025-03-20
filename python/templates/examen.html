@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-<<<<<<< HEAD
 <body class="bg-blue-50">
     <div class="dashboard">
        
@@ -88,52 +87,12 @@
                
                 <form action="/trier_classe" method="post" class="flex items-center gap-3">
                     <select name="classe" id="classe" class="p-3 border border-gray-300 rounded w-full">
-=======
-<body class="bg-gray-50">
-    <div class="flex h-screen">
-        <div class="w-64 bg-gray-900 text-white p-5 flex flex-col">
-            <div class="flex items-center mb-6">
-                <i class="fas fa-user-tie text-3xl mr-2"></i>
-                <h1 class="text-2xl font-bold">Enseignant</h1>
-            </div>
-            <nav>
-                <a href="/accueilp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="ph-house-light mr-2"></i> Accueil
-                </a>
-                <a href="/examen" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="ph-file-text-light mr-2"></i> Examens
-                </a>
-                <a href="/copies" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="ph-files-light mr-2"></i> Copies soumises
-                </a>
-                <a href="/notep" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="ph-pencil-light mr-2"></i> Notes et corrections
-                </a>
-                <a href="/statistiquesp" class="flex items-center py-2 px-4 hover:bg-gray-700 rounded">
-                    <i class="ph-chart-bar-light mr-2"></i> Statistiques
-                </a>
-            </nav>
-            <a href="/deconnection" class="mt-auto text-sm py-2 px-4 bg-red-600 hover:bg-red-700 text-center rounded flex items-center justify-center">
-                <i class="ph-sign-out-light mr-2"></i> Déconnexion
-            </a>
-        </div>
-        <div class="flex-1 p-6">
-            <h2 class="text-2xl font-semibold mb-4">Examens</h2>
-            <div class="bg-white p-4 shadow rounded">
-                <a href="/ajoutdevoirpage" class="mt-4 bg-gray-700 text-white px-4 py-2 rounded inline-block">Créer un nouvel examen</a>
-            </div>
-            <div class="mt-6">
-                <h3 class="text-xl font-semibold mb-2">Examens donnés</h3>
-                <form action="/trier_classe" method="post" class="flex items-center gap-2 mb-4">
-                    <select name="classe" id="classe" class="p-2 border border-gray-300 rounded">
->>>>>>> bb3d0f7ea916c719be27610acf3441f565af56a6
                         <option value="DUT1">DUT1</option>
                         <option value="DUT2">DUT2</option>
                         <option value="DIC1">DIC1</option>
                         <option value="DIC2">DIC2</option>
                         <option value="DIC3">DIC3</option>
                     </select>
-<<<<<<< HEAD
                     <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded-full flex items-center gap-2 hover:bg-blue-700 transition">
                         <i class="fas fa-filter"></i> Trier
                     </button>
@@ -159,25 +118,6 @@
             <div class="overflow-x-auto">
                 <table class="w-full border-collapse rounded-lg shadow-md">
                     <thead class="bg-blue-600 text-white">
-=======
-                    <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded flex items-center gap-1">
-                        <i class="ph-funnel"></i> Trier par classe
-                    </button>
-                </form>
-                <form action="/trier_date" method="post" class="flex items-center gap-2 mb-4">
-                    <select name="date" id="date" class="p-2 border border-gray-300 rounded">
-                        <option value="passe">Date passée</option>
-                        <option value="courant">Encours</option>
-                    </select>
-                    <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded flex items-center gap-1">
-                        <i class="ph-funnel"></i> Trier par date
-                    </button>
-                </form>
-
-                {% if verif==True %}
-                <table class="table-auto w-full bg-white shadow rounded">
-                    <thead class="bg-gray-700 text-white">
->>>>>>> bb3d0f7ea916c719be27610acf3441f565af56a6
                         <tr>
                             <th class="p-4">📌 Nom</th>
                             <th class="p-4">📝 Description</th>
@@ -188,7 +128,6 @@
                     </thead>
                     <tbody class="text-gray-700 text-lg">
                         {% for examen in examens %}
-<<<<<<< HEAD
                         <tr class="border-b hover:bg-blue-100 transition">
                             <td class="p-4 font-semibold">{{ examen[0] }}</td>
                             <td class="p-4">{{ examen[1] }}</td>
@@ -198,27 +137,15 @@
                                 <a href="{{ examen[4] }}" download="{{ examen[4] }}.pdf" class="text-blue-600 hover:text-blue-800 transition font-medium">
                                     <i class="fas fa-download mr-2"></i> Télécharger
                                 </a>
-=======
-                        <tr class="border-b hover:bg-gray-100">
-                            <td class="p-2">{{ examen[0] }}</td>
-                            <td class="p-2">{{ examen[1] }}</td>
-                            <td class="p-2">{{ examen[2] }}</td>
-                            <td class="p-2">{{ examen[3] }}</td>
-                            <td class="p-2">
-                                <a href="{{ examen[4] }}" download="{{ examen[4] }}.pdf" class="text-gray-700 hover:text-gray-900">Voir l'examen</a>
->>>>>>> bb3d0f7ea916c719be27610acf3441f565af56a6
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-<<<<<<< HEAD
             {% else %}
             <p class="text-gray-700 text-center text-xl mt-10"> Vous n'avez pas encore créé d'examen.</p>
             {% endif %}
-=======
->>>>>>> bb3d0f7ea916c719be27610acf3441f565af56a6
         </div>
     </section>
 </div>

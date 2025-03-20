@@ -509,9 +509,17 @@ def notercopie():
     requete='''select note from corrections where id_copie=%s'''
     curseur.execute(requete,(idcopie,))
     verifnote=curseur.fetchall()
+    db.commit()
+    print(idcopie)
+    print(note)
+    print(sess_id)
+    print(commentaire)
+    
 
     if verifnote and verifnote[0]:
         verifnote=verifnote[0][0]
+        print(verifnote)
+        curseur=db.cursor()
         requete= requete = """
         SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
         FROM copies c
@@ -524,6 +532,7 @@ def notercopie():
         db.commit()
         return render_template("info_copie.html",infocopies=infocopies,note=verifnote)
     else:
+        curseur=db.cursor()
         requete = '''
         insert into corrections (id_copie,note,commentaire) values (%s,%s,%s)
         '''
@@ -531,6 +540,7 @@ def notercopie():
         curseur.execute(requete, values)
         db.commit()
         curseur.execute("Select * from examens where id=%s",(idcopie,))
+        curseur = db.cursor()
         infocopies=curseur.fetchall()
         db.commit()
         return render_template("info_copie.html",infocopies=infocopies,note=note)

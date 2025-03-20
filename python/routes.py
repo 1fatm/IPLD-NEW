@@ -64,7 +64,7 @@ def copiecode():
     return infocopiecode()
 
 @app.route('/notercopie',methods=['POST'])
-def Notercopie():
+def Notecopie():
     return notercopie()
 
 @app.route('/updatenote',methods=['POST'])
