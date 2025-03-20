@@ -8,6 +8,7 @@ import subprocess
 import matplotlib.pyplot as plt
 import pandas as pd
 from io import BytesIO
+import seaborn as sns
 
 app = Flask(__name__)
 app.secret_key = 'your_love'
@@ -124,7 +125,7 @@ def connexionetudiant():
 
 def statistiques_etudiant():
     sess_id = session.get('id') 
-     # ID de l'étudiant connecté
+    # ID de l'étudiant connecté
     db=connect()
 
     curseur = db.cursor()
@@ -331,6 +332,7 @@ def ajouter_devoir():
     return render_template("Ajoutdevoir.html", success_message="Devoir ajouté avec succès.",sess_id=session['id'])
 
 def soumettrefichier():
+    sess_id = session.get('id')
     repertoire = os.path.join('python','static', 'images', 'copies')
     if not os.path.exists(repertoire):
         os.makedirs(repertoire)
@@ -369,9 +371,20 @@ def soumettrefichier():
         return render_template("info_dev.html", errorfichier=f"Erreur MySQL : {err}")
     finally:
         curseur.close()
-    
+    curseur = db.cursor()
     noteria(ideleve, idev, chemin1, id_copie)
-    return render_template("info_dev.html", success_message="Devoir soumis avec succès.", sess_id=session['id'])                              
+    curseur.execute("Select * from examens where id=%s",(idev,))
+    infodevoirs=curseur.fetchall()
+    db.commit()
+    curseur=db.cursor()
+    curseur.execute("Select * from copies where id_examen=%s and id_etudiant=%s",(idev,sess_id))
+    verificationsoumission=curseur.fetchall()
+    if verificationsoumission:
+        soumis=True
+    else:
+        soumis=False
+    db.commit()
+    return render_template("info_dev.html", success_message="Devoir soumis avec succès.", sess_id=session['id'],infodevoirs=infodevoirs,soumis=soumis)                              
 
 def noteria(ideleve, iddevoir, chemincopie, id_copie):
     db=connect()
@@ -797,7 +810,7 @@ def statistiquesp():
 
     return render_template('statistique.html', statistiques=statistiques)
 def get_statistiques(id_prof):
-    db=connect()
+    db = connect()
     cursor = db.cursor()
 
     # Récupérer les examens créés par le professeur
@@ -828,19 +841,19 @@ def get_statistiques(id_prof):
 
         moyenne = sum(notes) / len(notes)
 
-        # 📊 1. Histogramme
+        # 📊 1. Histogramme avec Seaborn
         plt.figure(figsize=(14, 10))
-        plt.hist(notes, bins=10, edgecolor='black', color='skyblue')
-        plt.title(f"Histogramme des notes - {examen_nom}")
-        plt.xlabel('Notes')
-        plt.ylabel('Nombre d\'étudiants')
+        sns.histplot(notes, bins=10, kde=True, color='skyblue')
+        plt.title(f"Histogramme des notes - {examen_nom}", fontsize=16)
+        plt.xlabel('Notes', fontsize=12)
+        plt.ylabel('Nombre d\'étudiants', fontsize=12)
         img_hist = io.BytesIO()
         plt.savefig(img_hist, format='png')
         img_hist.seek(0)
         plot_url_hist = base64.b64encode(img_hist.getvalue()).decode()
         plt.close()
 
-        # 🥧 2. Diagramme circulaire (camembert)
+        # 🥧 2. Diagramme circulaire avec Seaborn
         notes_range = ["0-5", "6-10", "11-15", "16-20"]
         counts = [sum(0 <= n <= 5 for n in notes),
                   sum(6 <= n <= 10 for n in notes),
@@ -848,21 +861,21 @@ def get_statistiques(id_prof):
                   sum(16 <= n <= 20 for n in notes)]
 
         plt.figure(figsize=(14, 10))
+        sns.set_palette("pastel")
         plt.pie(counts, labels=notes_range, autopct='%1.1f%%', startangle=140)
-        plt.title(f"Répartition des notes - {examen_nom}")
+        plt.title(f"Répartition des notes - {examen_nom}", fontsize=16)
         img_pie = io.BytesIO()
         plt.savefig(img_pie, format='png')
         img_pie.seek(0)
         plot_url_pie = base64.b64encode(img_pie.getvalue()).decode()
         plt.close()
 
-        # 📌 3. Diagramme en barres
+        # 📌 3. Diagramme en barres avec Seaborn
         plt.figure(figsize=(14, 10))
-        categories = ['0-5', '6-10', '11-15', '16-20']
-        plt.bar(categories, counts, color='orange')
-        plt.title(f"Notes par tranche - {examen_nom}")
-        plt.xlabel('Tranches de notes')
-        plt.ylabel('Nombre d\'étudiants')
+        sns.barplot(x=notes_range, y=counts, palette='muted')
+        plt.title(f"Notes par tranche - {examen_nom}", fontsize=16)
+        plt.xlabel('Tranches de notes', fontsize=12)
+        plt.ylabel('Nombre d\'étudiants', fontsize=12)
         img_bar = io.BytesIO()
         plt.savefig(img_bar, format='png')
         img_bar.seek(0)
@@ -883,8 +896,6 @@ def get_statistiques(id_prof):
     db.close()
 
     return statistiques
-
-
 def afficher_devoirs():
     # Vérifier si l'utilisateur est connecté
     if 'id' not in session:
@@ -1029,11 +1040,13 @@ def chatbot():
         return jsonify({"error": "La question est vide"}), 400
 
     response = ask_ollama(question)
-    return jsonify({"response": response}), 200
 
+    # Retourne la réponse en forçant l'encodage UTF-8
+    #return jsonify({"response": response}), 200  
+    return jsonify({"response": response}), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 def generernote():
-    sess_id = session.get('id')  # ID du professeur connecté
+    sess_id = session.get('id')
     id=request.form['idexam']
     db=connect()
     cursor=db.cursor()
