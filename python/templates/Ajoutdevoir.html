@@ -12,12 +12,12 @@
 </head>
 <body class="bg-gradient-to-b from-blue-50 to-gray-100">
     <div class="dashboard">
-        <!-- Bouton pour ouvrir/fermer la sidebar -->
+
         <button id="sidebarToggle" aria-label="Ouvrir/fermer la barre latérale" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md shadow-lg hover:bg-gray-800 transition">
             <i class="fa-solid fa-bars"></i>
         </button>
 
-        <!-- Sidebar -->
+       
         <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64  text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
             <div class="p-6">
                 <h2 class="text-8xl font-extrabold drop-shadow-2xl">
@@ -68,10 +68,9 @@
             </div>
         </nav>
 
-        <!-- Contenu Principal -->
         <main class="flex-1 p-6 ml-0 md:ml-64 transition-all">
             <div class="bg-white shadow-2xl rounded-lg p-8 w-full max-w-5xl mx-auto">
-                <!-- Message de succès ou d'erreur -->
+                
                 {% if errorfichier %}
                     <div class="bg-red-500 text-white text-center p-3 rounded-lg mb-6">
                         <p class="font-semibold">{{ errorfichier }}</p>
@@ -87,7 +86,6 @@
 
                 <h1 class="text-3xl font-bold text-center text-blue-900 mb-6">Ajouter Un Devoir</h1>
 
-                <!-- Formulaire -->
                 <form action="/ajouterun_devoir" method="POST" enctype="multipart/form-data" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -160,7 +158,6 @@
         </main>
     </div>
 
-    <!-- Script pour gérer la sidebar -->
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', function() {
             const sidebar = document.getElementById('sidebar');

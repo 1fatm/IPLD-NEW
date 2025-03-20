@@ -94,7 +94,6 @@ h1 {
     color: #333;
 }
 
-/* Icônes */
 .input-group .input-group-text {
     background: transparent;
     border: none;
@@ -127,7 +126,6 @@ button:active {
     transform: scale(0.98);
 }
 
-/* Liens */
 p {
     margin-top: 15px;
     text-align: center;

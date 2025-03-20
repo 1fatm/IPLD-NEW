@@ -12,12 +12,12 @@
 </head>
 <body class="bg-blue-50">
     <div class="dashboard min-h-screen flex">
-        <!-- Bouton pour ouvrir/fermer la sidebar -->
+      
         <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
             <i class="fa-solid fa-bars"></i>
         </button>
 
-        <!-- Sidebar -->
+     
         <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
             <div class="p-6">
                 <h2 class="text-8xl font-extrabold drop-shadow-2xl">
@@ -26,8 +26,7 @@
                         DEMIX
                     </span>
                 </h2>
-                
-                <!-- Menu de la sidebar -->
+           
                 <ul class="mt-6 space-y-4">
                     <li>
                         <a href="/accueilp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
@@ -62,7 +61,6 @@
                 </ul>
             </div>
 
-            <!-- Bouton de déconnexion -->
             <div class="p-6">
                 <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
                     <i class="fas fa-sign-out-alt text-lg"></i>
@@ -71,7 +69,7 @@
             </div>
         </nav>
 
-        <!-- Contenu Principal -->
+
         <div class="flex-1 min-h-screen bg-gray-100 p-6 md:ml-64 transition-all">
             <section class="w-full bg-white shadow-md rounded-lg p-6">
                 <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center space-x-3">
@@ -100,7 +98,7 @@
                 </div>
                 {%endif%}
    
-    <!-- Script pour gérer l'affichage du sidebar -->
+    
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');

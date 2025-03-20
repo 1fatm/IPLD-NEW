@@ -65,38 +65,78 @@
 
        
         <main class="flex-1 p-6 ml-0 md:ml-64 transition-all">
-            <h2 class="text-2xl font-semibold mb-6 text-gray-800">📚 Devoirs</h2>
+            <!-- Titre -->
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              
+                <span>📚 Devoirs</span>
+            </h2>
+        
+         
             <div class="bg-white p-6 shadow-lg rounded-lg">
-                <h3 class="text-xl font-semibold mb-6 text-gray-800"><i class="fas fa-tasks mr-2"></i> Devoirs à rendre</h3>
+              
+                <h3 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                    <i class="fas fa-tasks text-purple-600 mr-2"></i> 
+                    <span>Devoirs à rendre</span>
+                </h3>
+        
                 {% if verifdevoir %}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {% for devoir in devoirs %}
-                    <div class="p-6 border border-gray-200 rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow">
-                        <h2 class="text-lg font-bold text-gray-800">Nom: {{ devoir[0] }}</h2>
-                        <p class="text-gray-600 mt-2">Description: {{ devoir[1] }}</p>
-                        <p class="text-gray-600 mt-2">Type: {{ devoir[2] }}</p>
-                        <p class="text-gray-600 mt-2 font-medium">Prof: {{ devoir[6] }}</p>
-                        <p class="text-gray-600 mt-2">Date limite: <span class="font-bold text-red-600">{{ devoir[5] }}</span></p>
-                        <div class="mt-4 flex items-center space-x-4">
-                            <a href="{{ devoir[4] }}" download="{{ devoir[0] }}.pdf" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
-                                <i class="fas fa-download mr-2"></i> Télécharger
-                            </a>
-                            <form action="/info_devcode" method="post">
-                                <input type="hidden" name="id" value="{{ devoir[7] }}">
-                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                                    Détails
-                                </button>
-                            </form>
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for devoir in devoirs %}
+                            <div class="p-6 border border-gray-200 rounded-lg bg-white shadow-md hover:shadow-lg transition-transform transform hover:scale-105">
+                              
+                                <h2 class="text-lg font-bold text-gray-900 mb-3">
+                                    <i class="fas fa-file-alt text-blue-500 mr-2"></i> 
+                                    {{ devoir[0] }}
+                                </h2>
+        
+                              
+                                <p class="text-gray-600 mb-3">
+                                    <i class="fas fa-align-left text-gray-500 mr-2"></i> 
+                                    {{ devoir[1] }}
+                                </p>
+        
+                             
+                                <p class="text-gray-600 mb-3">
+                                    <i class="fas fa-tag text-gray-500 mr-2"></i> 
+                                    {{ devoir[2] }}
+                                </p>
+        
+                                <p class="text-gray-600 mb-3">
+                                    <i class="fas fa-chalkboard-teacher text-gray-500 mr-2"></i>
+                                    {{ devoir[6] }}
+                                </p>
+        
+                             
+                                <p class="text-gray-600 mb-4">
+                                    <i class="fas fa-calendar-times text-red-500 mr-2"></i>
+                                    Date limite : <span class="font-bold text-red-600">{{ devoir[5] }}</span>
+                                </p>
+        
+                                <div class="flex items-center space-x-4">
+                                  
+                                    <a href="{{ devoir[4] }}" download="{{ devoir[0] }}.pdf" class="text-blue-600 hover:text-blue-800 font-medium flex items-center">
+                                        <i class="fas fa-download mr-2"></i> Télécharger
+                                    </a>
+        
+                                    <form action="/info_devcode" method="post">
+                                        <input type="hidden" name="id" value="{{ devoir[7] }}">
+                                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center">
+                                            <i class="fas fa-info-circle mr-2"></i> Détails
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
-                </div>
                 {% else %}
-                <p class="text-center text-gray-500 py-8">Aucun devoir à rendre pour le moment.</p>
+                  
+                    <p class="text-center text-gray-500 py-8 flex items-center justify-center">
+                        <i class="fas fa-inbox text-4xl text-gray-400 mr-4"></i> 
+                        <span>Aucun devoir à rendre pour le moment.</span>
+                    </p>
                 {% endif %}
             </div>
         </main>
-    </div>
 
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', function() {

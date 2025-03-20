@@ -10,112 +10,97 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
 <body class="bg-blue-50">
-    <div class="dashboard">
-        <!-- Bouton pour ouvrir/fermer la sidebar -->
-        <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+  
+    <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 
-        <!-- Sidebar -->
-        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
-            <div class="p-6">
-                <h2 class="text-8xl font-extrabold drop-shadow-2xl">
-                    <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
-                        DEMIX
-                    </span>
-                </h2>
-                
-                <!-- Menu de la sidebar -->
-                <ul class="mt-6 space-y-4">
-                    <li>
-                        <a href="/accueilp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-home text-lg"></i>
-                            <span>Accueil</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/examen" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-file-alt text-lg"></i>
-                            <span>Examens</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/copies" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-file-upload text-lg"></i>
-                            <span>Copies soumises</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/notep" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-pen text-base"></i>
-                            <span>Notes et corrections</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/statistiquesp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-chart-bar text-base"></i>
-                            <span>Statistiques</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="p-6">
-                <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
-                    <i class="fas fa-sign-out-alt text-lg"></i>
-                    <span>Déconnexion</span>
-                </a>
-            </div>
-        </nav>
-
-        <!-- Contenu Principal -->
-<div class="main-content min-h-screen bg-gradient-to-b from-blue-50 to-gray-100 p-8 flex justify-center">
-    <section id="home" class="home-section w-full max-w-7xl bg-white shadow-2xl rounded-2xl p-8">
-        <h2 class="text-4xl font-bold text-gray-900 mb-8 text-center">📊 Statistiques des Examens</h2>
-
-        {% if statistiques %}
-        <div class="space-y-10">
-            {% for stat in statistiques %}
-            <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all border-l-4 border-blue-600">
-                <h2 class="text-2xl font-semibold text-blue-900 mb-2">🏫 Classe : {{ stat.classe }}</h2>
-                <h2 class="text-xl font-semibold text-gray-700 mb-4">📌 Examen : {{ stat.nom }}</h2>
-                <p class="mb-6 text-gray-600 text-lg"><strong>📊 Moyenne :</strong> <span class="font-medium">{{ stat.moyenne }}</span></p>
-
-                <!-- Conteneur des graphiques -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Histogramme -->
-                    <div class="bg-gray-100 p-6 rounded-lg shadow-md hover:scale-105 transition-all">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">📈 Histogramme</h3>
-                        <img src="data:image/png;base64,{{ stat.plot_url_hist }}" 
-                             alt="Histogramme des notes" class="w-full h-56 object-cover rounded-lg shadow-md">
-                    </div>
-
-                    <!-- Répartition -->
-                    <div class="bg-gray-100 p-6 rounded-lg shadow-md hover:scale-105 transition-all">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">📊 Répartition</h3>
-                        <img src="data:image/png;base64,{{ stat.plot_url_pie }}" 
-                             alt="Camembert" class="w-full h-56 object-cover rounded-lg shadow-md">
-                    </div>
-
-                    <!-- Diagramme en Barres -->
-                    <div class="bg-gray-100 p-6 rounded-lg shadow-md hover:scale-105 transition-all">
-                        <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">📊 Diagramme en Barres</h3>
-                        <img src="data:image/png;base64,{{ stat.plot_url_bar }}" 
-                             alt="Diagramme en barres" class="w-full h-56 object-cover rounded-lg shadow-md">
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+    <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+        <div class="p-6">
+            <h2 class="text-8xl font-extrabold drop-shadow-2xl">
+                <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
+                    DEMIX
+                </span>
+            </h2>
+            
+        
+            <ul class="mt-6 space-y-4">
+                <li>
+                    <a href="/accueilp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-home text-lg"></i>
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/examen" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-file-alt text-lg"></i>
+                        <span>Examens</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/copies" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-file-upload text-lg"></i>
+                        <span>Copies soumises</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/notep" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-pen text-base"></i>
+                        <span>Notes et corrections</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/statistiquesp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-chart-bar text-base"></i>
+                        <span>Statistiques</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        {% else %}
-        <p class="text-gray-700 text-center text-xl mt-10">🚫 Aucune statistique disponible pour le moment.</p>
-        {% endif %}
-    </section>
-</div>
-
 
     
+        <div class="p-6">
+            <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                <i class="fas fa-sign-out-alt text-lg"></i>
+                <span>Déconnexion</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="min-h-screen p-8 ml-0 md:ml-64">
+        <section class="bg-white shadow-lg rounded-lg p-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">📊 Statistiques des Examens</h2>
+            {% if statistiques %}
+                <div class="space-y-8">
+                    {% for stat in statistiques %}
+                        <div class="bg-gray-50 p-6 rounded-lg border-l-4 border-blue-600">
+                            <h3 class="text-xl font-semibold text-blue-900 mb-2">🏫 Classe : {{ stat.classe }}</h3>
+                            <p class="text-gray-700 mb-4">📌 Examen : {{ stat.nom }}</p>
+                            <p class="text-gray-600 mb-6"><strong>📊 Moyenne :</strong> {{ stat.moyenne }}</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <h4 class="text-lg font-semibold text-gray-700 mb-4 text-center">📈 Histogramme</h4>
+                                    <img src="data:image/png;base64,{{ stat.plot_url_hist }}" alt="Histogramme" class="w-full h-48 object-cover rounded-lg">
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <h4 class="text-lg font-semibold text-gray-700 mb-4 text-center">📊 Répartition</h4>
+                                    <img src="data:image/png;base64,{{ stat.plot_url_pie }}" alt="Camembert" class="w-full h-48 object-cover rounded-lg">
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <h4 class="text-lg font-semibold text-gray-700 mb-4 text-center">📊 Diagramme en Barres</h4>
+                                    <img src="data:image/png;base64,{{ stat.plot_url_bar }}" alt="Diagramme en barres" class="w-full h-48 object-cover rounded-lg">
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-700 text-center text-xl mt-10">🚫 Aucune statistique disponible pour le moment.</p>
+            {% endif %}
+        </section>
+    </main>
+
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');

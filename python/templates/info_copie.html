@@ -10,124 +10,130 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-<body class="bg-blue-50">
-    <div class="dashboard">
+<body class="bg-gradient-to-r from-blue-100 to-blue-50">
     
-        <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-        <div class="fixed top-4 right-4 z-50">
-            <a href="/copies" class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition">
-                <i class="fas fa-arrow-left"></i> Retour aux devoirs
+    <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+        <div class="p-6">
+            <h2 class="text-8xl font-extrabold drop-shadow-2xl">
+                <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
+                    DEMIX
+                </span>
+            </h2>
+            
+            <ul class="mt-6 space-y-4">
+                <li>
+                    <a href="/accueilp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-home text-lg"></i>
+                        <span>Accueil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/examen" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-file-alt text-lg"></i>
+                        <span>Examens</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/copies" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-file-upload text-lg"></i>
+                        <span>Copies soumises</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/notep" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-pen text-base"></i>
+                        <span>Notes et corrections</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/statistiquesp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                        <i class="fas fa-chart-bar text-base"></i>
+                        <span>Statistiques</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="p-6">
+            <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                <i class="fas fa-sign-out-alt text-lg"></i>
+                <span>Déconnexion</span>
             </a>
         </div>
+    </nav>
+
     
+    <main class="min-h-screen p-4 ml-0 md:ml-64">
+        <h2 class="text-2xl font-bold text-blue-900 mb-6 text-center">📄 Informations des devoirs</h2>
 
-      
-        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
-            <div class="p-6">
-                <h2 class="text-8xl font-extrabold drop-shadow-2xl">
-                    <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 animate-gradient bg-[length:200%_200%] hover:bg-[length:300%_300%] transition-all duration-500">
-                        DEMIX
-                    </span>
-                </h2>
-                
-              
-                <ul class="mt-6 space-y-4">
-                    <li>
-                        <a href="/accueilp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-home text-lg"></i>
-                            <span>Accueil</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/examen" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-file-alt text-lg"></i>
-                            <span>Examens</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/copies" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-file-upload text-lg"></i>
-                            <span>Copies soumises</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/notep" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-pen text-base"></i>
-                            <span>Notes et corrections</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/statistiquesp" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-chart-bar text-base"></i>
-                            <span>Statistiques</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Bouton de déconnexion -->
-            <div class="p-6">
-                <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
-                    <i class="fas fa-sign-out-alt text-lg"></i>
-                    <span>Déconnexion</span>
-                </a>
-            </div>
-        </nav>
-
-        <div class="main-content">
-            <section id="home" class="home-section">
-                <div class="bg-white p-6 rounded-xl shadow-md mb-6">
-                    <h2 class="text-2xl font-semibold text-blue-900 mb-4">Informations des devoirs</h2>
-                    {% for copie in infocopies %}
-                    <div class="mb-6">
-                        <h3 class="text-xl font-semibold text-blue-900">Étudiant : {{ copie[0] }}</h3>
-                        <p class="text-gray-600">Classe : {{ copie[1] }}</p>
-                        <p class="text-gray-600">Nom du devoir : {{ copie[2] }}</p>
-                        <p class="text-gray-600">Date limite de soumission : {{ copie[6] }}</p>
-                        <p class="text-gray-600">Date de soumission par l'élève : {{ copie[4] }}</p>
+        <div class="bg-white p-6 rounded-xl shadow-lg">
+            {% for copie in infocopies %}
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-900 mb-3">Étudiant : {{ copie[0] }}</h3>
+                    <div class="space-y-2 text-gray-700">
+                        <p><strong>🏫 Classe :</strong> {{ copie[1] }}</p>
+                        <p><strong>📌 Nom du devoir :</strong> {{ copie[2] }}</p>
+                        <p><strong>📅 Date limite de soumission :</strong> {{ copie[6] }}</p>
+                        <p><strong>📅 Date de soumission :</strong> {{ copie[4] }}</p>
                         <a href="{{ copie[3] }}" download="{{ copie[2] }}_Etudiant_{{ copie[0] }}.pdf" class="text-blue-600 hover:text-blue-800">
-                            Télécharger la copie
+                            <i class="fas fa-download mr-2"></i> Télécharger la copie
                         </a>
                     </div>
+                </div>
 
-                    {% if not note %}
+                {% if not note %}
+              
                     <form action="/notercopie" method="post" enctype="multipart/form-data" class="space-y-4">
                         <div>
-                            <label for="note" class="block text-gray-700 font-semibold">Note :</label>
-                            <input type="number" name="note" id="note" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
+                            <label for="note" class="block text-gray-700 font-semibold mb-1">Note :</label>
+                            <input type="number" name="note" id="note" required class="w-full px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
                         </div>
                         <div>
-                            <label for="commentaire" class="block text-gray-700 font-semibold">Commentaire :</label>
-                            <input type="text" name="commentaire" id="commentaire" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
+                            <label for="commentaire" class="block text-gray-700 font-semibold mb-1">Commentaire :</label>
+                            <textarea name="commentaire" id="commentaire" class="w-full px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600"></textarea>
                         </div>
                         <input type="text" name="id" value="{{ copie[5] }}" readonly hidden>
-                        <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-300">
-                            <i class="fas fa-upload mr-2"></i> Corriger
-                        </button>
-                    </form>
-                    {% else %}
-                    <p class="text-green-500 font-semibold">Note : {{ note }}</p>
-                    <form action="/updatenote" method="post" class="space-y-4">
-                        <div>
-                            <label for="newnote" class="block text-gray-700 font-semibold">Modifier la note :</label>
-                            <input type="number" name="newnote" id="newnote" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
+                        
+                        
+                        <div class="flex justify-between items-center">
+                            <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white py-1 px-4 rounded-lg transition duration-300 text-sm">
+                                <i class="fas fa-upload mr-2"></i> Corriger
+                            </button>
+                          
                         </div>
-                        <input type="text" name="id" value="{{ copie[5] }}" readonly hidden>
-                        <button type="submit" class="bg-yellow-600 hover:bg-yellow-500 text-white py-2 px-4 rounded-lg transition duration-300">
-                            Modifier
-                        </button>
                     </form>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </section>
-        </div>
-    </div>
+                {% else %}
+                  
+                    <div class="space-y-4">
+                        <p class="text-green-500 font-semibold">Note : {{ note }}</p>
+                        <form action="/updatenote" method="post" class="space-y-4">
+                            <div>
+                                <label for="newnote" class="block text-gray-700 font-semibold mb-1">Modifier la note :</label>
+                                <input type="number" name="newnote" id="newnote" class="w-full px-3 py-1 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600">
+                            </div>
+                            <input type="text" name="id" value="{{ copie[5] }}" readonly hidden>
+                            <button type="submit" class="bg-yellow-600 hover:bg-yellow-500 text-white py-1 px-4 rounded-lg transition duration-300 text-sm">
+                                Modifier
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            {% endfor %}
 
-  
+           
+            <div class="mt-6">
+                <a href="/copie" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center text-sm w-fit">
+                    <i class="fas fa-arrow-left mr-2"></i> Retour vers le devoir de l'élève
+                </a>
+            </div>
+        </div>
+    </main>
+
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');

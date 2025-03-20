@@ -9,16 +9,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
 </head>
-
-<body >
-    <div class="dashboard">
+<body class="bg-gray-100">
+    <div class="dashboard flex">
         <!-- Bouton pour ouvrir/fermer la sidebar -->
-        <button id="sidebarToggle" aria-label="Ouvrir/fermer la barre latérale" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md shadow-lg hover:bg-gray-800 transition">
+        <button id="sidebarToggle" class="fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md shadow-lg hover:bg-gray-800 transition">
             <i class="fa-solid fa-bars"></i>
         </button>
 
-    
-        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64  text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
             <div class="p-6">
                 <h2 class="text-8xl font-extrabold drop-shadow-2xl">
                     <span class="text-blue-500 transition-all duration-500 hover:text-blue-600 hover:scale-105">ACA</span>
@@ -26,28 +24,30 @@
                         DEMIX
                     </span>
                 </h2>
+                
+                <!-- Menu de la sidebar -->
                 <ul class="mt-6 space-y-4">
                     <li>
-                        <a href="/accueiletudiant" data-target="home" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-home text-xl"></i>
+                        <a href="/accueiletudiant" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-home text-lg"></i>
                             <span>Accueil</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/devoirs" data-target="exam-topics" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-tasks text-xl"></i>
+                        <a href="/devoirs" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-tasks text-lg"></i>
                             <span>Devoirs</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/notes" data-target="grades" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-file-alt text-xl"></i>
+                        <a href="/notes" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-file-alt text-lg"></i>
                             <span>Mes notes</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/notifications" data-target="notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
-                            <i class="fas fa-envelope text-xl"></i>
+                        <a href="/notifications" class="sidebar-link flex items-center space-x-3 px-4 py-3 rounded-md transition hover:bg-gray-800">
+                            <i class="fas fa-envelope text-lg"></i>
                             <span>Notifications</span>
                         </a>
                     </li>
@@ -55,23 +55,22 @@
             </div>
 
             <div class="p-6">
-                <a href="/deconnection" id="logout" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
-                    <i class="fas fa-sign-out-alt text-xl"></i>
+                <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
+                    <i class="fas fa-sign-out-alt text-lg"></i>
                     <span>Déconnexion</span>
                 </a>
             </div>
-            
         </nav>
 
-        <!-- Contenu principal -->
-        <main class="flex-1 p-6 ml-0 md:ml-64 transition-all">
+
+        <main class="flex-1 p-6 md:ml-64 transition-all">
             <h2 class="text-2xl font-semibold mb-6 text-gray-800">📑 Notes Corrigées</h2>
             <div class="bg-white p-6 shadow-lg rounded-lg">
                 <h3 class="text-xl font-semibold mb-6 text-gray-800"><i class="fas fa-file-alt mr-2"></i> Liste des Notes</h3>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                    <table class="w-full table-auto border-collapse border border-gray-200 rounded-lg shadow-md">
                         <thead>
-                            <tr class="bg-gray-900 text-white">
+                            <tr class="bg-gray-900 text-white text-left">
                                 <th class="py-3 px-5">Type</th>
                                 <th class="py-3 px-5">Nom</th>
                                 <th class="py-3 px-5">Date de soumission</th>
@@ -80,11 +79,11 @@
                         </thead>
                         <tbody>
                             {% for note in notes %}
-                            <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-200">
-                                <td class="py-3 px-5">{{ note.type }}</td>
-                                <td class="py-3 px-5">{{ note.nom_examen }}</td>
-                                <td class="py-3 px-5">{{ note.date_soumission }}</td>
-                                <td class="py-3 px-5">
+                            <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200 transition">
+                                <td class="py-3 px-5 whitespace-nowrap">{{ note.type }}</td>
+                                <td class="py-3 px-5 whitespace-nowrap">{{ note.nom_examen }}</td>
+                                <td class="py-3 px-5 whitespace-nowrap">{{ note.date_soumission }}</td>
+                                <td class="py-3 px-5 whitespace-nowrap">
                                     {% if note.note is not none %}
                                         <i class="fas fa-check-circle text-green-500 mr-2"></i>{{ note.note }}/20
                                     {% else %}
@@ -103,11 +102,9 @@
         </main>
     </div>
 
-    <!-- Script pour gérer la sidebar -->
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
         });
     </script>
 </body>

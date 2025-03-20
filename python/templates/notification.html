@@ -13,7 +13,8 @@
 <body class="bg-gray-50">
     <div class="dashboard">
         
-        <button id="sidebarToggle" aria-label="Ouvrir/fermer la barre latérale" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md shadow-lg hover:bg-gray-800 transition">
+        <button id="sidebarToggle" aria-label="Ouvrir/fermer la barre latérale" aria-expanded="false"
+            class="fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md shadow-lg hover:bg-gray-800 transition focus:outline-none">
             <i class="fa-solid fa-bars"></i>
         </button>
 
@@ -62,7 +63,7 @@
             
         </nav>
 
-        <!-- Contenu principal -->
+
         <main class="flex-1 p-6 ml-0 md:ml-64 transition-all">
             <h2 class="text-2xl font-semibold mb-6 text-gray-800">📢 Notifications</h2>
             <div class="bg-white p-6 shadow-lg rounded-lg">
@@ -70,7 +71,7 @@
                 <div class="overflow-x-auto">
                     <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                         <thead>
-                            <tr class="bg-gray-900 text-white">
+                            <tr class="bg-gray-900 text-white text-left">
                                 <th class="py-3 px-5">Nom</th>
                                 <th class="py-3 px-5">Professeur</th>
                                 <th class="py-3 px-5">Date limite</th>
@@ -81,10 +82,10 @@
                         <tbody>
                             {% for examen in examens %}
                             <tr class="border-b border-gray-200 bg-gray-100 hover:bg-gray-200 transition-colors duration-200">
-                                <td class="py-3 px-5">{{ examen.nom }}</td>
-                                <td class="py-3 px-5">{{ examen.prof }}</td>
-                                <td class="py-3 px-5">{{ examen.datedesoumission }}</td>
-                                <td class="py-3 px-5">{{ examen.date_soumission }}</td>
+                                <td class="py-3 px-5 whitespace-nowrap">{{ examen.nom }}</td>
+                                <td class="py-3 px-5 whitespace-nowrap">{{ examen.prof }}</td>
+                                <td class="py-3 px-5 whitespace-nowrap">{{ examen.date_limite }}</td>
+                                <td class="py-3 px-5 whitespace-nowrap">{{ examen.date_soumission }}</td>
                                 <td class="py-3 px-5 font-bold {% if examen.statut == 'Soumis' %}text-green-500{% else %}text-red-500{% endif %}">
                                     {{ examen.statut }}
                                 </td>
@@ -100,11 +101,11 @@
         </main>
     </div>
 
-    <!-- Script pour gérer la sidebar -->
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', function() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('-translate-x-full');
+            this.setAttribute('aria-expanded', sidebar.classList.contains('-translate-x-full') ? 'false' : 'true');
         });
     </script>
 </body>

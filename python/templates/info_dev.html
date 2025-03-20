@@ -11,12 +11,12 @@
 </head>
 <body class="bg-blue-50">
     <div class="dashboard">
-        
+   
         <button id="sidebarToggle" class="sidebar-toggle fixed left-4 top-4 z-50 p-2 bg-gray-900 text-white rounded-md">
             <i class="fa-solid fa-bars"></i>
         </button>
 
-     
+      
         <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-blue-900 text-white shadow-lg transition-transform transform -translate-x-full md:translate-x-0 flex flex-col justify-between">
             <div class="p-6">
                 <h2 class="text-8xl font-extrabold drop-shadow-2xl">
@@ -55,7 +55,6 @@
                 </ul>
             </div>
 
-        
             <div class="p-6">
                 <a href="/deconnection" class="sidebar-link flex items-center space-x-3 text-red-600 hover:text-red-700 transition font-medium text-lg">
                     <i class="fas fa-sign-out-alt text-lg"></i>
@@ -66,48 +65,60 @@
 
         <div class="main-content">
             <section id="home" class="home-section">
+          
                 <h2 class="text-2xl font-semibold mb-6 text-gray-800">Détails du Devoir</h2>
-
+        
+             
                 <div class="bg-white p-6 rounded-xl shadow-md">
                     {% for devoir in infodevoirs %}
-                    <div class="mb-6 p-6 bg-blue-50 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-blue-900">{{ devoir[1] }}</h3>
-                        <p class="text-gray-700 mt-2"><strong>Description :</strong> {{ devoir[2] }}</p>
-                        <p class="text-gray-700"><strong>Type :</strong> {{ devoir[3] }}</p>
-                        {% if prof_nom %}
-                        <p class="text-gray-700"><strong>Professeur :</strong> {{ prof_nom }}</p>
+                      
+                        <div class="mb-6 p-6 bg-blue-50 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold text-blue-900">{{ devoir[1] }}</h3>
+                            <p class="text-gray-700 mt-2"><strong>Description :</strong> {{ devoir[2] }}</p>
+                            <p class="text-gray-700"><strong>Type :</strong> {{ devoir[3] }}</p>
+                            {% if prof_nom %}
+                                <p class="text-gray-700"><strong>Professeur :</strong> {{ prof_nom }}</p>
+                            {% endif %}
+                            <p class="text-gray-700"><strong>Date limite :</strong> {{ devoir[8] }}</p>
+                            <a href="{{ devoir[5] }}" download="{{ devoir[1] }}.pdf" class="inline-block mt-4 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-download mr-2"></i> Télécharger le fichier
+                            </a>
+                        </div>
+        
+                    
+                        {% if soumis == False %}
+                        
+                            <section class="mt-6 p-6 bg-white shadow-md rounded-lg">
+                                <h2 class="text-xl font-semibold text-gray-800">Soumettre un Devoir</h2>
+                                <form action="/soumettre" method="post" enctype="multipart/form-data" class="mt-4 space-y-4">
+                                    <label for="copie" class="text-gray-700">Sélectionner un fichier PDF :</label>
+                                    <input type="file" name="copie" id="copie" accept="application/pdf" required class="block w-full border border-gray-300 p-3 rounded-lg">
+                                    <input type="hidden" name="idev" value="{{ devoir[0] }}">
+                                    <input type="hidden" name="ideleve" value="{{ session['id'] }}">
+                                    <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
+                                        <i class="fas fa-upload mr-2"></i> Soumettre
+                                    </button>
+                                </form>
+                            </section>
+                        {% else %}
+                    
+                            <section class="mt-6 p-6 bg-green-100 shadow-md rounded-lg text-green-800">
+                                <h2 class="text-xl font-semibold">Devoir déjà soumis</h2>
+                            </section>
                         {% endif %}
-                        <p class="text-gray-700"><strong>Date limite :</strong> {{ devoir[8] }}</p>
-                        <a href="{{ devoir[5] }}" download="{{ devoir[1] }}.pdf" class="inline-block mt-4 px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                            <i class="fas fa-download mr-2"></i> Télécharger le fichier
-                        </a>
-                    </div>
-
-                    {% if soumis == False %}
-                    <section class="mt-6 p-6 bg-white shadow-md rounded-lg">
-                        <h2 class="text-xl font-semibold text-gray-800">Soumettre un Devoir</h2>
-                        <form action="/soumettre" method="post" enctype="multipart/form-data" class="mt-4 space-y-4">
-                            <label for="copie" class="text-gray-700">Sélectionner un fichier PDF :</label>
-                            <input type="file" name="copie" id="copie" accept="application/pdf" required class="block w-full border border-gray-300 p-3 rounded-lg">
-                            <input type="hidden" name="idev" value="{{ devoir[0] }}">
-                            <input type="hidden" name="ideleve" value="{{ session['id'] }}">
-                            <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center">
-                                <i class="fas fa-upload mr-2"></i> Soumettre
-                            </button>
-                        </form>
-                    </section>
-                    {% else %}
-                    <section class="mt-6 p-6 bg-green-100 shadow-md rounded-lg text-green-800">
-                        <h2 class="text-xl font-semibold">Devoir déjà soumis</h2>
-                    </section>
-                    {% endif %}
                     {% endfor %}
+                </div>
+        
+                
+                <div class="mt-6">
+                    <a href="/devoirs" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center text-sm w-fit">
+                        <i class="fas fa-arrow-left mr-2"></i> Retour aux devoirs
+                    </a>
                 </div>
             </section>
         </div>
-    </div>
 
- 
+
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('-translate-x-full');

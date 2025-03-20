@@ -155,14 +155,14 @@ p {
     align-items: center;
     flex-direction: column;
     text-align: center;
-    margin-top: 20px; /* Ajuste l'espace en haut si nécessaire */
+    margin-top: 20px; 
 }
 
 .favicon {
-    width: 80px;  /* Augmente la taille */
+    width: 80px;  
     height: 80px;
-    border-radius: 50%;  /* Rend l'icône circulaire */
-    margin-bottom: 10px; /* Ajoute un espace entre l'icône et le titre */
+    border-radius: 50%;  
+    margin-bottom: 10px; 
 }
 
 @media (min-width: 600px) {
