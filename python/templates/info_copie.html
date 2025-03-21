@@ -83,6 +83,7 @@
                         <a href="{{ copie[3] }}" download="{{ copie[2] }}_Etudiant_{{ copie[0] }}.pdf" class="text-blue-600 hover:text-blue-800">
                             <i class="fas fa-download mr-2"></i> Télécharger la copie
                         </a>
+    
                     </div>
                 </div>
 
@@ -106,6 +107,12 @@
                             </button>
                           
                         </div>
+                    </form> <br>
+                    <form action="/copie" method="post">
+                        <input type="hidden" name="id" value="{{ copie[5] }}">
+                        <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white py-1 px-4 rounded-lg transition duration-300 text-sm">
+                            <i class="fas fa-code mr-2"></i> Retour à la copie de l'étudiant
+                        </button>
                     </form>
                 {% else %}
                   
@@ -120,17 +127,17 @@
                             <button type="submit" class="bg-yellow-600 hover:bg-yellow-500 text-white py-1 px-4 rounded-lg transition duration-300 text-sm">
                                 Modifier
                             </button>
-                        </form>
+                        </form> <br>
                     </div>
+                    <form action="/copie" method="post">
+                        <input type="hidden" name="id" value="{{ copie[5] }}">
+                        <button type="submit" class="bg-blue-900 hover:bg-blue-700 text-white py-1 px-4 rounded-lg transition duration-300 text-sm">
+                           Retour à la copie de l'étudiant
+                        </button>
+                    </form>
                 {% endif %}
             {% endfor %}
-
-           
-            <div class="mt-6">
-                <a href="/copie" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center text-sm w-fit">
-                    <i class="fas fa-arrow-left mr-2"></i> Retour vers le devoir de l'élève
-                </a>
-            </div>
+   
         </div>
     </main>
 

@@ -128,7 +128,7 @@ def connexionetudiant():
 
 def statistiques_etudiant():
     sess_id = session.get('id') 
-    # ID de l'étudiant connecté
+  
     db=connect()
 
     curseur = db.cursor()
@@ -190,12 +190,12 @@ def timeline_eleve():
         db.close()
 
 def timeline_prof():
-    sess_username = session.get('username')
-    id=request.form['id']
+    idex=request.form['id']
     sess_id = session.get('id')
     db=connect()
     cursor = db.cursor()
     print(sess_id)  
+    print(id)
     requete = """
     SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id,ex.datedesoumission
     FROM copies c
@@ -203,14 +203,14 @@ def timeline_prof():
     JOIN examens ex ON c.id_examen = ex.id
     WHERE ex.idprof = %s and ex.id=%s  
     """
-    cursor.execute(requete, (sess_id,id))
+    cursor.execute(requete, (sess_id,idex))
     devoirsoumis = cursor.fetchall()
-    print(devoirsoumis)  
+    print(devoirsoumis) 
 
     db.commit()
     db.close()
 
-    return render_template('copie.html', devoirsoumis=devoirsoumis)
+    return render_template('copie.html', devoirsoumis=devoirsoumis,idex=idex)
 
 def connexionetu():
     if request.method == 'POST':
@@ -489,6 +489,7 @@ def infodev():
 def infocopiecode():
     sess_username=session.get('username')
     idcopie=request.form['id']
+    idex=request.form['idexam']
     sess_id = session.get('id')
     db=connect()
     curseur=db.cursor()
@@ -497,9 +498,9 @@ def infocopiecode():
     FROM copies c
     JOIN etudiants e ON c.id_etudiant = e.id
     JOIN examens ex ON c.id_examen = ex.id
-    WHERE ex.idprof = %s and c.id=%s
+    WHERE ex.idprof = %s and c.id=%s and ex.id=%s
     """
-    curseur.execute(requete, (sess_id,idcopie))
+    curseur.execute(requete, (sess_id,idcopie,idex))
     infocopies=curseur.fetchall()
     db.commit()
     requete="""select note from corrections where id_copie=%s"""
