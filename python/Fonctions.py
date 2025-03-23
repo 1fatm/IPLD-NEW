@@ -9,7 +9,7 @@ import pandas as pd
 from io import BytesIO
 import seaborn as sns
 import matplotlib
-matplotlib.use('Agg')  # Utilisation d'un backend non interactif
+matplotlib.use('Agg')  
 import matplotlib.pyplot as plt
 
 
@@ -133,12 +133,10 @@ def statistiques_etudiant():
 
     curseur = db.cursor()
 
-    # Nombre d'examens soumis par l'étudiant
     requete = "SELECT COUNT(*) FROM copies WHERE id_etudiant = %s"
     curseur.execute(requete, (sess_id,))
     soumis = curseur.fetchone()[0]
 
-    # Nombre d'examens non soumis par l'étudiant
     requete = """
         SELECT COUNT(*) 
         FROM examens 
@@ -148,7 +146,6 @@ def statistiques_etudiant():
     curseur.execute(requete, (sess_id, sess_id))
     non_soumis = curseur.fetchone()[0]
 
-    # Nombre d'examens en retard (non soumis et date dépassée)
     requete = """
         SELECT COUNT(*) 
         FROM examens 
@@ -287,7 +284,7 @@ def ajouter_devoir():
     chemin1 = os.path.join('static', 'images','examens', fichier_filename)
     print(f"Relative path for database: {chemin1}")
 
-    repertoire_correction = os.path.join('python', 'static', 'images','corrections')  # Use os.path.join for cross-platform compatibility
+    repertoire_correction = os.path.join('python', 'static', 'images','corrections')  
     if not os.path.exists(repertoire_correction):
         print(f"Creating directory correction: {repertoire_correction}")
         os.makedirs(repertoire_correction)
@@ -450,7 +447,6 @@ def noteria(id_etudiant, id_examen, chemin_copie, id_copie):
         elif ligne.startswith("Commentaire:"):
             commentaire = ligne.split(":", 1)[1].strip()
 
-    # Enregistrer la correction dans la base de données
     try:
         curseur.execute(
             "INSERT INTO corrections (id_copie, note, commentaire, correction_automatique) VALUES (%s, %s, %s, %s)",
@@ -518,21 +514,19 @@ def notercopie():
     note = request.form['note']
     commentaire = request.form['commentaire']
     
-    db = connect()  # Connexion à la base de données
-    curseur = db.cursor(buffered=True)  # Curseur avec buffered=True pour éviter l'erreur "Unread result found"
+    db = connect()  
+    curseur = db.cursor(buffered=True)  
 
     try:
-        # Vérifier si une note existe déjà pour cette copie
         requete = '''SELECT note FROM corrections WHERE id_copie = %s'''
         curseur.execute(requete, (idcopie,))
-        verifnote = curseur.fetchone()  # Utiliser fetchone() pour récupérer un seul résultat
+        verifnote = curseur.fetchone()  
         db.commit()
 
-        if verifnote and verifnote[0]:  # Si une note existe déjà
+        if verifnote and verifnote[0]:  
             verifnote = verifnote[0]
             print(f"Note existante : {verifnote}")
 
-            # Récupérer les informations de la copie
             requete = """
                 SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id, ex.datedesoumission
                 FROM copies c
@@ -552,7 +546,6 @@ def notercopie():
             curseur.execute(requete, values)
             db.commit()
 
-            # Récupérer les informations de la copie après l'insertion
             requete = """
                 SELECT e.nom_complet, e.classe, ex.nom AS examen_nom, c.fichier_pdf, c.date_soumission, c.id, ex.datedesoumission
                 FROM copies c
@@ -568,12 +561,12 @@ def notercopie():
 
     except Exception as e:
         print(f"Erreur : {e}")
-        db.rollback()  # Annuler les changements en cas d'erreur
+        db.rollback()  
         return "Une erreur s'est produite. Veuillez réessayer."
 
     finally:
-        curseur.close()  # Fermer le curseur
-        db.close()  # Fermer la connexion à la base de données
+        curseur.close()  
+        db.close()  
 def updatenote():
     idcopie=request.form['id']
     newnote=request.form['newnote']
