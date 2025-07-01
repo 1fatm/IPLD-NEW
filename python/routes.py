@@ -35,6 +35,15 @@ def Inscriptionprof():
 def Inscriptionprofpage():
     return render_template('inscription_prof.html')
 
+@app.route('/connexionprof')
+def connexionprof_route():
+    return render_template('connexionprof.html')
+@app.route('/inscriptionprof')
+def inscriptionprof_route():
+    
+    return render_template('inscriptionprof.html')
+
+
 @app.route('/inscriptionetudiantpage')
 def Inscriptionetupage():
     return render_template('inscription_etudiant.html')
@@ -149,7 +158,6 @@ def voirnotes():
 @app.route('/chatbot', methods=['POST'])
 def ollama():
     return chatbot()
-
 @app.route('/generernote',methods=['POST'])
 def genererfichiernote():
     return generernote()
