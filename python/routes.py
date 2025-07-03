@@ -43,6 +43,9 @@ def deconnexion_route():
     
     return render_template('accueil.html')       
     
-    return render_template('synthese.html')
+@app.route('/pageprof')
+def pageprof_route():
+    return render_template('pageprof.html')
+   
 if __name__ == '__main__':
     app.run(debug=True)

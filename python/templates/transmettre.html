@@ -12,22 +12,43 @@
   <div class="dashboard-container">
     
     <!-- SIDEBAR -->
-    <nav class="sidebar">
-      <div class="logo-section">
-        <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
-      </div>
-      <ul class="menu">
-        <li><a href="{{ url_for('pagechefdepartement') }}" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
-        <li><a href="{{ url_for('consulterpage_route') }}" class="menu-link"><i class="fas fa-list"></i> Consulter</a></li>
-        <li><a href="{{ url_for('soumettre_demande') }}" class="menu-link"><i class="fas fa-plus-circle"></i> Nouvelle demande</a></li>
-        <li><a href="{{ url_for('synthese_route') }}" class="menu-link"><i class="fas fa-file-alt"></i> Synthèse</a></li>
-        <li class="active"><a href="{{ url_for('transmettre_route') }}" class="menu-link"><i class="fas fa-paper-plane"></i> Transmettre</a></li>
-      </ul>
-      <div class="logout">
-        <i class="fas fa-sign-out-alt"></i> Déconnexion
-      </div>
-    </nav>
-
+     <nav class="sidebar">
+  <div class="logo-section">
+    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
+  </div>
+  <ul class="menu">
+    <li>
+      <a href="{{ url_for('pagechefdepartement') }}" class="menu-link">
+        <i class="fas fa-home"></i> Accueil
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('consulterpage_route') }}" class="menu-link">
+        <i class="fas fa-list"></i> Consulter
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('soumettre_demande') }}" class="menu-link">
+        <i class="fas fa-plus-circle"></i> Nouvelle demande
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('synthese_route') }}"class="menu-link">
+        <i class="fas fa-file-alt"></i> Synthèse
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('transmettre_route') }}"class="menu-link">
+        <i class="fas fa-paper-plane"></i> Transmettre
+      </a>
+    </li>
+  </ul>
+  <div class="logout">
+   
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    
+  </div>
+</nav>
     <!-- MAIN CONTENT -->
     <main class="main-content">
       <h1>Budgets à Transmettre</h1>

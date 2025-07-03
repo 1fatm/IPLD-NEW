@@ -24,7 +24,7 @@
   left: 0;
   width: 260px;
   height: 100vh;
-  background-color: #033a64;
+  background-color: #E3EFFF;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -36,11 +36,11 @@
 
     .logo-section {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 5px;
     }
 
     .logo {
-      width: 80px;
+      width: 100px;
     }
 
    .menu li {
@@ -53,14 +53,14 @@
   align-items: center;
   gap: 10px;
   padding: 12px 15px;
-  color: white;
+  color:#343a40;
   text-decoration: none;
   border-radius: 8px;
   transition: background-color 0.3s ease;
 }
 
 .menu-link:hover {
-  background-color: #1e3a8a;
+  background-color: #C1D9F5;
 }
 
 .menu li.active .menu-link {
@@ -109,7 +109,7 @@
     .main-content h1 {
       font-size: 1.8rem;
       font-weight: 600;
-      color: #1e3a8a;
+      color:#3175B6;
       margin-bottom: 5px;
     }
 
@@ -165,7 +165,7 @@
 
     .historique h2 {
       font-size: 1.3rem;
-      color: #1e3a8a;
+      color:#3175B6;
       margin-bottom: 15px;
     }
 
