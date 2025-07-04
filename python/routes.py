@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptioncheffonction,inscriptionproffonction, inscriptiondirectionfonction
+from python.authentification import inscriptioncheffonction,inscriptionproffonction, inscriptiondirectionfonction
 @app.route('/')
 def index():
     return render_template('accueil.html')
