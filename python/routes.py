@@ -1,7 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-
-
+from python.Fonctions import connexioncheffonction, inscriptioncheffonction
 @app.route('/')
 def index():
     return render_template('accueil.html')
@@ -46,7 +45,15 @@ def synthese_route():
 @app.route('/transmettredemande')
 def transmettre_route():
     return render_template('transmettre.html')
-    
+
+@app.route('/connexionchefcode') 
+def connexionchefcode_route():
+    return connexioncheffonction()
+
+@app.route('/inscriptionchefcode') 
+def inscriptionchefcode_route():
+    return inscriptioncheffonction()
+
 @app.route('/deconnexion')
 def deconnexion_route():
     
