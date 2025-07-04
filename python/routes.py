@@ -1,10 +1,9 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import connexioncheffonction, inscriptioncheffonction
+from python.Fonctions import inscriptioncheffonction,inscriptionproffonction, inscriptiondirectionfonction
 @app.route('/')
 def index():
     return render_template('accueil.html')
-
 
 @app.route('/chefdedepartement')
 def pagechefdepartement():
@@ -46,13 +45,15 @@ def synthese_route():
 def transmettre_route():
     return render_template('transmettre.html')
 
-@app.route('/connexionchefcode') 
-def connexionchefcode_route():
-    return connexioncheffonction()
-
-@app.route('/inscriptionchefcode') 
+@app.route('/inscriptionchefcode', methods=['POST']) 
 def inscriptionchefcode_route():
     return inscriptioncheffonction()
+@app.route('/inscriptionprofcode', methods=['POST']) 
+def inscriptionprofcode_route():
+    return inscriptionproffonction()
+@app.route('/inscriptiondirectioncode', methods=['POST']) 
+def inscriptiondirectioncode_route():
+    return inscriptiondirectionfonction()
 
 @app.route('/deconnexion')
 def deconnexion_route():
