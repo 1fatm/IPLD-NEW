@@ -1,6 +1,5 @@
 from flask import Flask, render_template,session
 from python import app
-from python.Fonctions import inscriptionetu,inscriptionprof,connexionprof,connexionetudiant,ajouter_devoir,infodev,soumettrefichier,infocopiecode,notercopie,updatenote,timeline_prof,afficher_note,deconnection,afficher_examens,trier_classe,countcopiesnonnotees,trier_date,statistiques_etudiant,afficher_devoirs,generer_statistiques,afficher_notifications,afficher_notes,voirlesnotes,statistiquesp,chatbot,generernote,copieparexam
 
 
 @app.route('/')
@@ -15,16 +14,26 @@ def pagechefdepartement():
 @app.route('/connexionprof')
 def connexionprof_route():
     return render_template('connexionprof.html')
+@app.route('/connexionchef')
+def connexionchef_route():
+    return render_template('connexionchefdepartement.html')
+@app.route('/inscriptionchef')
+def inscriptionchef_route():
+    return render_template('inscriptionchefdepartement.html')
 @app.route('/inscriptionprof')
 def inscriptionprof_route():
-    
     return render_template('inscriptionprof.html')
 
 @app.route('/consulterlesdemandes')
 def consulterpage_route():
     
     return render_template('consulter.html')
-
+@app.route('/connexiondirection')
+def connexiondirection_route():
+    return render_template('connexiondirection.html')
+@app.route('/inscriptiondirection')
+def inscriptiondirection_route():
+    return render_template('inscriptiondirection.html')
 @app.route('/soumettredemande')
 def soumettre_demande():
     
