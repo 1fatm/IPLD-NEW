@@ -213,3 +213,4 @@ def connexiondirectionfonction():
 def deconnexionfonction():
     session.clear()  
     return redirect(url_for('index'))
+
