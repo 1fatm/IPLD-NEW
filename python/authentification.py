@@ -208,3 +208,8 @@ def connexiondirectionfonction():
     except Exception as e:
         print("Erreur lors de la connexion :", e)
         return render_template("connexiondirection.html", error="Identifiants invalides. Veuillez réessayer.")
+
+
+def deconnexionfonction():
+    session.clear()  
+    return redirect(url_for('index'))

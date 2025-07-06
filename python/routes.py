@@ -1,6 +1,6 @@
 from flask import Flask, render_template,session
 from python import app
-from python.authentification import inscriptioncheffonction,inscriptionproffonction, inscriptiondirectionfonction,connexionproffonction, connexioncheffonction, connexiondirectionfonction
+from python.authentification import inscriptioncheffonction,inscriptionproffonction, inscriptiondirectionfonction,connexionproffonction, connexioncheffonction, connexiondirectionfonction, deconnexionfonction
 @app.route('/')
 def index():
     return render_template('accueil.html')
@@ -52,12 +52,7 @@ def inscriptionprofcode_route():
     return inscriptionproffonction()
 @app.route('/inscriptiondirectioncode', methods=['POST']) 
 def inscriptiondirectioncode_route():
-    return inscriptiondirectionfonction()
-
-@app.route('/deconnexion')
-def deconnexion_route():
-    
-    return render_template('accueil.html')       
+    return inscriptiondirectionfonction()   
     
 @app.route('/pageprof')
 def pageprof_route():
@@ -74,6 +69,10 @@ def connexionchefcode_route():
 @app.route('/connexiondirectioncode', methods=['POST'])
 def connexiondirectioncode_route():
     return connexiondirectionfonction()
-   
+
+@app.route('/deconnexion')
+def deconnexion_route():
+    return deconnexionfonction()
+
 if __name__ == '__main__':
     app.run(debug=True)
