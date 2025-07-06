@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Budget Primitif - ESP UCAD</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pageprof.css') }}" />
+  <style>
+ 
+
+    
+
+
+    /* TABLE STYLES */
+    .table-section {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      margin-bottom: 30px;
+      overflow-x: auto;
+    }
+
+    .table-section h2 {
+      font-size: 1.5rem;
+      color: #1e3a8a;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      min-width: 1200px;
+    }
+
+    thead {
+      background-color: #e5ecf6;
+      position: sticky;
+      top: 0;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+
+    th {
+      font-weight: 600;
+      color: #1e3a8a;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f5f9;
+    }
+
+    .account-code {
+      font-weight: 600;
+      color: #1e40af;
+    }
+
+    .account-title {
+      font-weight: 500;
+    }
+
+    .total-row {
+      font-weight: 600;
+      background-color: #e5ecf6 !important;
+    }
+
+    .section-header {
+      font-weight: 600;
+      background-color: #dbeafe !important;
+    }
+
+    .subsection-header {
+      font-weight: 500;
+      background-color: #eff6ff !important;
+    }
+
+    .amount {
+      text-align: right;
+      font-family: 'Courier New', monospace;
+    }
+
+    .variation {
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+
+    .positive {
+      color: #16a34a;
+    }
+
+    .negative {
+      color: #dc2626;
+    }
+
+    .header-info {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header-info h3 {
+      margin: 5px 0;
+      color: #1e3a8a;
+    }
+
+    .header-info p {
+      margin: 3px 0;
+      color: #64748b;
+    }
+    .validation-container {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-valider {
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-valider:hover {
+  background-color: #15803d;
+}
+
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- SIDEBAR -->
+   <nav class="sidebar">
+  <div class="logo-section">
+    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
+  </div>
+  <ul class="menu">
+    <li>
+      <a href="{{ url_for('pagechefdepartement') }}" class="menu-link">
+        <i class="fas fa-home"></i> Accueil
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('consulterpage_route') }}" class="menu-link">
+        <i class="fas fa-list"></i> Consulter
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('soumettre_demande') }}" class="menu-link">
+        <i class="fas fa-plus-circle"></i> Nouvelle demande
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('synthese_route') }}"class="menu-link">
+        <i class="fas fa-file-alt"></i> Synthèse
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('transmettre_route') }}"class="menu-link">
+        <i class="fas fa-paper-plane"></i> Transmettre
+      </a>
+    </li>
+  </ul>
+  <div class="logout">
+    <a href="{{ url_for('deconnexion_route') }}" class="menu-link">
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    </a>
+  </div>
+
+</nav>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <h1>Budget Primitif</h1>
+      <p class="subtitle">Gestion 2024 - École Supérieure Polytechnique</p>
+
+      <div class="header-info">
+        <h3>UNIVERSITE CHEIKH ANTA DIOP DE DAKAR</h3>
+        <p>B.P. 5005- Dakar- Fann- Sénégal</p>
+        <p>Tel. +221 33 824 05 86 | Fax +221 33 825 28 83</p>
+        <p>Courriel : rectorat@ucad.edu.sn - Site web : http://www.ucad.sn</p>
+      </div>
+
+      <div class="table-section">
+        <h2>Budget Primitif 2024</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Classe</th>
+              <th>Cpte</th>
+              <th>C/Div</th>
+              <th>Sous cpte</th>
+              <th>Intitulé</th>
+              <th>BUDGET 2023 (FCFA)</th>
+              <th>REALISE 2023 (FCFA)</th>
+              <th>BUDGET 2024 (FCFA)</th>
+              <th>Variation (abs)</th>
+              <th>Variation (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- RECETTES ORDINAIRES -->
+            <tr class="section-header">
+              <td colspan="10">RECETTES ORDINAIRES</td>
+            </tr>
+            <tr class="subsection-header">
+              <td colspan="10">A1 - COMPTES DE LA SECTION FONCTIONNEMENT</td>
+            </tr>
+            
+            <!-- Compte de produit des activités ordinaires -->
+            <tr>
+              <td>VII</td>
+              <td colspan="3">Compte de produit des activités ordinaires</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Ventes -->
+            <tr>
+              <td></td>
+              <td class="account-code">70</td>
+              <td colspan="2">Ventes</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Droits universitaires -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td class="account-code">700</td>
+              <td></td>
+              <td>Droits universitaires</td>
+              <td class="amount">0</td>
+              <td class="amount">0</td>
+              <td class="amount">0</td>
+              <td class="variation">0</td>
+              <td class="variation">0%</td>
+            </tr>
+            
+            <!-- Droits d'inscription -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="account-code">7001</td>
+              <td>Droits d'inscription</td>
+              <td class="amount">0</td>
+              <td class="amount">0</td>
+              <td class="amount">0</td>
+              <td class="variation">0</td>
+              <td class="variation">0%</td>
+            </tr>
+            
+            <!-- Droits d'inscription administrative -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="account-code">70011</td>
+              <td>Droits d'inscription administrative</td>
+              <td class="amount">0</td>
+              <td class="amount">0</td>
+              <td class="amount">0</td>
+              <td class="variation">0</td>
+              <td class="variation">0%</td>
+            </tr>
+            
+            <!-- Droits d'inscription pédagogique -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="account-code">70012</td>
+              <td>Droits d'inscription pédagogique</td>
+              <td class="amount">116,885,131</td>
+              <td class="amount">104,215,000</td>
+              <td class="amount">108,950,000</td>
+              <td class="variation positive">-7,935,131</td>
+              <td class="variation negative">-6.79%</td>
+            </tr>
+            
+            <!-- Total Ventes -->
+            <tr class="total-row">
+              <td colspan="5">Total 70: Ventes</td>
+              <td class="amount">358,270,765</td>
+              <td class="amount">367,126,908</td>
+              <td class="amount">383,541,000</td>
+              <td class="variation positive">25,270,235</td>
+              <td class="variation positive">7.05%</td>
+            </tr>
+            
+            <!-- Subventions d'exploitation -->
+            <tr>
+              <td></td>
+              <td class="account-code">71</td>
+              <td colspan="2">Subventions d'exploitation</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Total Subventions -->
+            <tr class="total-row">
+              <td colspan="5">Total 71: Subventions</td>
+              <td class="amount">325,000,000</td>
+              <td class="amount">243,750,000</td>
+              <td class="amount">325,000,000</td>
+              <td class="variation">0</td>
+              <td class="variation">0%</td>
+            </tr>
+            
+            <!-- Autres produits -->
+            <tr>
+              <td></td>
+              <td class="account-code">75</td>
+              <td colspan="2">Autres produits</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Total Produits divers -->
+            <tr class="total-row">
+              <td colspan="5">Total 75: Produits divers</td>
+              <td class="amount">285,900,000</td>
+              <td class="amount">274,114,908</td>
+              <td class="amount">313,541,000</td>
+              <td class="variation positive">27,641,000</td>
+              <td class="variation positive">9.67%</td>
+            </tr>
+            
+            <!-- Total Classe 7 -->
+            <tr class="total-row">
+              <td colspan="5">Total Classe 7</td>
+              <td class="amount">3,258,642,765</td>
+              <td class="amount">3,339,773,144</td>
+              <td class="amount">3,506,441,153</td>
+              <td class="variation positive">247,798,388</td>
+              <td class="variation positive">7.60%</td>
+            </tr>
+            
+            <!-- Total Recettes ordinaires -->
+            <tr class="total-row">
+              <td colspan="5">Total Recettes ordinaires</td>
+              <td class="amount">3,258,642,765</td>
+              <td class="amount">3,339,773,144</td>
+              <td class="amount">3,506,441,153</td>
+              <td class="variation positive">247,798,388</td>
+              <td class="variation positive">7.60%</td>
+            </tr>
+            
+            <!-- RECETTES EXTRAORDINAIRES -->
+            <tr class="section-header">
+              <td colspan="10">RECETTES EXTRAORDINAIRES</td>
+            </tr>
+            <tr class="subsection-header">
+              <td colspan="10">B1 - COMPTES DE LA SECTION INVESTISSEMENT</td>
+            </tr>
+            
+            <!-- Report à nouveau -->
+            <tr>
+              <td></td>
+              <td class="account-code">12</td>
+              <td colspan="2">Report à nouveau</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Report à nouveau créditeur -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td class="account-code">121</td>
+              <td></td>
+              <td>Report à nouveau créditeur</td>
+              <td class="amount">891,000,000</td>
+              <td class="amount">891,000,000</td>
+              <td class="amount">950,000,000</td>
+              <td class="variation positive">59,000,000</td>
+              <td class="variation positive">6.62%</td>
+            </tr>
+            
+            <!-- Total Recettes extraordinaires -->
+            <tr class="total-row">
+              <td colspan="5">Total Recettes extraordinaires</td>
+              <td class="amount">891,000,000</td>
+              <td class="amount">891,000,000</td>
+              <td class="amount">950,000,000</td>
+              <td class="variation positive">59,000,000</td>
+              <td class="variation positive">6.62%</td>
+            </tr>
+            
+            <!-- RÉCAPITULATIF DES RECETTES -->
+            <tr class="section-header">
+              <td colspan="5">RÉCAPITULATIF DES RECETTES</td>
+              <td class="amount">4,149,642,765</td>
+              <td class="amount">4,230,773,144</td>
+              <td class="amount">4,456,441,153</td>
+              <td class="variation positive">306,798,388</td>
+              <td class="variation positive">7.39%</td>
+            </tr>
+            
+            <!-- DEPENSES ORDINAIRES -->
+            <tr class="section-header">
+              <td colspan="10">DÉPENSES ORDINAIRES</td>
+            </tr>
+            <tr class="subsection-header">
+              <td colspan="10">A2 - COMPTES DE LA SECTION FONCTIONNEMENT</td>
+            </tr>
+            
+            <!-- Achats et variations de stocks -->
+            <tr>
+              <td></td>
+              <td class="account-code">60</td>
+              <td colspan="2">Achats et variations de stocks</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Consommables informatiques -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="account-code">60411</td>
+              <td>Consommables informatiques</td>
+              <td class="amount">15,000,000</td>
+              <td class="amount">30,658,760</td>
+              <td class="amount">40,000,000</td>
+              <td class="variation positive">25,000,000</td>
+              <td class="variation positive">166.67%</td>
+            </tr>
+            
+            <!-- Produits de labo -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="account-code">60413</td>
+              <td>Produits de labo</td>
+              <td class="amount">25,000,000</td>
+              <td class="amount">15,336,530</td>
+              <td class="amount">50,000,000</td>
+              <td class="variation positive">25,000,000</td>
+              <td class="variation positive">100.00%</td>
+            </tr>
+            
+            <!-- Total Achats -->
+            <tr class="total-row">
+              <td colspan="5">Total 60: Achats</td>
+              <td class="amount">210,000,000</td>
+              <td class="amount">156,000,000</td>
+              <td class="amount">270,000,000</td>
+              <td class="variation positive">60,000,000</td>
+              <td class="variation positive">28.57%</td>
+            </tr>
+            
+            <!-- Charges de Personnel -->
+            <tr>
+              <td></td>
+              <td class="account-code">66</td>
+              <td colspan="2">Charges de Personnel</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Appointements contractuels -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="account-code">66113</td>
+              <td>Appointements contractuels</td>
+              <td class="amount">30,000,000</td>
+              <td class="amount">24,297,415</td>
+              <td class="amount">30,000,000</td>
+              <td class="variation">0</td>
+              <td class="variation">0%</td>
+            </tr>
+            
+            <!-- Total Charges de Personnel -->
+            <tr class="total-row">
+              <td colspan="5">Total 66: Charges de Personnel</td>
+              <td class="amount">1,500,000,000</td>
+              <td class="amount">1,600,000,000</td>
+              <td class="amount">1,650,000,000</td>
+              <td class="variation positive">150,000,000</td>
+              <td class="variation positive">10.00%</td>
+            </tr>
+            
+            <!-- Total Dépenses ordinaires -->
+            <tr class="total-row">
+              <td colspan="5">Total Dépenses ordinaires</td>
+              <td class="amount">2,800,000,000</td>
+              <td class="amount">2,900,000,000</td>
+              <td class="amount">3,000,000,000</td>
+              <td class="variation positive">200,000,000</td>
+              <td class="variation positive">7.14%</td>
+            </tr>
+            
+            <!-- DÉPENSES EXTRAORDINAIRES -->
+            <tr class="section-header">
+              <td colspan="10">DÉPENSES EXTRAORDINAIRES</td>
+            </tr>
+            <tr class="subsection-header">
+              <td colspan="10">B2 - COMPTES DE LA SECTION INVESTISSEMENT</td>
+            </tr>
+            
+            <!-- Immobilisations incorporelles -->
+            <tr>
+              <td></td>
+              <td class="account-code">21</td>
+              <td colspan="2">Immobilisations incorporelles</td>
+              <td colspan="6"></td>
+            </tr>
+            
+            <!-- Logiciels -->
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="account-code">213</td>
+              <td>Logiciels</td>
+              <td class="amount">15,000,000</td>
+              <td class="amount">2,185,262</td>
+              <td class="amount">25,000,000</td>
+              <td class="variation positive">10,000,000</td>
+              <td class="variation positive">66.67%</td>
+            </tr>
+            
+            <!-- Total Dépenses extraordinaires -->
+            <tr class="total-row">
+              <td colspan="5">Total Dépenses extraordinaires</td>
+              <td class="amount">150,000,000</td>
+              <td class="amount">120,000,000</td>
+              <td class="amount">200,000,000</td>
+              <td class="variation positive">50,000,000</td>
+              <td class="variation positive">33.33%</td>
+            </tr>
+            
+            <!-- RÉCAPITULATIF DES DÉPENSES -->
+            <tr class="section-header">
+              <td colspan="5">RÉCAPITULATIF DES DÉPENSES</td>
+              <td class="amount">2,950,000,000</td>
+              <td class="amount">3,020,000,000</td>
+              <td class="amount">3,200,000,000</td>
+              <td class="variation positive">250,000,000</td>
+              <td class="variation positive">8.47%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="validation-container">
+  <form action="" method="POST">
+    <button type="submit" class="btn-valider">Valider le budget</button>
+  </form>
+</div>
+
+    </main>
+  </div>
+</body>
+</html>

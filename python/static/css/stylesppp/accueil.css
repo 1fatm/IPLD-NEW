@@ -1,0 +1,103 @@
+/* Police principale */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff; /* blanc */
+    color: #1b3a2a; /* vert foncé */
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Conteneur principal centré */
+.container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+/* Logo et titre */
+.logo-container {
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.favicon {
+    width: 60px;
+    height: 60px;
+}
+
+/* Titre */
+h1#typewriter {
+    font-weight: 700;
+    font-size: 2.4rem;
+    color: #2e7d32; /* vert plus vif */
+}
+
+/* Paragraphe d’intro */
+.container p {
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: #2e7d32;
+    margin-top: 0;
+    margin-bottom: 40px;
+}
+
+/* Section de sélection des rôles */
+.role-selection {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+/* Cartes de rôle */
+.role-card {
+    background-color: #e8f5e9; /* vert très clair */
+    border: 2px solid #2e7d32;
+    border-radius: 15px;
+    padding: 25px;
+    width: 260px;
+    box-shadow: 0 6px 15px rgba(46, 125, 50, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(46, 125, 50, 0.35);
+}
+
+/* Image dans les cartes */
+.role-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+/* Titre des cartes */
+.role-card h2 {
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: #1b3a2a;
+    margin: 0;
+}
+
+/* Particles.js en arrière-plan */
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: linear-gradient(135deg, #a5d6a7 0%, #81c784 100%);
+}

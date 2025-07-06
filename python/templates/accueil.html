@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accès Plateforme Budgétaire - ESP-UCAD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+   
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff;
+      color: #2c3e50;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      background-color: #e9f2fb;
+      border-bottom: 2px solid #2980b9;
+    }
+
+    header img {
+      height: 120px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: #2980b9;
+      font-weight: 600;
+      text-align: center;
+      flex: 1;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      background-color: #f9fbfd;
+    }
+
+    .description {
+      font-size: 1rem;
+      color: #34495e;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .role-options {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .role-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 25px;
+      width: 260px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .role-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .role-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .role-card h2 {
+      font-size: 1.2rem;
+      color: #2980b9;
+      margin-bottom: 8px;
+    }
+
+    .role-card p {
+      font-size: 0.95rem;
+      color: #7f8c8d;
+    }
+
+    footer {
+      background-color: #2980b9;
+      color: white;
+      text-align: center;
+      padding: 15px 20px;
+      font-size: 0.9rem;
+      margin-top: auto;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+      }
+
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .role-card {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+  <header>
+    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo UCAD"  height="1200px">
+    <h1>Plateforme de Gestion Budgétaire<br>ESP - UCAD</h1>
+    <div style="width: 60px;"></div>
+  </header>
+
+
+ <main style="padding-top: 100px;">
+  <p class="description">Veuillez sélectionner votre profil pour accéder à la plateforme :</p>
+
+  <div class="role-options">
+
+  <div class="role-card" onclick="window.location.href='/connexionprof'">
+  <i class="fas fa-chalkboard-teacher fa-3x" style="color:#2980b9; margin-bottom:10px;"></i>
+  <h2>Professeur</h2>
+  <p>Soumission des besoins budgétaires</p>
+</div>
+
+<div class="role-card" onclick="window.location.href='/connexionchef'">
+  <i class="fas fa-user-tie fa-3x" style="color:#2980b9; margin-bottom:10px;"></i>
+  <h2>Chef de Département</h2>
+  <p>Consolidation et priorisation des demandes</p>
+</div>
+
+<div class="role-card" onclick="window.location.href='/connexiondirection'">
+  <i class="fas fa-briefcase fa-3x" style="color:#2980b9; margin-bottom:10px;"></i>
+  <h2>Direction</h2>
+  <p>Validation et gestion des budgets</p>
+</div>
+
+
+  </div>
+</main>
+
+
+
+  <footer>
+    © 2025 - Projet de Dématérialisation des Processus Administratifs - ESP / UCAD
+  </footer>
+
+</body>
+</html>

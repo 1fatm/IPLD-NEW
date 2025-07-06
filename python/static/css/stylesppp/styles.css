@@ -1,0 +1,228 @@
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #0a0319, #1b458f);
+    overflow: hidden;
+}
+
+
+.container {
+    display: flex;
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
+    background-color: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+.image-section {
+    flex: 1;
+    background: url('../images/image1.jpeg') center/cover no-repeat;
+    position: relative;
+    animation: slideInLeft 1s ease-out;
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+
+.form-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    animation: slideInRight 1s ease-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+
+.login-container {
+    width: 100%;
+    max-width: 350px;
+    text-align: center;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-message {
+    font-size: 1.2em;
+    color: #007BFF;
+    margin-bottom: 20px;
+    font-weight: bold;
+    line-height: 1.5;
+    padding: 10px;
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid #0056b3;
+    animation: fadeIn 1.5s ease-out;
+}
+
+
+h2 {
+    margin-bottom: 20px;
+    color: #0056b3;
+    font-size: 1.8rem;
+    animation: fadeIn 1.5s ease-out;
+}
+
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+    animation: fadeIn 1.5s ease-out;
+}
+
+.input-group label {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.input-group label i {
+    margin-right: 10px;
+    color: #007BFF;
+}
+
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+    transition: 0.3s;
+    font-size: 1rem;
+}
+
+input:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #007BFF;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+
+.error-message {
+    color: #dc3545;
+    margin-top: 10px;
+    display: none;
+    font-weight: bold;
+}
+
+
+p a {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+p a:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+        margin: 20px;
+    }
+
+    .image-section {
+        height: 200px;
+    }
+
+    .welcome-message {
+        font-size: 1em;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    input {
+        padding: 10px;
+    }
+
+    button {
+        padding: 10px;
+    }
+}
+
+.back-button {
+    display: inline-block;
+    padding: 6px 12px; 
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px; 
+    font-weight: bold;
+    transition: 0.3s;
+    font-size: 0.8rem;
+    margin: 5px; 
+    box-sizing: border-box; /
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.back-button i {
+    margin-right: 6px; 
+}
+
+
+.back-button.top-left {
+    position: absolute;
+    top: 10px; 
+    left: 10px; 
+    z-index: 10;
+}

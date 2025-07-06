@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plateforme de Gestion Budgétaire - Professeur</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/pageprof2.css') }}">
+</head>
+<body>
+   
+
+
+    <div class="app-layout">
+  <aside class="sidebar">
+ 
+
+  <div class="sidebar-logo">
+    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
+  </div>
+
+
+    <nav>
+        <ul>
+            <li class="sidebar-item active" data-section="accueil">
+                <i class="fas fa-home icon"></i>
+                <span>Accueil</span>
+            </li>
+            <li class="sidebar-item" data-section="create-request">
+                <i class="fas fa-file-invoice-dollar icon"></i>
+                <span>Nouvelle demande</span>
+            </li>
+            <li class="sidebar-item" data-section="view-status">
+                <i class="fas fa-list-alt icon"></i>
+                <span>Consulter</span>
+            </li>
+            <li class="sidebar-item" data-section="synthese">
+                <i class="fas fa-chart-bar icon"></i>
+                <span>Synthèse</span>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 🔴 Déconnexion déplacée ici -->
+    <div class="sidebar-item logout-item" data-section="logout">
+        <a href="{{ url_for('deconnexion_route') }}" class="menu-link">
+            <i class="fas fa-sign-out-alt icon"></i>
+            <span>Déconnexion</span>
+        </a>
+    </div>
+</aside>
+
+
+        <main class="content-area">
+            <section id="accueil-section" class="feature-section">
+                <h2>Bienvenue sur votre tableau de bord, Professeur !</h2>
+                <p>Utilisez le menu latéral pour naviguer entre les différentes fonctionnalités.</p>
+                <div class="accueil-cards-grid">
+                    <div class="accueil-card" data-section="create-request">
+                        <i class="fas fa-file-invoice-dollar icon"></i>
+                        <h3>Créer une demande</h3>
+                    </div>
+                    <div class="accueil-card" data-section="view-status">
+                        <i class="fas fa-list-alt icon"></i>
+                        <h3>Consulter demandes</h3>
+                    </div>
+                    <div class="accueil-card" data-section="synthese">
+                        <i class="fas fa-chart-bar icon"></i>
+                        <h3>Voir synthèse</h3>
+                    </div>
+                </div>
+            </section>
+
+            <section id="create-request-section" class="feature-section hidden">
+                <h2>Nouvelle Demande</h2>
+                <p>Veuillez remplir le formulaire ci-dessous :</p>
+
+                <form id="budget-request-form">
+                    <fieldset class="form-section">
+                        <div class="form-group">
+                            <label for="teacher-name">Nom de l'enseignant :</label>
+                            <input type="text" id="teacher-name" name="teacherName" placeholder="Ex: M. Ndiaye" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="request-title">Intitulé de la demande <span class="required-star">*</span> :</label>
+                            <input type="text" id="request-title" name="title" placeholder="Ex: Ordinateur portable" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="request-category">Catégorie <span class="required-star">*</span> :</label>
+                            <select id="request-category" name="category" required>
+                                <option value="">Sélectionnez une catégorie</option>
+                                <option value="materiel_pedagogique">Matériel Pédagogique</option>
+                                <option value="equipement_labo">Équipement de Laboratoire</option>
+                                <option value="consommables">Consommables</option>
+                                <option value="deplacement">Déplacements / Missions</option>
+                                <option value="formation">Formation / Séminaires</option>
+                                <option value="logiciels">Licences Logiciels</option>
+                                <option value="services">Services Externes</option>
+                                <option value="autre">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="request-description">Description <span class="required-star">*</span> :</label>
+                            <textarea id="request-description" name="description" rows="6" placeholder="Ex: Besoin d'un ordinateur pour les cours magistraux." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="requested-amount">Montant total estimé (XOF) <span class="required-star">*</span> :</label>
+                            <input type="number" id="requested-amount" name="amount" min="0" step="1" placeholder="Ex: 500000" required>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form-section">
+                        <legend>Détails des Articles (Optionnel)</legend>
+                        <p>Ajoutez des lignes pour détailler les différents articles ou services.</p>
+                        <div id="items-container">
+                            </div>
+                        <button type="button" id="add-item-btn" class="btn btn-secondary small-btn">Ajouter un article</button>
+                    </fieldset>
+
+                    <fieldset class="form-section">
+                        <legend>Pièces Jointes (Optionnel)</legend>
+                        <div class="form-group">
+                            <label for="attachments">Joindre des documents (devis, factures proforma, etc.) :</label>
+                            <input type="file" id="attachments" name="attachments" multiple accept=".pdf,.doc,.docx,.jpg,.png">
+                            <small>Formats acceptés : PDF, Word, Images. Taille maximale : 5MB par fichier.</small>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-buttons">
+                        <button type="button" id="save-draft-btn" class="btn btn-secondary">Sauvegarder en brouillon</button>
+                        <button type="submit" id="submit-request-btn" class="btn btn-primary">Soumettre la demande</button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="view-status-section" class="feature-section hidden">
+                <h2>Consulter le statut de mes demandes</h2>
+                <p>Ici, vous pouvez consulter toutes vos demandes budgétaires et leur statut actuel.</p>
+                <div class="table-responsive">
+                    <table id="requests-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titre</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Date de soumission</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="synthese-section" class="feature-section hidden">
+                <h2>Synthèse Budgétaire</h2>
+                <p>Aperçu et statistiques de vos demandes budgétaires.</p>
+                <div class="placeholder-content">
+                    <p>Cette section affichera des résumés, graphiques et statistiques de vos demandes. (En cours de développement)</p>
+                </div>
+            </section>
+
+            <section id="logout-section" class="feature-section hidden">
+                <h2>Déconnexion</h2>
+                <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                <div class="form-buttons" style="justify-content: center;">
+                    <button type="button" id="confirm-logout-btn" class="btn btn-primary">Confirmer la déconnexion</button>
+                    <button type="button" class="btn btn-secondary cancel-logout-btn">Annuler</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+   
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
