@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion - ESP-UCAD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+  <style>
+   
+  </style>
+</head>
+<body>
+
+
+  <div class="login-container">
+    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo UCAD" class="logo" height="120px"/>
+    <h2>Connexion à la plateforme</h2>
+    <form action="/connexionchefcode" method="POST">
+  {%if error%}
+ <div class="error">
+  <p style="color:red">{{error}}</p>
+ </div>
+ {%endif%}
+  {%if success%}
+ <div class="success">
+  <p style="color:rgb(2, 248, 43)">{{success}}</p>
+ </div>
+ {%endif%}
+      <input type="email" name="email" placeholder="Adresse email" required />
+      <input type="password" name="password" placeholder="Mot de passe" required />
+      <button type="submit">Se connecter</button>
+    </form>
+    <div class="bottom-link">
+      Vous n'avez pas de compte ? <a href="/inscriptionchef">Créer un compte</a>
+    </div>
+  </div>
+</body>
+</html>

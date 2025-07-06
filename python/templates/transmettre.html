@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Transmettre - Chef de Département</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pageprof.css') }}" />
+</head>
+<body>
+  <div class="dashboard-container">
+    
+    <!-- SIDEBAR -->
+     <nav class="sidebar">
+  <div class="logo-section">
+    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
+  </div>
+  <ul class="menu">
+    <li>
+      <a href="{{ url_for('pagechefdepartement') }}" class="menu-link">
+        <i class="fas fa-home"></i> Accueil
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('consulterpage_route') }}" class="menu-link">
+        <i class="fas fa-list"></i> Consulter
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('soumettre_demande') }}" class="menu-link">
+        <i class="fas fa-plus-circle"></i> Nouvelle demande
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('synthese_route') }}"class="menu-link">
+        <i class="fas fa-file-alt"></i> Synthèse
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('transmettre_route') }}"class="menu-link">
+        <i class="fas fa-paper-plane"></i> Transmettre
+      </a>
+    </li>
+  </ul>
+  <div class="logout">
+   
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    
+  </div>
+</nav>
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <h1>Budgets à Transmettre</h1>
+      <p class="subtitle">Validez ou modifiez les budgets en attente de transmission à la direction</p>
+
+      <section class="historique">
+        <h2>Liste des budgets validés</h2>
+        <div class="table-container">
+          <table class="demandes-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Intitulé</th>
+                <th>Année</th>
+                <th>Montant total</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for budget in budgets %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ budget.nom }}</td>
+                <td>{{ budget.annee }}</td>
+                <td>{{ "{:,.0f}".format(budget.montant) }} FCFA</td>
+                <td>
+                  <a href="{{ url_for('modifier_budget', budget_id=budget.id) }}" class="btn-modifier">Modifier</a>
+                  <form action="{{ url_for('envoyer_budget', budget_id=budget.id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn-envoyer">Transmettre</button>
+                  </form>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" style="text-align:center;">Aucun budget validé à transmettre.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

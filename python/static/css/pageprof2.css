@@ -1,0 +1,524 @@
+/* styles.css */
+
+/* Variables de couleur pour une gestion facile */
+:root {
+    --primary-color: #3175B6; /* Bleu des en-têtes, icônes, titres, boutons primaires (couleur de vos captures) */
+    --secondary-color: #6c757d; /* Gris pour les actions secondaires/boutons "Retour" */
+    --light-bg: #f8f9fa; /* Fond très clair pour le corps de la page */
+    --card-bg: #ffffff; /* Fond blanc pour les cartes et sections de formulaire */
+    --text-color: #343a40; /* Couleur principale du texte */
+    --border-color: #dee2e6; /* Couleur des bordures des éléments */
+    --sidebar-bg: #E3EFFF; /* Fond légèrement bleuté pour la sidebar, comme dans l'image */
+    --sidebar-active-bg: #C1D9F5; /* Fond de l'élément actif dans la sidebar */
+    --sidebar-text-color: #343a40; /* Couleur du texte dans la sidebar */
+    --header-footer-blue: #3175B6; /* Le même bleu pour l'en-tête et le pied de page */
+}
+
+/* Styles généraux du corps de la page */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; /* Important pour que le background soit plein écran */
+    padding: 0; /* Important pour que le background soit plein écran */
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Fait en sorte que le pied de page reste en bas de l'écran */
+}
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Force les éléments à se répartir entre haut et bas */
+    height: 100vh; /* Important pour que la sidebar prenne toute la hauteur */
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    position: fixed; /* Rend la sidebar fixe */
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+/* Styles de l'en-tête principal */
+.main-header {
+    background-color: var(--header-footer-blue); /* Utilise le bleu cohérent */
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    border-bottom: 3px solid rgba(0, 0, 0, 0.1); /* Petite bordure en bas */
+}
+
+.header-content {
+    max-width: 1200px; /* Limite la largeur du contenu de l'en-tête */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    height: 20px;
+    margin-right: 15px;
+}
+
+.school-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.platform-title {
+    font-size: 2.2em;
+    margin: 10px 0 5px;
+    font-weight: 600;
+}
+
+.university-name {
+    font-size: 1.1em;
+    margin: 0;
+    font-weight: 300;
+}
+
+/* Layout principal de l'application avec sidebar */
+.app-layout {
+    display: flex;
+    flex-grow: 1; /* Permet à ce conteneur de prendre l'espace restant */
+    width: 100%; /* Nouveau : Occupe 100% de la largeur disponible */
+    margin: 0; /* Nouveau : Supprime les marges automatiques pour qu'il n'y ait pas d'espace sur les côtés */
+    background-color: var(--card-bg); /* Fond blanc pour tout le contenu */
+    border-radius: 0; /* Plus de coins arrondis si le fond est plein écran */
+    box-shadow: none; /* Plus d'ombre si le fond est plein écran */
+    overflow: hidden; /* Pour que les bords arrondis ne coupent pas le contenu */
+}
+
+/* Sidebar (barre latérale) */
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    gap: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-left: 5px solid transparent;
+}
+
+.sidebar-item:hover {
+    background-color: var(--sidebar-active-bg);
+    border-left-color: var(--primary-color);
+}
+
+.sidebar-item span {
+    font-weight: 500;
+    font-size: 1em;
+}
+
+.sidebar nav ul li + li {
+    margin-top: 10px; /* espace entre les éléments */
+}
+
+
+.sidebar-item.logout-item {
+    margin-top: auto;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 15px 25px;
+    color: #dc3545;
+    font-weight: bold;
+    border-left: 5px solid transparent;
+}
+
+.sidebar-item.logout-item:hover {
+    background-color: #ffeaea;
+    color: #c82333;
+    border-left-color: #dc3545;
+}
+
+.sidebar-item.logout-item .icon {
+    color: #dc3545;
+}
+.sidebar-logo {
+    text-align: center;
+    margin-bottom: 50px; /* Espace entre le logo et les éléments de la sidebar */
+}
+
+.sidebar-logo img {
+    max-width: 120px;
+    height: auto;
+}
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar nav ul li {
+    margin-bottom: 20px; 
+    
+}
+
+/* Zone de contenu principal */
+.content-area {
+    flex-grow: 5; /* Prend l'espace restant */
+    padding: 30px;
+    background-color: var(--card-bg); 
+    margin-left: 250px; /* Espace pour la sidebar */
+    min-height: 100vh; /* Assure que la zone de contenu prend au moins*/
+    min-height: 100vh; /* Assure que la zone de contenu prend au moins toute la hauteur de l'écran */
+}
+
+/* Titre des sections de contenu */
+.feature-section h2 {
+    font-size: 2em;
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+    
+}
+
+/* Accueil dashboard cards (nouvelle section pour remplacer l'ancienne actions-grid) */
+.accueil-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 40px;
+    justify-content: center;
+}
+
+.accueil-card {
+    background-color: var(--light-bg); /* Fond légèrement différent pour les cartes d'accueil */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.accueil-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f2f2f2;
+}
+
+.accueil-card .icon {
+    font-size: 3em;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.accueil-card h3 {
+    font-size: 1.4em;
+    color: var(--text-color);
+    margin: 0;
+}
+
+/* Styles pour les champs obligatoires */
+.required-star {
+    color: red;
+    font-weight: bold;
+    margin-left: 3px;
+}
+
+/* Styles pour les sections de formulaire (fieldset) */
+.form-section {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: #fcfcfc;
+}
+
+.form-section legend {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: var(--primary-color);
+    padding: 0 10px;
+    border-bottom: none;
+}
+
+/* Styles des groupes de formulaire (label + input/textarea/select) */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group select {
+    width: calc(100% - 20px);
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(49, 117, 182, 0.25);
+    outline: none;
+}
+
+.form-group select {
+    background-color: white;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%233175B6%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.4c-6.5%200-12.3%203.2-16.2%208.1-3.9%204.9-4.7%2011.6-2.6%2017.7l139.2%20220.4c4.1%206.5%2011.4%2010.4%2019%2010.4s14.9-3.9%2019-10.4L289.6%2091.1c2.1-6.1%201.3-12.8-2.6-17.7z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px;
+}
+
+/* Styles pour les messages d'aide sous les champs */
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 0.85em;
+}
+
+/* Conteneur des boutons de formulaire (alignés à droite) */
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+/* Styles des boutons génériques */
+.btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.05em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Boutons primaires (Soumettre, Voir Détails) */
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2a639b;
+    transform: translateY(-2px);
+}
+
+/* Boutons secondaires (Sauvegarder brouillon, Modifier, Retour au menu) */
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+/* Boutons "Ajouter un article" (petit) */
+.small-btn {
+    padding: 8px 15px;
+    font-size: 0.9em;
+}
+
+/* Styles pour les lignes d'articles dynamiques */
+.item-entry {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 50px;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px dashed var(--border-color);
+    border-radius: 5px;
+    background-color: #fefefe;
+    align-items: end;
+}
+
+.item-entry .form-group {
+    margin-bottom: 0;
+}
+
+.item-entry .form-group label {
+    font-size: 0.9em;
+}
+
+.item-entry button.remove-item-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease;
+    height: fit-content;
+}
+
+.item-entry button.remove-item-btn:hover {
+    background-color: #c82333;
+}
+
+/* Styles de tableau pour l'affichage des demandes */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+#requests-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#requests-table th,
+#requests-table td {
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    text-align: left;
+}
+
+#requests-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+}
+
+#requests-table tr:nth-child(even) {
+    background-color: var(--light-bg);
+}
+
+/* Pied de page principal */
+.main-footer {
+    background-color: var(--header-footer-blue); /* Utilise le bleu cohérent */
+    color: white;
+    text-align: center;
+    padding: 15px 20px;
+    margin-top: auto; /* Pousse le footer en bas de la page */
+    font-size: 0.9em;
+}
+
+/* Classe pour masquer les éléments (utilisée par JS) */
+.hidden {
+    display: none !important; /* Use !important to ensure it overrides other display properties */
+}
+
+/* Styles pour le contenu par défaut de la section Synthèse (si vide) */
+.placeholder-content {
+    background-color: #f2f2f2;
+    border: 1px dashed var(--border-color);
+    padding: 30px;
+    text-align: center;
+    color: #666;
+    border-radius: 8px;
+    font-style: italic;
+    margin-top: 30px;
+}
+
+
+/* Responsive adjustments pour les petits écrans */
+@media (max-width: 992px) { /* Tablette et moins */
+    .app-layout {
+        flex-direction: column; /* La sidebar passe au-dessus du contenu */
+        margin: 10px auto;
+        box-shadow: none; /* Pas d'ombre sur mobile si la sidebar n'est pas "à côté" */
+        border-radius: 0;
+    }
+
+    .sidebar {
+        width: 100%; /* La sidebar prend toute la largeur */
+        padding: 10px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Ombre en bas de la sidebar */
+        order: -1; /* Place la sidebar au-dessus du header dans la source visuelle */
+        position: sticky; /* Rendre la sidebar collante en haut */
+        top: 0;
+        z-index: 100; /* Assure qu'elle est au-dessus du reste */
+    }
+
+    .sidebar nav ul {
+        display: flex; /* Les éléments de la sidebar s'affichent en ligne */
+        justify-content: space-around;
+        flex-wrap: wrap; /* Permet aux éléments de passer à la ligne si pas assez de place */
+    }
+
+    .sidebar-item {
+        flex: 1; /* Chaque élément prend une part égale de l'espace */
+        padding: 10px 15px;
+        flex-direction: column; /* Icône et texte en colonne */
+        font-size: 0.9em;
+        border-left: none; /* Supprime la bordure gauche */
+        border-bottom: 3px solid transparent; /* Bordure en bas pour l'actif */
+    }
+
+    .sidebar-item.active {
+        border-left-color: transparent;
+        border-bottom-color: var(--primary-color);
+    }
+
+    .sidebar-item .icon {
+        margin-right: 0; /* Pas de marge à droite pour les icônes */
+        margin-bottom: 5px; /* Petite marge en dessous de l'icône */
+    }
+    .sidebar-item span {
+        text-align: center;
+    }
+
+    .sidebar-item.logout-item {
+        margin-top: 0; /* Pas besoin de pousser en bas sur mobile */
+        border-top: none;
+    }
+
+    .content-area {
+        padding: 20px;
+    }
+
+    .accueil-cards-grid {
+        grid-template-columns: 1fr; /* Une seule colonne pour les cartes d'accueil sur mobile */
+    }
+
+    .main-header .platform-title {
+        font-size: 1.8em;
+    }
+    .main-header .school-name {
+        font-size: 1em;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    .btn {
+        width: 90%;
+        margin: 5px 0; /* Espacement vertical entre les boutons */
+    }
+
+    .item-entry {
+        grid-template-columns: 1fr; /* Articles en une seule colonne sur petits écrans */
+    }
+    .item-entry button.remove-item-btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
