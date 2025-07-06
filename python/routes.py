@@ -74,6 +74,5 @@ def connexiondirectioncode_route():
 def deconnexion_route():
     return deconnexionfonction()
 
-
 if __name__ == '__main__':
     app.run(debug=True)
