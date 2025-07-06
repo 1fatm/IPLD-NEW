@@ -20,6 +20,16 @@ def inscriptionprof_route():
     
     return render_template('inscriptionprof.html')
 
+@app.route('/inscriptionchefdepartement')
+def inscriptionchefdepartement_route():
+    
+    return render_template('inscriptionchefdepartement.html')
+@app.route('/inscriptiondirection')
+def inscriptiondirection_route():
+    
+    return render_template('inscriptiondirection.html')
+
+
 @app.route('/consulterlesdemandes')
 def consulterpage_route():
     

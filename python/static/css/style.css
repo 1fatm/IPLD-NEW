@@ -208,3 +208,65 @@ input[type="password"] {
 .input-icon input {
   padding-left: 38px;
 }
+/* Pour rendre le <select> visuellement identique à un <input> */
+.select-field {
+  width: 100%;
+  padding: 12px 12px 12px 38px; /* correspond à input avec icône */
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  color: #888;
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%232c3e50' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px 8px;
+  box-sizing: border-box;
+  transition: border 0.3s ease;
+}
+
+.select-field:focus {
+  border-color: #2980b9;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.2);
+}
+.input-icon select {
+  width: 100%;
+  padding: 10px 10px 10px 35px; /* Espace pour l'icône */
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+
+  background-position: right 10px center;
+  background-size: 10px;
+  cursor: pointer;
+}
+
+/* Style de l'icône à gauche */
+.input-icon {
+  position: relative;
+}
+
+.input-icon i {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.input-icon select:focus {
+
+  outline: none;
+
+}
