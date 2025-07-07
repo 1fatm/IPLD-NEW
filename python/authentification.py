@@ -172,19 +172,26 @@ def connexioncheffonction():
         if not motdepassesup.data:
             return render_template("connexionchefdepartement.html", error="Cet utilisateur n'existe pas. Veuillez réessayer.")
         mot_de_passe = motdepassesup.data[0]['mot_de_passe']
+        departement = motdepassesup.data[0]['departement']
+        nom=motdepassesup.data[0]['nom']
+        prenom=motdepassesup.data[0]['prenom']
         #verifier si le mot de passe correspond
         motdepasse = hashlib.sha256(motdepasse.encode()).hexdigest() 
         if not motdepasse==mot_de_passe:
             return render_template("connexionchefdepartement.html", error="Identifiants invalides. Veuillez réessayer.")
         else:
+            #on récupére les informations du chef
             session['username']=motdepassesup.data[0]['email']
-            session['role']='Chef de departement'
+            session['role']='Chef du Departement '+departement
+            session['nom']=nom
+            session['prenom']=prenom
             print("Connexion réussie pour le chef :", mail)
+            #on recupere les demandes faites par les professeurs de son departement
+            demande=supabase.table('demandes').select('*').eq('departement', departement).execute()
             return render_template("chefdedepartement.html", session=session)
     except Exception as e:
         print("Erreur lors de la connexion :", e)
         return render_template("connexionchefdepartement.html", error="Identifiants invalides. Veuillez réessayer.")
-
 
 def connexiondirectionfonction():
     mail = request.form.get('email')

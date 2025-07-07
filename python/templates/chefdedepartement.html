@@ -55,7 +55,7 @@
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
-      <h1>Bienvenue Chef de Département</h1>
+      <h1>Bienvenue {{ session['prenom'] }} {{ session['nom'] }} ,{{session['role']}}</h1>
       <p class="subtitle">Voici un aperçu des demandes :</p>
 
       <div class="stats">
