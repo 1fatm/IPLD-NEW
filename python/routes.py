@@ -129,11 +129,6 @@ def supprimer_brouillon_route():
 @app.route('/obtenir_statistiques', methods=['GET'])
 def obtenir_statistiques_route():
     return obtenir_statistiques()
-
-@app.route('/sedeconnecter')
-def deconnexion_route():
-    session.clear()
-    return render_template('accueil.html')
-   
+ 
 if __name__ == '__main__':
     app.run(debug=True)
