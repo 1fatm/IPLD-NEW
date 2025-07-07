@@ -338,3 +338,442 @@ document.addEventListener('DOMContentLoaded', () => {
         showSection('accueil');
     }
 });
+
+
+
+
+// JavaScript pour pageprof.html
+document.addEventListener('DOMContentLoaded', function() {
+    // Variables globales
+    let currentBrouillonId = null;
+    let itemCounter = 0;
+
+    // Gestion de la navigation
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    const sections = document.querySelectorAll('.feature-section');
+    const accueilCards = document.querySelectorAll('.accueil-card');
+
+    // Navigation via sidebar
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const targetSection = this.dataset.section;
+            if (targetSection && targetSection !== 'logout') {
+                showSection(targetSection);
+                updateActiveMenuItem(this);
+            }
+        });
+    });
+
+    // Navigation via cartes d'accueil
+    accueilCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const targetSection = this.dataset.section;
+            if (targetSection) {
+                showSection(targetSection);
+                updateActiveMenuItem(document.querySelector(`.sidebar-item[data-section="${targetSection}"]`));
+            }
+        });
+    });
+
+    function showSection(sectionName) {
+        sections.forEach(section => {
+            section.classList.add('hidden');
+        });
+        
+        const targetSection = document.getElementById(sectionName + '-section');
+        if (targetSection) {
+            targetSection.classList.remove('hidden');
+            
+            // Charger les données spécifiques à la section
+            if (sectionName === 'view-status') {
+                chargerDemandes();
+            } else if (sectionName === 'synthese') {
+                chargerStatistiques();
+            }
+        }
+    }
+
+    function updateActiveMenuItem(activeItem) {
+        sidebarItems.forEach(item => {
+            item.classList.remove('active');
+        });
+        if (activeItem) {
+            activeItem.classList.add('active');
+        }
+    }
+
+    // Gestion du formulaire de demande
+    const form = document.getElementById('budget-request-form');
+    const addItemBtn = document.getElementById('add-item-btn');
+    const itemsContainer = document.getElementById('items-container');
+    const saveDraftBtn = document.getElementById('save-draft-btn');
+    const submitBtn = document.getElementById('submit-request-btn');
+
+    // Ajouter un article
+    addItemBtn.addEventListener('click', function() {
+        ajouterArticle();
+    });
+
+    function ajouterArticle() {
+        itemCounter++;
+        const itemHtml = `
+            <div class="item-row" data-item-id="${itemCounter}">
+                <div class="item-inputs">
+                    <input type="text" name="itemName[]" placeholder="Nom de l'article" required>
+                    <input type="number" name="itemQuantity[]" placeholder="Quantité" min="1" required>
+                    <input type="number" name="itemPrice[]" placeholder="Prix unitaire" min="0" step="0.01" required>
+                    <span class="item-total">Total: 0 XOF</span>
+                </div>
+                <button type="button" class="btn btn-danger small-btn remove-item-btn">Supprimer</button>
+            </div>
+        `;
+        itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+        
+        // Ajouter les event listeners pour le nouvel article
+        const newItem = itemsContainer.lastElementChild;
+        const removeBtn = newItem.querySelector('.remove-item-btn');
+        const quantityInput = newItem.querySelector('input[name="itemQuantity[]"]');
+        const priceInput = newItem.querySelector('input[name="itemPrice[]"]');
+        const totalSpan = newItem.querySelector('.item-total');
+
+        removeBtn.addEventListener('click', function() {
+            newItem.remove();
+            calculerMontantTotal();
+        });
+
+        // Calculer le total de l'article
+        function updateItemTotal() {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const total = quantity * price;
+            totalSpan.textContent = `Total: ${total.toLocaleString('fr-FR')} XOF`;
+            calculerMontantTotal();
+        }
+
+        quantityInput.addEventListener('input', updateItemTotal);
+        priceInput.addEventListener('input', updateItemTotal);
+    }
+
+    function calculerMontantTotal() {
+        const quantities = document.querySelectorAll('input[name="itemQuantity[]"]');
+        const prices = document.querySelectorAll('input[name="itemPrice[]"]');
+        let total = 0;
+
+        for (let i = 0; i < quantities.length; i++) {
+            const quantity = parseFloat(quantities[i].value) || 0;
+            const price = parseFloat(prices[i].value) || 0;
+            total += quantity * price;
+        }
+
+        const amountInput = document.getElementById('requested-amount');
+        if (total > 0) {
+            amountInput.value = total;
+        }
+    }
+
+    // Sauvegarder en brouillon
+    saveDraftBtn.addEventListener('click', function() {
+        sauvegarderBrouillon();
+    });
+
+    function sauvegarderBrouillon() {
+        const formData = new FormData(form);
+        const data = {
+            teacherName: formData.get('teacherName'),
+            title: formData.get('title'),
+            category: formData.get('category'),
+            description: formData.get('description'),
+            amount: formData.get('amount'),
+            articles: getArticlesData(),
+            brouillon_id: currentBrouillonId
+        };
+
+        fetch('/sauvegarder_brouillon', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                currentBrouillonId = data.brouillon_id;
+                showNotification('Brouillon sauvegardé avec succès', 'success');
+            } else {
+                showNotification(data.message || 'Erreur lors de la sauvegarde', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur de connexion', 'error');
+        });
+    }
+
+    // Soumettre la demande
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        soumettredemande();
+    });
+
+    function soumettredemande() {
+        const formData = new FormData(form);
+        
+        fetch('/creer_demande', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Demande créée avec succès', 'success');
+                form.reset();
+                itemsContainer.innerHTML = '';
+                currentBrouillonId = null;
+                itemCounter = 0;
+            } else {
+                showNotification(data.message || 'Erreur lors de la création', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur de connexion', 'error');
+        });
+    }
+
+    function getArticlesData() {
+        const articles = [];
+        const itemRows = document.querySelectorAll('.item-row');
+        
+        itemRows.forEach(row => {
+            const name = row.querySelector('input[name="itemName[]"]').value;
+            const quantity = row.querySelector('input[name="itemQuantity[]"]').value;
+            const price = row.querySelector('input[name="itemPrice[]"]').value;
+            
+            if (name && quantity && price) {
+                articles.push({
+                    nom: name,
+                    quantite: parseInt(quantity),
+                    prix_unitaire: parseFloat(price),
+                    prix_total: parseInt(quantity) * parseFloat(price)
+                });
+            }
+        });
+        
+        return articles;
+    }
+
+    // Charger les demandes
+    function chargerDemandes() {
+        fetch('/consulter_demandes')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                afficherDemandes(data.demandes);
+            } else {
+                showNotification(data.message || 'Erreur lors du chargement', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur de connexion', 'error');
+        });
+    }
+
+    function afficherDemandes(demandes) {
+        const tbody = document.querySelector('#requests-table tbody');
+        tbody.innerHTML = '';
+
+        demandes.forEach(demande => {
+            const row = document.createElement('tr');
+            
+            const statutClass = getStatutClass(demande.statut);
+            const dateCreation = new Date(demande.date_creation).toLocaleDateString('fr-FR');
+            
+            row.innerHTML = `
+                <td>${demande.id}</td>
+                <td>${demande.titre_demande}</td>
+                <td>${demande.montant_total.toLocaleString('fr-FR')} XOF</td>
+                <td><span class="status ${statutClass}">${getStatutText(demande.statut)}</span></td>
+                <td>${dateCreation}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="voirDetails(${demande.id})">Voir</button>
+                    ${demande.statut === 'brouillon' ? `<button class="btn btn-sm btn-warning" onclick="modifierBrouillon(${demande.id})">Modifier</button>` : ''}
+                    ${demande.statut === 'brouillon' ? `<button class="btn btn-sm btn-danger" onclick="supprimerBrouillon(${demande.id})">Supprimer</button>` : ''}
+                </td>
+            `;
+            
+            tbody.appendChild(row);
+        });
+    }
+
+    function getStatutClass(statut) {
+        switch(statut) {
+            case 'en_attente': return 'pending';
+            case 'approuve_chef': return 'approved';
+            case 'rejete_chef': return 'rejected';
+            case 'approuve_final': return 'approved';
+            case 'rejete_final': return 'rejected';
+            case 'brouillon': return 'draft';
+            default: return 'pending';
+        }
+    }
+
+    function getStatutText(statut) {
+        switch(statut) {
+            case 'en_attente': return 'En attente';
+            case 'approuve_chef': return 'Approuvé par le chef';
+            case 'rejete_chef': return 'Rejeté par le chef';
+            case 'approuve_final': return 'Approuvé final';
+            case 'rejete_final': return 'Rejeté final';
+            case 'brouillon': return 'Brouillon';
+            default: return 'Statut inconnu';
+        }
+    }
+
+    // Charger les statistiques
+    function chargerStatistiques() {
+        fetch('/obtenir_statistiques')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                afficherStatistiques(data.statistiques);
+            } else {
+                showNotification(data.message || 'Erreur lors du chargement des statistiques', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur de connexion', 'error');
+        });
+    }
+
+    function afficherStatistiques(stats) {
+        const syntheseSection = document.getElementById('synthese-section');
+        const placeholderContent = syntheseSection.querySelector('.placeholder-content');
+        
+        placeholderContent.innerHTML = `
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total des demandes</h3>
+                    <p class="stat-number">${stats.total_demandes}</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Montant total</h3>
+                    <p class="stat-number">${stats.total_montant.toLocaleString('fr-FR')} XOF</p>
+                </div>
+            </div>
+            <div class="stats-details">
+                <h3>Répartition par statut</h3>
+                <div class="stats-list">
+                    ${Object.entries(stats.stats_statut).map(([statut, data]) => `
+                        <div class="stat-item">
+                            <span>${getStatutText(statut)}</span>
+                            <span>${data.count} demandes (${data.montant.toLocaleString('fr-FR')} XOF)</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    // Notification system
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            ${type === 'success' ? 'background-color: #4CAF50;' : 'background-color: #f44336;'}
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 5000);
+    }
+
+    // Fonctions globales pour les boutons
+    window.voirDetails = function(id) {
+        // Implémenter la modal pour voir les détails
+        console.log('Voir détails de la demande:', id);
+    };
+
+    window.modifierBrouillon = function(id) {
+        // Charger le brouillon dans le formulaire
+        fetch(`/charger_brouillon?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const brouillon = data.brouillon;
+                
+                // Remplir le formulaire
+                document.getElementById('teacher-name').value = brouillon.nom_demandeur || '';
+                document.getElementById('request-title').value = brouillon.titre_demande || '';
+                document.getElementById('request-category').value = brouillon.categorie || '';
+                document.getElementById('request-description').value = brouillon.description || '';
+                document.getElementById('requested-amount').value = brouillon.montant_total || '';
+                
+                // Charger les articles
+                itemsContainer.innerHTML = '';
+                if (brouillon.articles && brouillon.articles.length > 0) {
+                    brouillon.articles.forEach(article => {
+                        ajouterArticle();
+                        const lastItem = itemsContainer.lastElementChild;
+                        lastItem.querySelector('input[name="itemName[]"]').value = article.nom;
+                        lastItem.querySelector('input[name="itemQuantity[]"]').value = article.quantite;
+                        lastItem.querySelector('input[name="itemPrice[]"]').value = article.prix_unitaire;
+                    });
+                }
+                
+                currentBrouillonId = id;
+                showSection('create-request');
+                updateActiveMenuItem(document.querySelector('.sidebar-item[data-section="create-request"]'));
+                
+                showNotification('Brouillon chargé avec succès', 'success');
+            } else {
+                showNotification(data.message || 'Erreur lors du chargement', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showNotification('Erreur de connexion', 'error');
+        });
+    };
+
+    window.supprimerBrouillon = function(id) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce brouillon ?')) {
+            fetch('/supprimer_brouillon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({id: id})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Brouillon supprimé avec succès', 'success');
+                    chargerDemandes();
+                } else {
+                    showNotification(data.message || 'Erreur lors de la suppression', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                showNotification('Erreur de connexion', 'error');
+            });
+        }
+    };
+
+    // Initialisation
+    showSection('accueil');
+});
