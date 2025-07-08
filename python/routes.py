@@ -14,9 +14,6 @@ from python.pageprof import (
     creer_demande,
     sauvegarder_brouillon,
     consulter_demandes,
-    consulter_brouillons,
-    charger_brouillon,
-    supprimer_brouillon,
     obtenir_statistiques
 )
 
@@ -100,8 +97,7 @@ def connexiondirectioncode_route():
 def deconnexion_route():
     return deconnexionfonction()
 
-
-
+# Routes pour les fonctionnalités des professeurs
 @app.route('/creer_demande', methods=['POST'])
 def creer_demande_route():
     return creer_demande()
@@ -113,18 +109,6 @@ def sauvegarder_brouillon_route():
 @app.route('/consulter_demandes', methods=['GET'])
 def consulter_demandes_route():
     return consulter_demandes()
-
-@app.route('/consulter_brouillons', methods=['GET'])
-def consulter_brouillons_route():
-    return consulter_brouillons()
-
-@app.route('/charger_brouillon', methods=['GET'])
-def charger_brouillon_route():
-    return charger_brouillon()
-
-@app.route('/supprimer_brouillon', methods=['POST'])
-def supprimer_brouillon_route():
-    return supprimer_brouillon()
 
 @app.route('/obtenir_statistiques', methods=['GET'])
 def obtenir_statistiques_route():

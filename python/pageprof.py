@@ -1,5 +1,6 @@
 from supabase import create_client, Client
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
+from flask import request, redirect, url_for, session, jsonify, flash, render_template
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 import os
 import json
@@ -11,6 +12,50 @@ supabase_url = os.getenv("SUPABASE_URL")
 supabase_key = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(supabase_url, supabase_key)
 
+# Configuration pour les uploads
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def save_uploaded_file(file, folder):
+    """Sauvegarde un fichier uploadé et retourne le chemin"""
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        # Ajouter un UUID pour éviter les conflits de noms
+        filename = f"{uuid.uuid4()}_{filename}"
+        filepath = os.path.join(UPLOAD_FOLDER, folder, filename)
+        
+        # Créer le dossier si nécessaire
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        
+        file.save(filepath)
+        return filepath
+    return None
+
+def pageprof():
+    """Fonction pour afficher la page du professeur"""
+    if 'username' not in session or session.get('role') != 'professeur':
+        return redirect(url_for('connexionprof_route'))
+    
+    # Récupérer les informations du professeur pour pré-remplir le formulaire
+    try:
+        prof_info = supabase.table('Professeurs').select('*').eq('email', session['username']).execute()
+        if prof_info.data:
+            prof_data = prof_info.data[0]
+            # Formatage des données pour le template
+            prof_data['nom_complet'] = f"{prof_data['prenom']} {prof_data['nom']}"
+            return render_template('pageprof.html', prof_data=prof_data, session=session)
+        else:
+            flash('Erreur: Informations du professeur non trouvées', 'error')
+            return render_template('pageprof.html', session=session)
+    except Exception as e:
+        print(f"Erreur lors de la récupération des données du professeur: {e}")
+        flash('Erreur lors du chargement des données', 'error')
+        return render_template('pageprof.html', session=session)
+
 def creer_demande():
     """Fonction pour créer une nouvelle demande budgétaire"""
     print("=== DÉBUT CRÉATION DEMANDE ===")
@@ -20,50 +65,62 @@ def creer_demande():
         print("❌ Accès non autorisé - Session:", session)
         return jsonify({'success': False, 'message': 'Accès non autorisé'}), 403
     
+    # Vérifier si c'est une sauvegarde en brouillon
+    is_draft = request.form.get('action') == 'brouillon'
+    
     try:
-        # Récupérer les données du formulaire
-        nom_demandeur = request.form.get('teacherName')
+        # Récupérer les informations du professeur d'abord
         email_demandeur = session.get('username')
-        titre_demande = request.form.get('title')
-        categorie = request.form.get('category')
-        description = request.form.get('description')
-        montant_total = request.form.get('amount')
-        
-        print(f"📝 Données reçues:")
-        print(f"   - Nom: {nom_demandeur}")
-        print(f"   - Email: {email_demandeur}")
-        print(f"   - Titre: {titre_demande}")
-        print(f"   - Catégorie: {categorie}")
-        print(f"   - Description: {description}")
-        print(f"   - Montant: {montant_total}")
-        
-        # Validation des données obligatoires
-        if not nom_demandeur or not titre_demande or not categorie or not description or not montant_total:
-            print("❌ Données manquantes")
-            return jsonify({'success': False, 'message': 'Tous les champs obligatoires doivent être remplis'}), 400
-        
-        # Conversion du montant
-        try:
-            montant_total = float(montant_total)
-        except ValueError:
-            print("❌ Montant invalide")
-            return jsonify({'success': False, 'message': 'Montant invalide'}), 400
-        
-        # Récupérer les informations du professeur
         print(f"🔍 Recherche du professeur: {email_demandeur}")
+        
         try:
             prof_info = supabase.table('Professeurs').select('*').eq('email', email_demandeur).execute()
-            print(f"📊 Résultat recherche professeur: {prof_info}")
+            print(f"📊 Résultat recherche professeur: {prof_info.data}")
         except Exception as e:
             print(f"❌ Erreur lors de la recherche du professeur: {e}")
             return jsonify({'success': False, 'message': 'Erreur lors de la recherche du professeur'}), 500
         
         if not prof_info.data:
             print("❌ Professeur non trouvé")
-            return jsonify({'success': False, 'message': 'Professeur non trouvé'}), 404
+            return jsonify({'success': False, 'message': 'Professeur non trouvé dans la base de données'}), 404
         
-        departement = prof_info.data[0]['departement']
-        print(f"✅ Professeur trouvé - Département: {departement}")
+        # Récupérer les informations du professeur
+        prof_data = prof_info.data[0]
+        nom_demandeur = f"{prof_data['prenom']} {prof_data['nom']}"
+        departement = prof_data['departement']
+        
+        print(f"✅ Professeur trouvé - Nom: {nom_demandeur}, Département: {departement}")
+        
+        # Récupérer les données du formulaire
+        titre_demande = request.form.get('title', '').strip()
+        categorie = request.form.get('category', '').strip()
+        description = request.form.get('description', '').strip()
+        montant_total = request.form.get('amount', '').strip()
+        
+        print(f"📝 Données reçues:")
+        print(f"   - Nom: {nom_demandeur}")
+        print(f"   - Email: {email_demandeur}")
+        print(f"   - Département: {departement}")
+        print(f"   - Titre: {titre_demande}")
+        print(f"   - Catégorie: {categorie}")
+        print(f"   - Description: {description}")
+        print(f"   - Montant: {montant_total}")
+        print(f"   - Mode: {'Brouillon' if is_draft else 'Soumission'}")
+        
+        # Validation des données obligatoires (seulement pour soumission)
+        if not is_draft:
+            if not titre_demande or not categorie or not description or not montant_total:
+                print("❌ Données manquantes")
+                return jsonify({'success': False, 'message': 'Tous les champs obligatoires doivent être remplis'}), 400
+        
+        # Conversion du montant
+        try:
+            montant_total = float(montant_total) if montant_total else 0
+        except ValueError:
+            if not is_draft:
+                print("❌ Montant invalide")
+                return jsonify({'success': False, 'message': 'Le montant doit être un nombre valide'}), 400
+            montant_total = 0
         
         # Traiter les articles (si fournis)
         articles = []
@@ -72,38 +129,57 @@ def creer_demande():
         item_prices = request.form.getlist('itemPrice[]')
         
         print(f"📦 Articles reçus: {len(item_names)} articles")
-        print(f"   - Noms: {item_names}")
-        print(f"   - Quantités: {item_quantities}")
-        print(f"   - Prix: {item_prices}")
+        print(f"    - Noms: {item_names}")
+        print(f"    - Quantités: {item_quantities}")
+        print(f"    - Prix: {item_prices}")
         
-        for i in range(len(item_names)):
-            if item_names[i] and item_quantities[i] and item_prices[i]:
-                try:
-                    article = {
-                        'nom': item_names[i],
-                        'quantite': int(item_quantities[i]),
-                        'prix_unitaire': float(item_prices[i]),
-                        'prix_total': int(item_quantities[i]) * float(item_prices[i])
-                    }
-                    articles.append(article)
-                    print(f"   ✅ Article {i+1}: {article}")
-                except ValueError as e:
-                    print(f"   ❌ Erreur article {i+1}: {e}")
+        if item_names:
+            for i in range(len(item_names)):
+                if (i < len(item_names) and item_names[i] and item_names[i].strip()):
+                    try:
+                        quantite = int(item_quantities[i]) if (i < len(item_quantities) and item_quantities[i] and item_quantities[i].strip()) else 1
+                        prix_unitaire = float(item_prices[i]) if (i < len(item_prices) and item_prices[i] and item_prices[i].strip()) else 0
+                        
+                        article = {
+                            'nom': item_names[i].strip(),
+                            'quantite': quantite,
+                            'prix_unitaire': prix_unitaire,
+                            'prix_total': quantite * prix_unitaire
+                        }
+                        articles.append(article)
+                        print(f"   ✅ Article {i+1}: {article}")
+                    except (ValueError, IndexError) as e:
+                        print(f"   ❌ Erreur article {i+1}: {e}")
+                        continue
         
-        # Traiter les pièces jointes
+        # Traiter les pièces jointes (optionnel)
         pieces_jointes = []
         if 'attachments' in request.files:
             for file in request.files.getlist('attachments'):
-                if file.filename:
+                if file and file.filename and file.filename.strip():
                     try:
-                        pieces_jointes.append({
-                            'nom_fichier': file.filename,
-                            'taille': len(file.read()),
-                            'type': file.content_type
-                        })
-                        print(f"📎 Pièce jointe: {file.filename}")
+                        # Vérifier la taille du fichier
+                        file.seek(0, 2)  # Aller à la fin du fichier
+                        file_size = file.tell()
+                        file.seek(0)  # Revenir au début
+                        
+                        if file_size > MAX_FILE_SIZE:
+                            print(f'❌ Fichier {file.filename} trop volumineux')
+                            continue
+                            
+                        # Sauvegarder le fichier
+                        filepath = save_uploaded_file(file, 'pieces_jointes')
+                        if filepath:
+                            pieces_jointes.append({
+                                'nom_fichier': file.filename,
+                                'chemin': filepath,
+                                'taille': file_size,
+                                'type': file.content_type
+                            })
+                            print(f"📎 Pièce jointe sauvegardée: {file.filename}")
                     except Exception as e:
                         print(f"❌ Erreur pièce jointe: {e}")
+                        continue
         
         # Préparer les données pour la base
         demande_data = {
@@ -115,13 +191,19 @@ def creer_demande():
             'categorie': categorie,
             'description': description,
             'montant_total': montant_total,
-            'statut': 'en_attente',
+            'statut': 'brouillon' if is_draft else 'en_attente',
             'chemin_articles': json.dumps(articles) if articles else None,
-            'chemin_pieces_jointes': json.dumps(pieces_jointes) if pieces_jointes else None
+            'chemin_pieces_jointes': json.dumps(pieces_jointes) if pieces_jointes else None,
+            'date_creation': datetime.now().isoformat(),
+            'date_modification': datetime.now().isoformat()
         }
         
         print(f"💾 Données à insérer dans la base:")
-        print(f"   {demande_data}")
+        for key, value in demande_data.items():
+            if key not in ['chemin_articles', 'chemin_pieces_jointes']:
+                print(f"   {key}: {value}")
+            else:
+                print(f"   {key}: {'Oui' if value else 'Non'}")
         
         # Insérer dans la base de données
         try:
@@ -130,27 +212,19 @@ def creer_demande():
             print(f"📊 Résultat insertion: {result}")
             
             # Vérifier si l'insertion a réussi
-            if hasattr(result, 'data') and result.data:
+            if result.data:
                 print("✅ Demande créée avec succès!")
-                return jsonify({
-                    'success': True, 
-                    'message': 'Demande créée avec succès', 
-                    'demande_id': result.data[0]['id']
-                })
+                message = 'Brouillon sauvegardé avec succès !' if is_draft else 'Demande créée avec succès ! Elle sera traitée par le chef de département.'
+                return jsonify({'success': True, 'message': message})
             else:
-                print(f"❌ Échec de l'insertion - result: {result}")
-                # Essayer de récupérer l'erreur
-                error_message = "Erreur lors de la création de la demande"
-                if hasattr(result, 'error') and result.error:
-                    error_message = f"Erreur Supabase: {result.error}"
-                return jsonify({'success': False, 'message': error_message}), 500
+                print(f"❌ Échec de l'insertion - Pas de données retournées")
+                return jsonify({'success': False, 'message': 'Erreur lors de la création de la demande'}), 500
                 
         except Exception as e:
             print(f"❌ Exception lors de l'insertion: {e}")
-            print(f"   Type: {type(e)}")
             import traceback
             traceback.print_exc()
-            return jsonify({'success': False, 'message': f'Erreur base de données: {str(e)}'}), 500
+            return jsonify({'success': False, 'message': f'Erreur de base de données: {str(e)}'}), 500
             
     except Exception as e:
         print(f"❌ Erreur générale: {e}")
@@ -161,75 +235,25 @@ def creer_demande():
     finally:
         print("=== FIN CRÉATION DEMANDE ===")
 
-# Fonction de test pour vérifier la connexion Supabase
-def test_supabase_connection():
-    """Fonction pour tester la connexion à Supabase"""
-    try:
-        # Test simple de connexion
-        result = supabase.table('demandes').select('count').execute()
-        print(f"✅ Connexion Supabase OK: {result}")
-        return True
-    except Exception as e:
-        print(f"❌ Erreur connexion Supabase: {e}")
-        return False
-
-# Reste du code (autres fonctions)...
 def sauvegarder_brouillon():
     """Fonction pour sauvegarder une demande en brouillon"""
-    if 'username' not in session or session.get('role') != 'professeur':
-        return jsonify({'success': False, 'message': 'Accès non autorisé'}), 403
+    # Ajouter un indicateur pour le brouillon dans les données du formulaire
+    from werkzeug.datastructures import MultiDict
+    
+    # Créer une nouvelle forme de données avec l'indicateur brouillon
+    form_data = MultiDict(request.form)
+    form_data['action'] = 'brouillon'
+    
+    # Temporairement remplacer request.form
+    original_form = request.form
+    request.form = form_data
     
     try:
-        # Récupérer les données JSON
-        data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'Aucune donnée reçue'}), 400
-        
-        email_demandeur = session.get('username')
-        
-        # Récupérer les informations du professeur
-        prof_info = supabase.table('Professeurs').select('*').eq('email', email_demandeur).execute()
-        if not prof_info.data:
-            return jsonify({'success': False, 'message': 'Professeur non trouvé'}), 404
-        
-        departement = prof_info.data[0]['departement']
-        
-        # Préparer les données du brouillon
-        brouillon_data = {
-            'nom_demandeur': data.get('teacherName', ''),
-            'email_demandeur': email_demandeur,
-            'role_demandeur': 'professeur',
-            'departement': departement,
-            'titre_demande': data.get('title', ''),
-            'categorie': data.get('category', ''),
-            'description': data.get('description', ''),
-            'montant_total': float(data.get('amount', 0)) if data.get('amount') else 0,
-            'statut': 'brouillon',
-            'chemin_articles': json.dumps(data.get('articles', [])) if data.get('articles') else None,
-            'chemin_pieces_jointes': json.dumps(data.get('pieces_jointes', [])) if data.get('pieces_jointes') else None
-        }
-        
-        # Vérifier si c'est une mise à jour d'un brouillon existant
-        brouillon_id = data.get('brouillon_id')
-        if brouillon_id:
-            result = supabase.table('demandes').update(brouillon_data).eq('id', brouillon_id).eq('email_demandeur', email_demandeur).execute()
-        else:
-            result = supabase.table('demandes').insert(brouillon_data).execute()
-        
-        if result.data:
-            return jsonify({
-                'success': True, 
-                'message': 'Brouillon sauvegardé avec succès', 
-                'brouillon_id': result.data[0]['id']
-            })
-        else:
-            return jsonify({'success': False, 'message': 'Erreur lors de la sauvegarde du brouillon'}), 500
-            
-    except Exception as e:
-        print(f"Erreur lors de la sauvegarde du brouillon: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'message': f'Une erreur s\'est produite: {str(e)}'}), 500
+        result = creer_demande()
+        return result
+    finally:
+        # Restaurer le formulaire original
+        request.form = original_form
 
 def consulter_demandes():
     """Fonction pour consulter toutes les demandes d'un professeur"""
@@ -246,13 +270,30 @@ def consulter_demandes():
             # Traiter les données pour le frontend
             demandes = []
             for demande in result.data:
+                # Formater la date
+                date_creation = demande['date_creation']
+                if 'T' in date_creation:
+                    date_creation = date_creation.split('T')[0]
+                
+                # Mapper les statuts pour l'affichage
+                statut_display = {
+                    'brouillon': 'Brouillon',
+                    'en_attente': 'En attente',
+                    'approuve_chef': 'Approuvé par le chef',
+                    'rejete_chef': 'Rejeté par le chef',
+                    'approuve_direction': 'Approuvé par la direction',
+                    'rejete_direction': 'Rejeté par la direction',
+                    'finalise': 'Finalisé'
+                }.get(demande['statut'], demande['statut'])
+                
                 demandes.append({
                     'id': demande['id'],
                     'titre_demande': demande['titre_demande'],
                     'categorie': demande['categorie'],
                     'montant_total': demande['montant_total'],
                     'statut': demande['statut'],
-                    'date_creation': demande['date_creation'],
+                    'statut_display': statut_display,
+                    'date_creation': date_creation,
                     'date_modification': demande['date_modification'],
                     'description': demande['description'],
                     'commentaire_chef': demande.get('commentaire_chef', ''),
@@ -267,105 +308,6 @@ def consulter_demandes():
             
     except Exception as e:
         print(f"Erreur lors de la consultation des demandes: {str(e)}")
-        return jsonify({'success': False, 'message': f'Une erreur s\'est produite: {str(e)}'}), 500
-
-def consulter_brouillons():
-    """Fonction pour consulter les brouillons d'un professeur"""
-    if 'username' not in session or session.get('role') != 'professeur':
-        return jsonify({'success': False, 'message': 'Accès non autorisé'}), 403
-    
-    try:
-        email_demandeur = session.get('username')
-        
-        # Récupérer tous les brouillons du professeur
-        result = supabase.table('demandes').select('*').eq('email_demandeur', email_demandeur).eq('statut', 'brouillon').order('date_creation', desc=True).execute()
-        
-        if result.data:
-            brouillons = []
-            for brouillon in result.data:
-                brouillons.append({
-                    'id': brouillon['id'],
-                    'titre_demande': brouillon['titre_demande'],
-                    'categorie': brouillon['categorie'],
-                    'montant_total': brouillon['montant_total'],
-                    'date_creation': brouillon['date_creation'],
-                    'date_modification': brouillon['date_modification'],
-                    'nom_demandeur': brouillon['nom_demandeur'],
-                    'description': brouillon['description'],
-                    'articles': json.loads(brouillon['chemin_articles']) if brouillon.get('chemin_articles') else [],
-                    'pieces_jointes': json.loads(brouillon['chemin_pieces_jointes']) if brouillon.get('chemin_pieces_jointes') else []
-                })
-            
-            return jsonify({'success': True, 'brouillons': brouillons})
-        else:
-            return jsonify({'success': True, 'brouillons': []})
-            
-    except Exception as e:
-        print(f"Erreur lors de la consultation des brouillons: {str(e)}")
-        return jsonify({'success': False, 'message': f'Une erreur s\'est produite: {str(e)}'}), 500
-
-def charger_brouillon():
-    """Fonction pour charger un brouillon spécifique"""
-    if 'username' not in session or session.get('role') != 'professeur':
-        return jsonify({'success': False, 'message': 'Accès non autorisé'}), 403
-    
-    try:
-        brouillon_id = request.args.get('id')
-        email_demandeur = session.get('username')
-        
-        if not brouillon_id:
-            return jsonify({'success': False, 'message': 'ID du brouillon manquant'}), 400
-        
-        # Récupérer le brouillon
-        result = supabase.table('demandes').select('*').eq('id', brouillon_id).eq('email_demandeur', email_demandeur).eq('statut', 'brouillon').execute()
-        
-        if result.data:
-            brouillon = result.data[0]
-            brouillon_data = {
-                'id': brouillon['id'],
-                'nom_demandeur': brouillon['nom_demandeur'],
-                'titre_demande': brouillon['titre_demande'],
-                'categorie': brouillon['categorie'],
-                'description': brouillon['description'],
-                'montant_total': brouillon['montant_total'],
-                'articles': json.loads(brouillon['chemin_articles']) if brouillon.get('chemin_articles') else [],
-                'pieces_jointes': json.loads(brouillon['chemin_pieces_jointes']) if brouillon.get('chemin_pieces_jointes') else []
-            }
-            
-            return jsonify({'success': True, 'brouillon': brouillon_data})
-        else:
-            return jsonify({'success': False, 'message': 'Brouillon non trouvé'}), 404
-            
-    except Exception as e:
-        print(f"Erreur lors du chargement du brouillon: {str(e)}")
-        return jsonify({'success': False, 'message': f'Une erreur s\'est produite: {str(e)}'}), 500
-
-def supprimer_brouillon():
-    """Fonction pour supprimer un brouillon"""
-    if 'username' not in session or session.get('role') != 'professeur':
-        return jsonify({'success': False, 'message': 'Accès non autorisé'}), 403
-    
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({'success': False, 'message': 'Aucune donnée reçue'}), 400
-            
-        brouillon_id = data.get('id')
-        email_demandeur = session.get('username')
-        
-        if not brouillon_id:
-            return jsonify({'success': False, 'message': 'ID du brouillon manquant'}), 400
-        
-        # Supprimer le brouillon
-        result = supabase.table('demandes').delete().eq('id', brouillon_id).eq('email_demandeur', email_demandeur).eq('statut', 'brouillon').execute()
-        
-        if result.data:
-            return jsonify({'success': True, 'message': 'Brouillon supprimé avec succès'})
-        else:
-            return jsonify({'success': False, 'message': 'Brouillon non trouvé ou impossible à supprimer'}), 404
-            
-    except Exception as e:
-        print(f"Erreur lors de la suppression du brouillon: {str(e)}")
         return jsonify({'success': False, 'message': f'Une erreur s\'est produite: {str(e)}'}), 500
 
 def obtenir_statistiques():
