@@ -6,9 +6,36 @@
   <title>Connexion - ESP-UCAD</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
   <style>
    
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .logo {
+      margin-bottom: 20px;
+    }
+    .bottom-link {
+      margin-top: 20px;
+    }
+    .bottom-link a {
+      color: #007bff;
+      text-decoration: none;
+    }
+    .bottom-link a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>

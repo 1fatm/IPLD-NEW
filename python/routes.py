@@ -12,13 +12,22 @@ def index():
 def pagechefdepartement():
     return render_template('chefdedepartement.html')
 
+@app.route('/connexiondirection')
+def inscriptiondirection():
+    return render_template('connexiondirection.html')
+
+
+@app.route('/inscriptionprof')
+def inscriptionprof_route():
+    return render_template('inscriptionprof.html')
 @app.route('/connexionprof')
 def connexionprof_route():
     return render_template('connexionprof.html')
-@app.route('/inscriptionprof')
-def inscriptionprof_route():
+
+@app.route('/connexionchefdedepartement')
+def connexionchefdepartement_route():
     
-    return render_template('inscriptionprof.html')
+    return render_template('connexionchefdepartement.html')
 
 @app.route('/inscriptionchefdepartement')
 def inscriptionchefdepartement_route():

@@ -8,6 +8,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+<style>
+  .login-container {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+  </style>
 <body>
   <div class="login-container">
     <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo ESP-UCAD" class="logo"/>
