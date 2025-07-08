@@ -43,13 +43,13 @@
   <div class="login-container">
     <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo UCAD" class="logo" height="120px"/>
     <h2>Connexion à la plateforme</h2>
-    <form action="/connexion" method="POST">
+    <form action="/connexiondirectioncode" method="POST">
       <input type="email" name="email" placeholder="Adresse email" required />
       <input type="password" name="password" placeholder="Mot de passe" required />
       <button type="submit">Se connecter</button>
     </form>
     <div class="bottom-link">
-      Vous n'avez pas de compte ? <a href="/inscriptionprof">Créer un compte</a>
+      Vous n'avez pas de compte ? <a href="/inscriptiondirection">Créer un compte</a>
     </div>
   </div>
 </body>
