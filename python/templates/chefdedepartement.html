@@ -8,53 +8,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/pageprof.css') }}" />
 
- 
+  <style>
+    .btn-details {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-details i {
+      font-size: 14px;
+    }
+
+    .btn-details:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
+
 <body>
   <div class="dashboard-container">
     <!-- SIDEBAR -->
-   <nav class="sidebar">
-  <div class="logo-section">
-    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
-  </div>
-  <ul class="menu">
-    <li>
-      <a href="{{ url_for('pagechefdepartement') }}" class="menu-link">
-        <i class="fas fa-home"></i> Accueil
-      </a>
-    </li>
-    <li>
-      <a href="{{ url_for('consulterpage_route') }}" class="menu-link">
-        <i class="fas fa-list"></i> Consulter
-      </a>
-    </li>
-    <li>
-      <a href="{{ url_for('soumettre_demande') }}" class="menu-link">
-        <i class="fas fa-plus-circle"></i> Nouvelle demande
-      </a>
-    </li>
-    <li>
-      <a href="{{ url_for('synthese_route') }}"class="menu-link">
-        <i class="fas fa-file-alt"></i> Synthèse
-      </a>
-    </li>
-    <li>
-      <a href="{{ url_for('transmettre_route') }}"class="menu-link">
-        <i class="fas fa-paper-plane"></i> Transmettre
-      </a>
-    </li>
-  </ul>
-  <div class="logout">
-   
-      <i class="fas fa-sign-out-alt"></i> Déconnexion
-    
-  </div>
-</nav>
-
+    <nav class="sidebar">
+      <div class="logo-section">
+        <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
+      </div>
+      <ul class="menu">
+        <li><a href="{{ url_for('pagechefdepartement') }}" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
+        <li><a href="{{ url_for('consulterpage_route') }}" class="menu-link"><i class="fas fa-list"></i> Consulter</a></li>
+        <li><a href="{{ url_for('soumettre_demande') }}" class="menu-link"><i class="fas fa-plus-circle"></i> Nouvelle demande</a></li>
+        <li><a href="{{ url_for('synthese_route') }}" class="menu-link"><i class="fas fa-file-alt"></i> Synthèse</a></li>
+        <li><a href="{{ url_for('transmettre_route') }}" class="menu-link"><i class="fas fa-paper-plane"></i> Transmettre</a></li>
+      </ul>
+      <div class="logout">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </div>
+    </nav>
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
-      <h1>Bienvenue {{ session['prenom'] }} {{ session['nom'] }} ,{{session['role']}}</h1>
+      <h1>Bienvenue {{ session['prenom'] }} {{ session['nom'] }}, {{ session['role'] }}</h1>
       <p class="subtitle">Voici un aperçu des demandes :</p>
 
       <div class="stats">
@@ -81,7 +81,6 @@
         </div>
       </div>
 
-      <!-- TABLE -->
       <section class="historique">
         <h2>Historique des demandes</h2>
         {% if lesdemandes %}
@@ -96,28 +95,33 @@
               <th>Montant total</th>
               <th>Statut</th>
               <th>Date de création</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {% for demande in lesdemandes %}
             <tr>
               <td>{{ demande.id }}</td>
-              <td>{{ demande.nom_demandeur }}</td>       
+              <td>{{ demande.nom_demandeur }}</td>
               <td>{{ demande.titre_demande }}</td>
               <td>{{ demande.categorie }}</td>
               <td>{{ demande.description }}</td>
               <td>{{ demande.montant_total }}</td>
               <td>{{ demande.statut }}</td>
-              <td>{{demande.date_creation}}</td>
-              <td><form action="/detailsdemandes" method="post">
-                <input type="hidden" name="id" value="{{demande.id}}" >
-                <input type="submit" value="Details">
-              </form></td>
+              <td>{{ demande.date_creation }}</td>
+              <td>
+                <form action="/detailsdemandes" method="post">
+                  <input type="hidden" name="id" value="{{ demande.id }}">
+                  <button type="submit" class="btn-details">
+                    <i class="fas fa-eye"></i> Détails
+                  </button>
+                </form>
+              </td>
             </tr>
-            {%endfor%}
+            {% endfor %}
           </tbody>
         </table>
-        {%endif%}
+        {% endif %}
       </section>
     </main>
   </div>

@@ -117,5 +117,19 @@ def consulter_demandes_route():
 def obtenir_statistiques_route():
     return obtenir_statistiques()
 
+# Routes pour les fonctionnalités du chef de département
+@app.route('/consulter_demandes_chef', methods=['GET'])
+def consulter_demandes_chef_route():
+    return consulter_demandes()
+@app.route('/transmettre_demande', methods=['POST'])
+def transmettre_demande_route():
+    return transmettre_route()
+@app.route('/synthese_chef', methods=['GET'])
+def synthese_chef_route():
+    return synthese_route()
+@app.route('/voirdetailsdemande')
+def voirdetailsdemande_route():
+    return render_template('details.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -19,12 +19,14 @@
     .details-section h2 {
       text-align: center;
       margin-bottom: 30px;
-      color: #333;
+      color: #3175B6;
+      font-size: 1.8rem;
     }
 
     .details-table {
       width: 100%;
       border-collapse: collapse;
+      margin-bottom: 30px;
     }
 
     .details-table td {
@@ -43,18 +45,63 @@
       text-align: right;
     }
 
+    .form-status {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-width: 400px;
+      margin: 0 auto 30px;
+    }
+
+    .form-status select {
+      padding: 10px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .form-status input[type="submit"] {
+      padding: 12px;
+      background-color: #3175B6;
+      border: none;
+      color: white;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .form-status input[type="submit"]:hover {
+      background-color: #265c92;
+    }
+
     .btn-back {
       display: inline-block;
-      margin-top: 25px;
       padding: 10px 20px;
-      background: #007bff;
+      background: #6c757d;
       color: #fff;
       text-decoration: none;
       border-radius: 6px;
+      transition: background-color 0.3s;
     }
 
     .btn-back:hover {
-      background: #0056b3;
+      background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+      .details-section {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      .details-table td.value {
+        text-align: left;
+      }
+
+      .form-status {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -93,15 +140,18 @@
           <tr><td class="label">Statut :</td><td class="value">{{ demande.statut }}</td></tr>
           <tr><td class="label">Date de création :</td><td class="value">{{ demande.date_creation }}</td></tr>
         </table>
-        <form action="/changerstatut" method="post">
-            <input type="hidden" name="id" id="id" value="{{ demande.id }}">
-            <select name="statut" id="statut">
-                <option value="en_attente">En attente</option>
-                <option value="approuve">Approuvé</option>
-                <option value="rejete">Rejeté</option>
-            </select>
-            <input type="submit" value="Changer le statut">
+
+        <form action="/changerstatut" method="post" class="form-status">
+          <input type="hidden" name="id" value="{{ demande.id }}">
+          <label for="statut">Changer le statut :</label>
+          <select name="statut" id="statut">
+              <option value="en_attente" {% if demande.statut == 'en_attente' %}selected{% endif %}>En attente</option>
+              <option value="approuve" {% if demande.statut == 'approuve' %}selected{% endif %}>Approuvé</option>
+              <option value="rejete" {% if demande.statut == 'rejete' %}selected{% endif %}>Rejeté</option>
+          </select>
+          <input type="submit" value="Mettre à jour">
         </form>
+
         <a href="{{ url_for('pagechefdepartement') }}" class="btn-back">← Retour</a>
       </section>
     </main>
