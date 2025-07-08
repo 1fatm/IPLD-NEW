@@ -188,7 +188,8 @@ def connexioncheffonction():
             print("Connexion réussie pour le chef :", mail)
             #on recupere les demandes faites par les professeurs de son departement
             demande=supabase.table('demandes').select('*').eq('departement', departement).execute()
-            return render_template("chefdedepartement.html", session=session)
+            lesdemandes = demande.data if demande.data else []
+            return render_template("chefdedepartement.html", session=session, lesdemandes=lesdemandes)
     except Exception as e:
         print("Erreur lors de la connexion :", e)
         return render_template("connexionchefdepartement.html", error="Identifiants invalides. Veuillez réessayer.")

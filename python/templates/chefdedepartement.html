@@ -85,42 +85,36 @@
       <!-- TABLE -->
       <section class="historique">
         <h2>Historique des demandes</h2>
-        <div class="table-container">
-          <table class="demandes-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Nom de l’enseignant</th>
-                <th>Intitulé de la demande</th>
-                <th>Statut</th>
-                <th>Date de soumission</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>M. Ndiaye</td>
-                <td>Ordinateur portable</td>
-                <td><span class="badge badge-validé">Validée</span></td>
-                <td>10/06/2025</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Mme Diop</td>
-                <td>Projecteur</td>
-                <td><span class="badge badge-attente">En attente</span></td>
-                <td>11/06/2025</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>M. Sow</td>
-                <td>Imprimante</td>
-                <td><span class="badge badge-rejeté">Rejetée</span></td>
-                <td>09/06/2025</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {% if lesdemandes %}
+        <table>
+          <thead>
+            <tr>
+              <th>ID demande</th>
+              <th>Nom du professeur</th>
+              <th>Titre</th>
+              <th>Catégorie</th>
+              <th>Description</th>
+              <th>Montant total</th>
+              <th>Statut</th>
+              <th>Date de création</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for demande in lesdemandes %}
+            <tr>
+              <td>{{ demande.id }}</td>
+              <td>{{ demande.nom_demandeur }}</td>       
+              <td>{{ demande.titre_demande }}</td>
+              <td>{{ demande.categorie }}</td>
+              <td>{{ demande.description }}</td>
+              <td>{{ demande.montant_total }}</td>
+              <td>{{ demande.statut }}</td>
+              <td>{{demande.date_creation}}</td>
+            </tr>
+            {%endfor%}
+          </tbody>
+        </table>
+        {%endif%}
       </section>
     </main>
   </div>
