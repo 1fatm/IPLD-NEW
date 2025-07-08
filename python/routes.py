@@ -53,6 +53,9 @@ def connexiondirection_route():
 def inscriptiondirection_route():
     return render_template('inscriptiondirection.html')
 
+@app.route('/pagedirection')
+def pagedirection_route():
+    return render_template('pagedirection.html')
 @app.route('/soumettredemande')
 def soumettre_demande():
     return render_template('soumettredemande.html')
