@@ -19,7 +19,9 @@ from python.pageprof import (
     supprimer_brouillon,
     obtenir_statistiques
 )
-
+from python.Fonctions import(
+    voirdetailsfonction
+)
 @app.route('/')
 def index():
     return render_template('accueil.html')
@@ -129,6 +131,16 @@ def supprimer_brouillon_route():
 @app.route('/obtenir_statistiques', methods=['GET'])
 def obtenir_statistiques_route():
     return obtenir_statistiques()
- 
+
+@app.route('/detailsdemandes',methods=['POST'])
+def details_route():
+    return voirdetailsfonction()
+
+
+@app.route('/changerstatut',methods=['POST'])
+def changer_statut_route():
+    return changer_statut_fonction()
+
+
 if __name__ == '__main__':
     app.run(debug=True)

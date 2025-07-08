@@ -63,21 +63,21 @@
           <i class="fas fa-check-circle"></i>
           <div>
             <p class="label">Validées</p>
-            <p class="value">15</p>
+            <p class="value">{{ session['approuve'] }}</p>
           </div>
         </div>
         <div class="card-style stat-yellow">
           <i class="fas fa-hourglass-half"></i>
           <div>
             <p class="label">En attente</p>
-            <p class="value">9</p>
+            <p class="value">{{ session['attente'] }}</p>
           </div>
         </div>
         <div class="card-style stat-red">
           <i class="fas fa-times-circle"></i>
           <div>
             <p class="label">Rejetées</p>
-            <p class="value">3</p>
+            <p class="value">{{ session['rejete'] }}</p>
           </div>
         </div>
       </div>
@@ -110,6 +110,10 @@
               <td>{{ demande.montant_total }}</td>
               <td>{{ demande.statut }}</td>
               <td>{{demande.date_creation}}</td>
+              <td><form action="/detailsdemandes" method="post">
+                <input type="hidden" name="id" value="{{demande.id}}" >
+                <input type="submit" value="Details">
+              </form></td>
             </tr>
             {%endfor%}
           </tbody>

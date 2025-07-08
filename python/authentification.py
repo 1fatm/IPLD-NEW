@@ -188,6 +188,13 @@ def connexioncheffonction():
             print("Connexion réussie pour le chef :", mail)
             #on recupere les demandes faites par les professeurs de son departement
             demande=supabase.table('demandes').select('*').eq('departement', departement).execute()
+            #compter le nombre de demandes en attente
+            attente = sum(1 for demande in demande.data if demande['statut'] == 'en_attente')
+            approuve = sum(1 for demande in demande.data if demande['statut'] == 'approuve')
+            rejete = sum(1 for demande in demande.data if demande['statut'] == 'rejete')
+            session['attente']=attente
+            session['approuve']=approuve
+            session['rejete']=rejete
             lesdemandes = demande.data if demande.data else []
             return render_template("chefdedepartement.html", session=session, lesdemandes=lesdemandes)
     except Exception as e:
