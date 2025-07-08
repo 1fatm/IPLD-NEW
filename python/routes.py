@@ -57,5 +57,12 @@ def deconnexion_route():
 def pageprof_route():
     return render_template('pageprof.html')
    
+   
+@app.route('/pagedirection')
+def pagedirection_route():
+    return render_template('pagedirection.html')
+@app.route('/demandesreçues')
+def demandesreçues_route():
+    return render_template('demandesreçues.html') 
 if __name__ == '__main__':
     app.run(debug=True)
