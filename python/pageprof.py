@@ -129,9 +129,6 @@ def creer_demande():
         item_prices = request.form.getlist('itemPrice[]')
         
         print(f"📦 Articles reçus: {len(item_names)} articles")
-        print(f"    - Noms: {item_names}")
-        print(f"    - Quantités: {item_quantities}")
-        print(f"    - Prix: {item_prices}")
         
         if item_names:
             for i in range(len(item_names)):
