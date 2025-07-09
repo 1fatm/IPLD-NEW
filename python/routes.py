@@ -14,7 +14,15 @@ from python.pageprof import (
     creer_demande,
     sauvegarder_brouillon,
     consulter_demandes,
-    obtenir_statistiques
+    obtenir_statistiques,
+    sauvegarder_brouillon,
+    consulter_brouillons,
+    obtenir_brouillon,
+    modifier_brouillon,
+    supprimer_brouillon,
+    soumettre_brouillon,
+    detail_demande,
+    obtenir_demande_details
 )
 
 @app.route('/')
@@ -102,10 +110,6 @@ def deconnexion_route():
 def creer_demande_route():
     return creer_demande()
 
-@app.route('/sauvegarder_brouillon', methods=['POST'])
-def sauvegarder_brouillon_route():
-    return sauvegarder_brouillon()
-
 @app.route('/consulter_demandes', methods=['GET'])
 def consulter_demandes_route():
     return consulter_demandes()
@@ -113,6 +117,44 @@ def consulter_demandes_route():
 @app.route('/obtenir_statistiques', methods=['GET'])
 def obtenir_statistiques_route():
     return obtenir_statistiques()
+
+@app.route('/sauvegarder_brouillon', methods=['POST'])
+def sauvegarder_brouillon_route():
+    return sauvegarder_brouillon()
+
+@app.route('/consulter_brouillons', methods=['GET'])
+def consulter_brouillons_route():
+    return consulter_brouillons()
+
+@app.route('/obtenir_brouillon/<int:brouillon_id>', methods=['GET'])
+def obtenir_brouillon_route(brouillon_id):
+    return obtenir_brouillon(brouillon_id)
+
+@app.route('/modifier_brouillon/<int:brouillon_id>', methods=['POST'])
+def modifier_brouillon_route(brouillon_id):
+    return modifier_brouillon(brouillon_id)
+
+@app.route('/supprimer_brouillon/<int:brouillon_id>', methods=['DELETE'])
+def supprimer_brouillon_route(brouillon_id):
+    return supprimer_brouillon(brouillon_id)
+
+@app.route('/soumettre_brouillon/<int:brouillon_id>', methods=['POST'])
+def soumettre_brouillon_route(brouillon_id):
+    return soumettre_brouillon(brouillon_id)
+
+@app.route('/detail_demande')
+def detail_demande_route():
+    return render_template('detail.html')
+
+@app.route('/detail_demande')
+def detail_demande():
+    return detail_demande()
+
+@app.route('/obtenir_demande_details/<int:demande_id>')
+def obtenir_demande_details_route(demande_id):
+    return obtenir_demande_details(demande_id)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

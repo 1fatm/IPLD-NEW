@@ -96,7 +96,7 @@
     }
 
     /* MAIN CONTENT */
- .main-content {
+.main-content {
   flex-grow: 1;
   padding: 30px;
   background-color: #fff;
@@ -235,3 +235,5 @@
         justify-content: center;
       }
     }
+
+
