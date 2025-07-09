@@ -127,7 +127,7 @@ def transmettre_demande_route():
 @app.route('/synthese_chef', methods=['GET'])
 def synthese_chef_route():
     return synthese_route()
-@app.route('/voirdetailsdemande')
+@app.route('/voirdetailsdemande', methods=['GET'])
 def voirdetailsdemande_route():
     return render_template('details.html')
 

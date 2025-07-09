@@ -45,6 +45,33 @@
       text-align: right;
     }
 
+    /* Badges colorés pour les statuts */
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      display: inline-block;
+      text-transform: capitalize;
+    }
+
+    .status-en_attente {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .status-approuve {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-rejete {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
     .form-status {
       display: flex;
       flex-direction: column;
@@ -137,7 +164,12 @@
           <tr><td class="label">Catégorie :</td><td class="value">{{ demande.categorie }}</td></tr>
           <tr><td class="label">Description :</td><td class="value">{{ demande.description }}</td></tr>
           <tr><td class="label">Montant total :</td><td class="value">{{ demande.montant_total }} FCFA</td></tr>
-          <tr><td class="label">Statut :</td><td class="value">{{ demande.statut }}</td></tr>
+          <tr>
+            <td class="label">Statut :</td>
+            <td class="value">
+              <span class="status-badge status-{{ demande.statut }}">{{ demande.statut.replace('_', ' ') }}</span>
+            </td>
+          </tr>
           <tr><td class="label">Date de création :</td><td class="value">{{ demande.date_creation }}</td></tr>
         </table>
 
