@@ -112,8 +112,8 @@ body {
   color: #fff;
 }
 
-/* MAIN CONTENT */
-.main-content {
+    /* MAIN CONTENT */
+ .main-content {
   flex-grow: 1;
   padding: 30px;
   background-color: var(--white);
@@ -262,22 +262,8 @@ body {
     gap: 10px;
   }
 
-  .menu li {
-    flex: 1;
-    justify-content: center;
-  }
-
-  .main-content {
-    margin: 10px;
-    padding: 20px;
-  }
-
-  .stats {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .card-style {
-    flex: 1 1 100%;
-  }
-}
+      .menu li {
+        flex: 1;
+        justify-content: center;
+      }
+    }

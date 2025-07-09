@@ -14,7 +14,15 @@ from python.pageprof import (
     creer_demande,
     sauvegarder_brouillon,
     consulter_demandes,
-    obtenir_statistiques
+    obtenir_statistiques,
+    sauvegarder_brouillon,
+    consulter_brouillons,
+    obtenir_brouillon,
+    modifier_brouillon,
+    supprimer_brouillon,
+    soumettre_brouillon,
+    detail_demande,
+    obtenir_demande_details
 )
 
 @app.route('/')
@@ -105,10 +113,6 @@ def deconnexion_route():
 def creer_demande_route():
     return creer_demande()
 
-@app.route('/sauvegarder_brouillon', methods=['POST'])
-def sauvegarder_brouillon_route():
-    return sauvegarder_brouillon()
-
 @app.route('/consulter_demandes', methods=['GET'])
 def consulter_demandes_route():
     return consulter_demandes()
@@ -116,20 +120,6 @@ def consulter_demandes_route():
 @app.route('/obtenir_statistiques', methods=['GET'])
 def obtenir_statistiques_route():
     return obtenir_statistiques()
-
-# Routes pour les fonctionnalités du chef de département
-@app.route('/consulter_demandes_chef', methods=['GET'])
-def consulter_demandes_chef_route():
-    return consulter_demandes()
-@app.route('/transmettre_demande', methods=['POST'])
-def transmettre_demande_route():
-    return transmettre_route()
-@app.route('/synthese_chef', methods=['GET'])
-def synthese_chef_route():
-    return synthese_route()
-@app.route('/voirdetailsdemande', methods=['GET'])
-def voirdetailsdemande_route():
-    return render_template('details.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

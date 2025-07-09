@@ -381,12 +381,4 @@ html, body {
         width: 100%;
         margin-top: 10px;
     }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    .sidebar.collapsed {
-        display: none;
-    }
 }

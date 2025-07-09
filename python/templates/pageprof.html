@@ -26,6 +26,10 @@
                         <i class="fas fa-file-invoice-dollar icon"></i>
                         <span>Nouvelle demande</span>
                     </li>
+                    <li class="sidebar-item" data-section="brouillons">
+                        <i class="fas fa-edit icon"></i>
+                        <span>Brouillons</span>
+                    </li>
                     <li class="sidebar-item" data-section="view-status">
                         <i class="fas fa-list-alt icon"></i>
                         <span>Consulter</span>
@@ -55,6 +59,10 @@
                         <i class="fas fa-file-invoice-dollar icon"></i>
                         <h3>Créer une demande</h3>
                     </div>
+                    <div class="accueil-card" data-section="brouillons">
+                        <i class="fas fa-edit icon"></i>
+                        <h3>Mes brouillons</h3>
+                    </div>
                     <div class="accueil-card" data-section="view-status">
                         <i class="fas fa-list-alt icon"></i>
                         <h3>Consulter demandes</h3>
@@ -71,6 +79,8 @@
                 <p>Veuillez remplir le formulaire ci-dessous :</p>
 
                 <form id="budget-request-form" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" id="brouillon-id" name="brouillon_id" value="">
+                    
                     <fieldset class="form-section">
                         <div class="form-group">
                             <label for="teacher-name">Nom de l'enseignant :</label>
@@ -129,6 +139,63 @@
                 </form>
             </section>
 
+            <!-- NOUVELLE SECTION BROUILLONS -->
+            <section id="brouillons-section" class="feature-section hidden">
+                <div class="brouillons-container">
+                    <div class="brouillons-header">
+                        <h2 class="brouillons-title">
+                            <i class="fas fa-edit"></i>
+                            Mes Brouillons
+                        </h2>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table id="brouillons-table" class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-hashtag"></i> ID</th>
+                                    <th><i class="fas fa-file-alt"></i> Titre</th>
+                                    <th><i class="fas fa-tag"></i> Catégorie</th>
+                                    <th><i class="fas fa-coins"></i> Montant</th>
+                                    <th><i class="fas fa-calendar-plus"></i> Créé le</th>
+                                    <th><i class="fas fa-calendar-edit"></i> Modifié le</th>
+                                    <th><i class="fas fa-cogs"></i> Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Les brouillons seront chargés ici dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="no-brouillons-message" class="empty-state" style="display: none;">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>Aucun brouillon trouvé</h3>
+                        <p>Créez une nouvelle demande et sauvegardez-la en brouillon pour la retrouver ici.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MODAL POUR VOIR LES DÉTAILS D'UN BROUILLON -->
+            <div id="brouillon-details-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Détails du Brouillon</h3>
+                        <span class="close" onclick="closeBrouillonDetails()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <div id="brouillon-details-content">
+                            <!-- Les détails seront chargés ici -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeBrouillonDetails()">Fermer</button>
+                        <button type="button" class="btn btn-primary" onclick="editBrouillonFromModal()">Modifier</button>
+                        <button type="button" class="btn btn-success" onclick="submitBrouillonFromModal()">Soumettre</button>
+                    </div>
+                </div>
+            </div>
+
             <section id="view-status-section" class="feature-section hidden">
                 <h2>Consulter le statut de mes demandes</h2>
                 <p>Ici, vous pouvez consulter toutes vos demandes budgétaires et leur statut actuel.</p>
@@ -173,8 +240,38 @@
     </div>
 
     <script>
+        // Remplacer la fonction viewDetails existante par celle-ci :
+function viewDetails(demandeId) {
+    // Sauvegarder l'ID de la demande dans le localStorage pour la page de détails
+    localStorage.setItem('demandeId', demandeId);
+    
+    // Rediriger vers la page de détails
+    window.location.href = '/detail_demande';
+}
+
+// Ou si vous préférez ouvrir dans un nouvel onglet :
+function viewDetails(demandeId) {
+    // Sauvegarder l'ID de la demande dans le localStorage pour la page de détails
+    localStorage.setItem('demandeId', demandeId);
+    
+    // Ouvrir dans un nouvel onglet
+    window.open('/detail_demande', '_blank');
+}
+
+// Alternative : Passer l'ID directement dans l'URL
+function viewDetails(demandeId) {
+    window.location.href = `/detail_demande?id=${demandeId}`;
+}
+
+// Ou pour un nouvel onglet avec l'ID dans l'URL :
+function viewDetails(demandeId) {
+    window.open(`/detail_demande?id=${demandeId}`, '_blank');
+}
+
+
         // Variables globales
         let itemCount = 0;
+        let currentBrouillonId = null;
 
         // Fonction pour basculer entre les sections
         function showSection(sectionId) {
@@ -224,6 +321,238 @@
         // Fonction pour supprimer un article
         function removeItem(button) {
             button.closest('.item-row').remove();
+        }
+
+        // Fonction pour charger les brouillons
+        function loadBrouillons() {
+            fetch('/consulter_brouillons')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#brouillons-table tbody');
+                    const noMessage = document.getElementById('no-brouillons-message');
+                    const table = document.getElementById('brouillons-table');
+                    
+                    tbody.innerHTML = '';
+                    
+                    if (data.success && data.brouillons.length > 0) {
+                        table.style.display = 'table';
+                        noMessage.style.display = 'none';
+                        
+                        data.brouillons.forEach(brouillon => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${brouillon.id}</td>
+                                <td>${brouillon.titre_demande}</td>
+                                <td>${brouillon.categorie}</td>
+                                <td>${brouillon.montant_total.toLocaleString()} XOF</td>
+                                <td>${brouillon.date_creation}</td>
+                                <td>${brouillon.date_modification ? brouillon.date_modification.split('T')[0] : 'N/A'}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="viewBrouillonDetails(${brouillon.id})">Détails</button>
+                                    <button class="btn btn-sm btn-warning" onclick="editBrouillon(${brouillon.id})">Modifier</button>
+                                    <button class="btn btn-sm btn-success" onclick="submitBrouillon(${brouillon.id})">Soumettre</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteBrouillon(${brouillon.id})">Supprimer</button>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        table.style.display = 'none';
+                        noMessage.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors du chargement des brouillons');
+                });
+        }
+
+        // Fonction pour voir les détails d'un brouillon
+        function viewBrouillonDetails(brouillonId) {
+            fetch(`/obtenir_brouillon/${brouillonId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const brouillon = data.brouillon;
+                        currentBrouillonId = brouillonId;
+                        
+                        let detailsHtml = `
+                            <div class="brouillon-details">
+                                <h4>Informations générales</h4>
+                                <p><strong>Titre:</strong> ${brouillon.titre_demande}</p>
+                                <p><strong>Catégorie:</strong> ${brouillon.categorie}</p>
+                                <p><strong>Montant total:</strong> ${brouillon.montant_total.toLocaleString()} XOF</p>
+                                <p><strong>Description:</strong></p>
+                                <div class="description-box">${brouillon.description}</div>
+                        `;
+                        
+                        if (brouillon.articles && brouillon.articles.length > 0) {
+                            detailsHtml += `
+                                <h4>Articles</h4>
+                                <table class="details-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Quantité</th>
+                                            <th>Prix unitaire</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                            `;
+                            
+                            brouillon.articles.forEach(article => {
+                                detailsHtml += `
+                                    <tr>
+                                        <td>${article.nom}</td>
+                                        <td>${article.quantite}</td>
+                                        <td>${article.prix_unitaire.toLocaleString()} XOF</td>
+                                        <td>${article.prix_total.toLocaleString()} XOF</td>
+                                    </tr>
+                                `;
+                            });
+                            
+                            detailsHtml += `
+                                    </tbody>
+                                </table>
+                            `;
+                        }
+                        
+                        if (brouillon.pieces_jointes && brouillon.pieces_jointes.length > 0) {
+                            detailsHtml += `
+                                <h4>Pièces jointes</h4>
+                                <ul>
+                            `;
+                            
+                            brouillon.pieces_jointes.forEach(piece => {
+                                detailsHtml += `<li>${piece.nom_fichier} (${(piece.taille / 1024).toFixed(1)} KB)</li>`;
+                            });
+                            
+                            detailsHtml += `</ul>`;
+                        }
+                        
+                        detailsHtml += `</div>`;
+                        
+                        document.getElementById('brouillon-details-content').innerHTML = detailsHtml;
+                        document.getElementById('brouillon-details-modal').style.display = 'block';
+                    } else {
+                        alert('Erreur lors du chargement des détails: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors du chargement des détails');
+                });
+        }
+
+        // Fonction pour fermer la modal des détails
+        function closeBrouillonDetails() {
+            document.getElementById('brouillon-details-modal').style.display = 'none';
+            currentBrouillonId = null;
+        }
+
+        // Fonction pour modifier un brouillon depuis la modal
+        function editBrouillonFromModal() {
+            if (currentBrouillonId) {
+                closeBrouillonDetails();
+                editBrouillon(currentBrouillonId);
+            }
+        }
+
+        // Fonction pour soumettre un brouillon depuis la modal
+        function submitBrouillonFromModal() {
+            if (currentBrouillonId) {
+                closeBrouillonDetails();
+                submitBrouillon(currentBrouillonId);
+            }
+        }
+
+        // Fonction pour modifier un brouillon
+        function editBrouillon(brouillonId) {
+            fetch(`/obtenir_brouillon/${brouillonId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const brouillon = data.brouillon;
+                        
+                        // Remplir le formulaire avec les données du brouillon
+                        document.getElementById('brouillon-id').value = brouillonId;
+                        document.getElementById('request-title').value = brouillon.titre_demande;
+                        document.getElementById('request-category').value = brouillon.categorie;
+                        document.getElementById('request-description').value = brouillon.description;
+                        document.getElementById('requested-amount').value = brouillon.montant_total;
+                        
+                        // Vider et remplir les articles
+                        document.getElementById('items-container').innerHTML = '';
+                        itemCount = 0;
+                        
+                        if (brouillon.articles && brouillon.articles.length > 0) {
+                            brouillon.articles.forEach(article => {
+                                addItem();
+                                const currentCount = itemCount;
+                                document.getElementById(`item-name-${currentCount}`).value = article.nom;
+                                document.getElementById(`item-quantity-${currentCount}`).value = article.quantite;
+                                document.getElementById(`item-price-${currentCount}`).value = article.prix_unitaire;
+                            });
+                        }
+                        
+                        // Aller à la section de création
+                        showSection('create-request');
+                        
+                        // Changer le titre de la section
+                        document.querySelector('#create-request-section h2').textContent = 'Modifier le Brouillon';
+                    } else {
+                        alert('Erreur lors du chargement du brouillon: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors du chargement du brouillon');
+                });
+        }
+
+        // Fonction pour soumettre un brouillon
+        function submitBrouillon(brouillonId) {
+            if (confirm('Êtes-vous sûr de vouloir soumettre ce brouillon ? Il sera transformé en demande officielle.')) {
+                fetch(`/soumettre_brouillon/${brouillonId}`, {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        loadBrouillons();
+                    } else {
+                        alert('Erreur lors de la soumission: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la soumission');
+                });
+            }
+        }
+
+        // Fonction pour supprimer un brouillon
+        function deleteBrouillon(brouillonId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer ce brouillon ? Cette action est irréversible.')) {
+                fetch(`/supprimer_brouillon/${brouillonId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        loadBrouillons();
+                    } else {
+                        alert('Erreur lors de la suppression: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la suppression');
+                });
+            }
         }
 
         // Fonction pour charger les demandes
@@ -290,9 +619,15 @@
                 });
         }
 
-        // Fonction pour afficher les détails d'une demande
-        function viewDetails(id) {
-            alert('Détails de la demande ID: ' + id);
+
+
+        // Fonction pour réinitialiser le formulaire
+        function resetForm() {
+            document.getElementById('budget-request-form').reset();
+            document.getElementById('items-container').innerHTML = '';
+            document.getElementById('brouillon-id').value = '';
+            itemCount = 0;
+            document.querySelector('#create-request-section h2').textContent = 'Nouvelle Demande';
         }
 
         // Événements au chargement de la page
@@ -309,6 +644,10 @@
                             loadRequests();
                         } else if (section === 'synthese') {
                             loadStatistics();
+                        } else if (section === 'brouillons') {
+                            loadBrouillons();
+                        } else if (section === 'create-request') {
+                            resetForm();
                         }
                     }
                 });
@@ -325,6 +664,10 @@
                             loadRequests();
                         } else if (section === 'synthese') {
                             loadStatistics();
+                        } else if (section === 'brouillons') {
+                            loadBrouillons();
+                        } else if (section === 'create-request') {
+                            resetForm();
                         }
                     }
                 });
@@ -343,61 +686,88 @@
                 e.preventDefault();
                 
                 const formData = new FormData(form);
+                const brouillonId = document.getElementById('brouillon-id').value;
                 
-                fetch('/creer_demande', {
+                let url = '/creer_demande';
+                if (brouillonId) {
+                    url = `/modifier_brouillon/${brouillonId}`;
+                }
+                
+                fetch(url, {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Demande créée avec succès !');
-                        form.reset();
-                        document.getElementById('items-container').innerHTML = '';
-                        itemCount = 0;
-                        showSection('accueil');
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        resetForm();
+                        showSection('view-status');
+                        loadRequests();
                     } else {
-                        alert('Erreur lors de la création de la demande');
+                        alert('Erreur lors de la soumission: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Erreur lors de la création de la demande');
+                    alert('Erreur lors de la soumission');
                 });
             });
 
             // Sauvegarde en brouillon
             draftBtn.addEventListener('click', function() {
                 const formData = new FormData(form);
-                formData.append('action', 'brouillon');
+                const brouillonId = document.getElementById('brouillon-id').value;
                 
-                fetch('/creer_demande', {
+                let url = '/sauvegarder_brouillon';
+                if (brouillonId) {
+                    url = `/modifier_brouillon/${brouillonId}`;
+                }
+                
+                fetch(url, {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Brouillon sauvegardé avec succès !');
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        if (data.id) {
+                            document.getElementById('brouillon-id').value = data.id;
+                        }
+                        showSection('brouillons');
+                        loadBrouillons();
                     } else {
-                        alert('Erreur lors de la sauvegarde du brouillon');
+                        alert('Erreur lors de la sauvegarde: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Erreur lors de la sauvegarde du brouillon');
+                    alert('Erreur lors de la sauvegarde');
                 });
             });
 
-            // Bouton de déconnexion
+            // Gestion de la déconnexion
             document.getElementById('confirm-logout-btn').addEventListener('click', function() {
                 window.location.href = '/deconnexion';
             });
 
-            // Annuler déconnexion
-            document.querySelectorAll('.cancel-logout-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    showSection('accueil');
-                });
+            document.querySelector('.cancel-logout-btn').addEventListener('click', function() {
+                showSection('accueil');
             });
+
+            // Fermer la modal si on clique à l'extérieur
+            window.onclick = function(event) {
+                const modal = document.getElementById('brouillon-details-modal');
+                if (event.target === modal) {
+                    closeBrouillonDetails();
+                }
+            };
+
+            // Charger les données initiales
+            loadRequests();
+            loadStatistics();
+            loadBrouillons();
         });
     </script>
 </body>
