@@ -45,7 +45,6 @@
     <ul class="menu">
       <li><a href="/pagedirection" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
       <li><a href="/pagedemande" class="menu-link"><i class="fas fa-tasks"></i> Demandes</a></li>
-      <li><a href="#" class="menu-link"><i class="fas fa-file-alt"></i> Rapports</a></li>
     </ul>
     <div class="logout">
     <a href="{{ url_for('deconnexion_route') }}" class="menu-link">
@@ -57,33 +56,12 @@
 
   <!-- DIARRAAAAAAAAAAAAAAAA -->
   <main class="main-content">
-    <div class="stats">
-      <div class="card-style stat-green">
-        <i class="fas fa-dollar-sign"></i>
-        <div>
-          <p class="label">Montant total</p>
-          <p class="value">{{ session['montant'] }} Francs CFA</p>
-        </div>
-      </div>
-      <div class="card-style stat-yellow">
-        <i class="fas fa-file-alt"></i>
-        <div>
-          <p class="label">Nombre de demandes</p>
-          <p class="value">{{ session['total'] }}</p>
-        </div>
-      </div>
-      <div class="card-style stat-red">
-        <i class="fas fa-times-circle"></i>
-        <div>
-          <p class="label">Rejetées</p>
-          <p class="value">4</p>
-        </div>
-      </div>
-    </div>
 
     <h1>Bienvenue sur la page des demandes</h1>
-    <p class="subtitle">Vue d’ensemble des demandes reçues</p>
-
+    <p class="subtitle">Voici toutes les demandes que vous avez reçues</p>
+    <form action="/genererapport" method="post">
+      <input type="submit" value="Générer un rapport" class="btn">
+    </form><br>
     <!-- HISTORIQUE -->
       <section class="historique">
       <table>
@@ -93,7 +71,7 @@
             <th>Intitulé de la demande</th>
             <th>Montant</th>
             <th>Description</th>
-            <th>Date de soumission</th>
+            <th>Date de soumission de la demande</th>
             <th>Détails</th>
           </tr>
         </thead>
