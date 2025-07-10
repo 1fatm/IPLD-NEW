@@ -173,16 +173,22 @@
       </a>
     </li>
     <li>
-      <a href="{{ url_for('transmettre_route') }}"class="menu-link">
+      <a href="/transmetteredemande" class="menu-link">
         <i class="fas fa-paper-plane"></i> Transmettre
+      </a>
+    </li>
+       <li>
+      <a href="/demandetransmises"class="menu-link">
+        <i class="fas fa-paper-plane"></i> Demandes transmises
       </a>
     </li>
   </ul>
   <div class="logout">
-   
+    <a href="{{ url_for('deconnexion_route') }}" class="menu-link">
       <i class="fas fa-sign-out-alt"></i> Déconnexion
-    
+    </a>
   </div>
+
 </nav>
 
 

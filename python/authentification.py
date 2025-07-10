@@ -1,9 +1,11 @@
+
 from supabase import create_client, Client
 from app import app
 from flask import Flask, render_template, request, redirect, url_for, session
 from dotenv import load_dotenv
 import os
 import hashlib
+from datetime import datetime
 
 load_dotenv()
 supabase_url = os.getenv("SUPABASE_URL")
@@ -172,19 +174,46 @@ def connexioncheffonction():
         if not motdepassesup.data:
             return render_template("connexionchefdepartement.html", error="Cet utilisateur n'existe pas. Veuillez réessayer.")
         mot_de_passe = motdepassesup.data[0]['mot_de_passe']
+        departement = motdepassesup.data[0]['departement']
+        nom=motdepassesup.data[0]['nom']
+        prenom=motdepassesup.data[0]['prenom']
         #verifier si le mot de passe correspond
         motdepasse = hashlib.sha256(motdepasse.encode()).hexdigest() 
         if not motdepasse==mot_de_passe:
             return render_template("connexionchefdepartement.html", error="Identifiants invalides. Veuillez réessayer.")
         else:
+            #on récupére les informations du chef
             session['username']=motdepassesup.data[0]['email']
-            session['role']='Chef de departement'
+            session['role']='Chef du Departement '+departement
+            session['nom']=nom
+            session['departement']=departement
+            session['prenom']=prenom
             print("Connexion réussie pour le chef :", mail)
-            return render_template("chefdedepartement.html", session=session)
+            #on recupere les demandes faites par les professeurs de son departement
+            demandes=supabase.table('demandes').select('*').eq('departement', departement).eq('transmis', 'false').execute()
+            demandes_data = demandes.data
+            demande=supabase.table('demandes').select('*').eq('departement', departement).execute()
+            #compter le nombre de demandes en attente
+            attente = sum(1 for demande in demande.data if demande['statut'] == 'en_attente')
+            approuve = sum(1 for demande in demande.data if demande['statut'] == 'approuve')
+            rejete = sum(1 for demande in demande.data if demande['statut'] == 'rejete')
+            transmise = sum(1 for demande in demande.data if str(demande['transmis']).lower() == 'true')
+            session['attente'] = attente
+            session['approuve'] = approuve
+            session['rejete'] = rejete
+            session['transmis'] = transmise
+            lesdemandes = demandes.data if demandes.data else []
+            for demande in lesdemandes:
+                date_str = demande.get('date_creation')
+                if date_str:
+                    dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")  # format Supabase ISO
+                    demande['date_creation'] = dt.strftime('%d/%m/%Y %H:%M')
+                else:
+                    demande['date_creation'] = 'N/A'
+            return render_template("chefdedepartement.html", session=session, lesdemandes=lesdemandes)
     except Exception as e:
         print("Erreur lors de la connexion :", e)
         return render_template("connexionchefdepartement.html", error="Identifiants invalides. Veuillez réessayer.")
-
 
 def connexiondirectionfonction():
     mail = request.form.get('email')
@@ -213,3 +242,4 @@ def connexiondirectionfonction():
 def deconnexionfonction():
     session.clear()  
     return redirect(url_for('index'))
+

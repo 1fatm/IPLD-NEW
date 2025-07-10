@@ -1,5 +1,15 @@
 from flask import Flask, render_template, session
 from python import app
+import os
+from supabase import create_client, Client
+from dotenv import load_dotenv
+from datetime import datetime
+load_dotenv()
+# Supabase configuration
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key)
+
 from python.authentification import (
     inscriptioncheffonction, 
     inscriptionproffonction, 
@@ -14,24 +24,46 @@ from python.pageprof import (
     creer_demande,
     sauvegarder_brouillon,
     consulter_demandes,
-    obtenir_statistiques,
-    sauvegarder_brouillon,
-    consulter_brouillons,
-    obtenir_brouillon,
-    modifier_brouillon,
-    supprimer_brouillon,
-    soumettre_brouillon,
-    detail_demande,
-    obtenir_demande_details
+    obtenir_statistiques
 )
-
+from python.Fonctions import (
+    consulter_fonction,
+    voirdetailsfonction,
+    changer_statut_fonction,
+    transmettre_fonction,
+    valide_fonction,
+    demandes_transmises_fonction
+)
 @app.route('/')
 def index():
     return render_template('accueil.html')
 
 @app.route('/chefdedepartement')
 def pagechefdepartement():
-    return render_template('chefdedepartement.html')
+    if 'departement' not in session:
+        return render_template('connexionchefdepartement.html', error="Veuillez vous connecter d'abord.")
+    departement=session['departement']
+    demandes=supabase.table('demandes').select('*').eq('departement', departement).eq('transmis', 'false').execute()
+    demandes_data = demandes.data
+    demande=supabase.table('demandes').select('*').eq('departement', departement).execute()
+    #compter le nombre de demandes en attente
+    attente = sum(1 for demande in demande.data if demande['statut'] == 'en_attente')
+    approuve = sum(1 for demande in demande.data if demande['statut'] == 'approuve')
+    rejete = sum(1 for demande in demande.data if demande['statut'] == 'rejete')
+    transmise = sum(1 for demande in demande.data if str(demande['transmis']).lower() == 'true')
+    session['attente'] = attente
+    session['approuve'] = approuve
+    session['rejete'] = rejete
+    session['transmis'] = transmise
+    print(transmise)
+    for demande in demandes_data:
+        date_str = demande.get('date_creation')
+        if date_str:
+            dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S.%f")  # format Supabase ISO
+            demande['date_creation'] = dt.strftime('%d/%m/%Y %H:%M')
+        else:
+                    demande['date_creation'] = 'N/A'
+    return render_template('chefdedepartement.html', lesdemandes=demandes_data, session=session)
 
 @app.route('/connexionprof')
 def connexionprof_route():
@@ -51,7 +83,9 @@ def inscriptionprof_route():
 
 @app.route('/consulterlesdemandes')
 def consulterpage_route():
-    return render_template('consulter.html')
+    if 'departement' not in session:
+        return render_template('connexionchefdepartement.html', error="Veuillez vous connecter d'abord.")
+    return consulter_fonction()
 
 @app.route('/connexiondirection')
 def connexiondirection_route():
@@ -61,20 +95,19 @@ def connexiondirection_route():
 def inscriptiondirection_route():
     return render_template('inscriptiondirection.html')
 
-@app.route('/pagedirection')
-def pagedirection_route():
-    return render_template('pagedirection.html')
 @app.route('/soumettredemande')
 def soumettre_demande():
+    if 'departement' not in session:
+        return render_template('connexionchefdepartement.html', error="Veuillez vous connecter d'abord.")
     return render_template('soumettredemande.html')
 
 @app.route('/synthese')
 def synthese_route():
+    if 'departement' not in session:
+        return render_template('connexionchefdepartement.html', error="Veuillez vous connecter d'abord.")
     return render_template('synthese.html')
 
-@app.route('/transmettredemande')
-def transmettre_route():
-    return render_template('transmettre.html')
+
 
 @app.route('/inscriptionchefcode', methods=['POST'])
 def inscriptionchefcode_route():
@@ -108,18 +141,46 @@ def connexiondirectioncode_route():
 def deconnexion_route():
     return deconnexionfonction()
 
-# Routes pour les fonctionnalités des professeurs
 @app.route('/creer_demande', methods=['POST'])
 def creer_demande_route():
     return creer_demande()
+
+@app.route('/sauvegarder_brouillon', methods=['POST'])
+def sauvegarder_brouillon_route():
+    return sauvegarder_brouillon()
 
 @app.route('/consulter_demandes', methods=['GET'])
 def consulter_demandes_route():
     return consulter_demandes()
 
+
 @app.route('/obtenir_statistiques', methods=['GET'])
 def obtenir_statistiques_route():
     return obtenir_statistiques()
 
+# Routes pour les fonctionnalités du chef de département
+@app.route('/consulter_demandes_chef', methods=['GET'])
+def consulter_demandes_chef_route():
+    return consulter_demandes()
+@app.route('/transmetteredemande')
+def transmettre_route():
+    return valide_fonction()
+@app.route('/synthese_chef', methods=['GET'])
+def synthese_chef_route():
+    return synthese_route()
+@app.route('/detailsdemandes', methods=['POST'])
+def detailsdemandes_route():
+    return voirdetailsfonction()
+
+@app.route('/changerstatut', methods=['POST'])
+def changer_statut_route():
+    return changer_statut_fonction()
+@app.route('/transmettredemande', methods=['POST'])
+def transmetteredemande_route():
+    return transmettre_fonction()
+
+@app.route('/demandetransmises')
+def demandetransmises_route():
+    return demandes_transmises_fonction()
 if __name__ == '__main__':
     app.run(debug=True)

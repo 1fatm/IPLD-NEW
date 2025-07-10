@@ -10,7 +10,7 @@
 
   <style>
     .btn-details {
-      background-color: #4CAF50;
+      background-color: #2563eb;
       color: white;
       border: none;
       padding: 6px 12px;
@@ -30,31 +30,93 @@
     .btn-details:hover {
       background-color: #45a049;
     }
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      display: inline-block;
+      text-transform: capitalize;
+    }
+
+    .status-en_attente {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+    }
+
+    .status-approuve {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .status-rejete {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .btn {
+      padding: 6px 12px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
-
 <body>
   <div class="dashboard-container">
     <!-- SIDEBAR -->
-    <nav class="sidebar">
-      <div class="logo-section">
-        <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
-      </div>
-      <ul class="menu">
-        <li><a href="{{ url_for('pagechefdepartement') }}" class="menu-link"><i class="fas fa-home"></i> Accueil</a></li>
-        <li><a href="{{ url_for('consulterpage_route') }}" class="menu-link"><i class="fas fa-list"></i> Consulter</a></li>
-        <li><a href="{{ url_for('soumettre_demande') }}" class="menu-link"><i class="fas fa-plus-circle"></i> Nouvelle demande</a></li>
-        <li><a href="{{ url_for('synthese_route') }}" class="menu-link"><i class="fas fa-file-alt"></i> Synthèse</a></li>
-        <li><a href="{{ url_for('transmettre_route') }}" class="menu-link"><i class="fas fa-paper-plane"></i> Transmettre</a></li>
-      </ul>
-      <div class="logout">
-        <i class="fas fa-sign-out-alt"></i> Déconnexion
-      </div>
-    </nav>
+   <nav class="sidebar">
+  <div class="logo-section">
+    <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
+  </div>
+  <ul class="menu">
+    <li>
+      <a href="{{ url_for('pagechefdepartement') }}" class="menu-link">
+        <i class="fas fa-home"></i> Accueil
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('consulterpage_route') }}" class="menu-link">
+        <i class="fas fa-list"></i> Consulter
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('soumettre_demande') }}" class="menu-link">
+        <i class="fas fa-plus-circle"></i> Nouvelle demande
+      </a>
+    </li>
+    <li>
+      <a href="{{ url_for('synthese_route') }}"class="menu-link">
+        <i class="fas fa-file-alt"></i> Synthèse
+      </a>
+    </li>
+    <li>
+      <a href="/transmetteredemande" class="menu-link">
+        <i class="fas fa-paper-plane"></i> Transmettre
+      </a>
+    </li>
+       <li>
+      <a href="/demandetransmises"class="menu-link">
+        <i class="fas fa-paper-plane"></i> Demandes transmises
+      </a>
+    </li>
+  </ul>
+  <div class="logout">
+    <a href="{{ url_for('deconnexion_route') }}" class="menu-link">
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    </a>
+  </div>
+
+</nav>
+
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
-      <h1>Bienvenue {{ session['prenom'] }} {{ session['nom'] }}, {{ session['role'] }}</h1>
+      <h1>Bienvenue Chef de Département</h1>
       <p class="subtitle">Voici un aperçu des demandes :</p>
 
       <div class="stats">
@@ -62,65 +124,71 @@
           <i class="fas fa-check-circle"></i>
           <div>
             <p class="label">Validées</p>
-            <p class="value">{{ session['approuve'] }}</p>
+            <p class="value">{{session['approuve']}}</p>
           </div>
         </div>
         <div class="card-style stat-yellow">
           <i class="fas fa-hourglass-half"></i>
           <div>
             <p class="label">En attente</p>
-            <p class="value">{{ session['attente'] }}</p>
+            <p class="value">{{session['attente']}}</p>
           </div>
         </div>
         <div class="card-style stat-red">
           <i class="fas fa-times-circle"></i>
           <div>
             <p class="label">Rejetées</p>
-            <p class="value">{{ session['rejete'] }}</p>
+            <p class="value">{{session['rejete']}}</p>
+          </div>
+        </div>
+        <div class="card-style stat-blue">
+          <i class="fas fa-paper-plane"></i>
+          <div>
+            <p class="label">Transmises</p>
+            <p class="value">{{session['transmis']}}</p>
           </div>
         </div>
       </div>
 
+      <!-- TABLE -->
       <section class="historique">
         <h2>Historique des demandes </h2>
         {% if lesdemandes %}
-        <table>
-          <thead>
-            <tr>
-              <th>ID demande</th>
-              <th>Nom du professeur</th>
-              <th>Titre</th>
-              <th>Catégorie</th>
-              <th>Description</th>
-              <th>Montant total</th>
-              <th>Statut</th>
-              <th>Date de création</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for demande in lesdemandes %}
-            <tr>
-              <td>{{ demande.id }}</td>
-              <td>{{ demande.nom_demandeur }}</td>
-              <td>{{ demande.titre_demande }}</td>
-              <td>{{ demande.categorie }}</td>
-              <td>{{ demande.description }}</td>
-              <td>{{ demande.montant_total }}</td>
-              <td>{{ demande.statut }}</td>
-              <td>{{ demande.date_creation }}</td>
-              <td>
-                <form action="/detailsdemandes" method="post">
-                  <input type="hidden" name="id" value="{{ demande.id }}">
-                  <button type="submit" class="btn-details">
-                    <i class="fas fa-eye"></i> Détails
-                  </button>
-                </form>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <div class="table-container">
+          <table class="demandes-table">
+            <thead>
+              <tr>
+                <th>Nom du professeur</th>
+                <th>Email du professeur</th>
+                <th>Intitulé de la demande</th>
+                <th>Statut</th>
+                <th>Description</th>
+                <th>Date de soumission</th>
+                 <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for demande in lesdemandes %}
+              <tr>
+                <td> {{ demande.nom_demandeur }}</td>
+                <td>{{demande.email_demandeur}}</td>
+                <td>{{ demande.titre_demande }}</td>
+                <td><span class="status-badge status-{{ demande.statut }}">{{ demande.statut.replace('_', ' ') }}</span></td>
+                <td>{{ demande.description }}</td>
+                <td>{{ demande.date_creation }}</td>
+                <td>
+                <form action="/detailsdemandes" method="post" class="btn">
+                    <input type="hidden" name="id" value="{{ demande.id }}">
+                    <button type="submit" class="btn">
+                      <i class="fas fa-eye"></i> Détails
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+       </div>
         {% endif %}
       </section>
     </main>

@@ -168,6 +168,9 @@ body {
 .stat-red {
   border-left-color: var(--red);
 }
+.stat-blue {
+  border-left-color: var(--primary-color);
+}
 
 .card-style i {
   font-size: 1.8rem;
