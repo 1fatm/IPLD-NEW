@@ -11,42 +11,42 @@
 </head>
 <body>
     <div class="app-layout">
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
-            </div>
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="{{ url_for('static', filename='images/logo_officiel_ESP_UCAD-removebg-preview.png') }}" alt="Logo" class="logo">
+        </div>
 
-            <nav>
-                <ul>
-                    <li class="sidebar-item active" data-section="accueil">
-                        <i class="fas fa-home icon"></i>
-                        <span>Accueil</span>
-                    </li>
-                    <li class="sidebar-item" data-section="create-request">
-                        <i class="fas fa-file-invoice-dollar icon"></i>
-                        <span>Nouvelle demande</span>
-                    </li>
-                    <li class="sidebar-item" data-section="brouillons">
-                        <i class="fas fa-edit icon"></i>
-                        <span>Brouillons</span>
-                    </li>
-                    <li class="sidebar-item" data-section="view-status">
-                        <i class="fas fa-list-alt icon"></i>
-                        <span>Consulter</span>
-                    </li>
-                    <li class="sidebar-item" data-section="synthese">
-                        <i class="fas fa-chart-bar icon"></i>
-                        <span>Synthèse</span>
-                    </li>
-                </ul>
-            </nav>
+        <nav>
+            <ul>
+                <li class="sidebar-item active" data-section="accueil">
+                    <i class="fas fa-home icon"></i>
+                    <span>Accueil</span>
+                </li>
+                <li class="sidebar-item" data-section="create-request">
+                    <i class="fas fa-file-invoice-dollar icon"></i>
+                    <span>Nouvelle demande</span>
+                </li>
+                <li class="sidebar-item" data-section="brouillons">
+                    <i class="fas fa-edit icon"></i>
+                    <span>Brouillons</span>
+                </li>
+                <li class="sidebar-item" data-section="view-status">
+                    <i class="fas fa-list-alt icon"></i>
+                    <span>Consulter</span>
+                </li>
+                <li class="sidebar-item" data-section="synthese">
+                    <i class="fas fa-chart-bar icon"></i>
+                    <span>Synthèse</span>
+                </li>
+            </ul>
+        </nav>
 
-    <div class="sidebar-item logout-item" data-section="logout">
-        <a href="{{ url_for('deconnexion_route') }}" class="menu-link">
-            <i class="fas fa-sign-out-alt icon"></i>
-            <span>Déconnexion</span>
-        </a>
-    </div>
+<div class="sidebar-item logout-item" data-section="logout">
+    <a href="{{ url_for('deconnexion_route') }}" class="menu-link">
+        <i class="fas fa-sign-out-alt icon"></i>
+        <span>Déconnexion</span>
+    </a>
+</div>
 </aside>
 
 
