@@ -1,7 +1,6 @@
 from flask import Flask
-app = Flask(__name__)
-# Create the Flask application instance
-app = Flask(__name__)
 
-# Import routes from the routes module
-from python import routes
+app = Flask(__name__)
+app.secret_key = 'yourlove'
+
+from python import routes, authentification,pageprof,Fonctions  # En bas pour éviter les imports circulaires

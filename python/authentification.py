@@ -1,6 +1,6 @@
 
+from python import app
 from supabase import create_client, Client
-from app import app
 from flask import Flask, render_template, request, redirect, url_for, session
 from dotenv import load_dotenv
 import os

@@ -1,3 +1,4 @@
+from python import app
 from supabase import create_client, Client
 from flask import request, redirect, url_for, session, jsonify, flash, render_template
 from werkzeug.utils import secure_filename

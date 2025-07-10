@@ -212,6 +212,3 @@ def pagedemande_route():
     total= len(demandes)
     session['total'] = total
     return render_template('demandedirection.html', session=session, lesdemandes=demandes)
-
-if __name__ == '__main__':
-    app.run(debug=True)
