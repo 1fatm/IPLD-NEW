@@ -232,8 +232,14 @@ def connexiondirectionfonction():
         else:
             session['username']=motdepassesup.data[0]['email']
             session['role']='directeur'
+            #on va afficher les information(demandes) faites à la direction
+            demandes=supabase.table('transmis').select('*').execute()
+            demandes_data = demandes.data
+            demandes_data = demandes_data[:5]  # Limiter à 5 demandes pour la page
+            montant = sum(demande['montant_total'] for demande in demandes_data)
+            session['montant'] = montant
             print("Connexion réussie pour le directeur :", mail)
-            return render_template("pagedirection.html", session=session)
+            return render_template("pagedirection.html", session=session, lesdemandes=demandes_data)
     except Exception as e:
         print("Erreur lors de la connexion :", e)
         return render_template("connexiondirection.html", error="Identifiants invalides. Veuillez réessayer.")

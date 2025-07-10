@@ -54,12 +54,9 @@
   </div>
   </nav>
 
+
   <!-- DIARRAAAAAAAAAAAAAAAA -->
   <main class="main-content">
-    <h1>Bienvenue sur le tableau de bord</h1>
-    <p class="subtitle">Vue d’ensemble des demandes reçues</p>
-
-    <!-- STATISTIQUES -->
     <div class="stats">
       <div class="card-style stat-green">
         <i class="fas fa-dollar-sign"></i>
@@ -71,7 +68,7 @@
       <div class="card-style stat-yellow">
         <i class="fas fa-file-alt"></i>
         <div>
-          <p class="label">Total des demandes</p>
+          <p class="label">Nombre de demandes</p>
           <p class="value">{{ session['total'] }}</p>
         </div>
       </div>
@@ -84,15 +81,18 @@
       </div>
     </div>
 
+    <h1>Bienvenue sur la page des demandes</h1>
+    <p class="subtitle">Vue d’ensemble des demandes reçues</p>
+
     <!-- HISTORIQUE -->
       <section class="historique">
-      <h2>Historique des dernières demandes</h2>
       <table>
         <thead>
           <tr>
             <th>Département</th>
             <th>Intitulé de la demande</th>
             <th>Montant</th>
+            <th>Description</th>
             <th>Date de soumission</th>
             <th>Détails</th>
           </tr>
@@ -103,6 +103,7 @@
             <td>{{ demande.departement }}</td>
             <td>{{ demande.titre_demande }}</td>
             <td>{{ demande.montant_total }} Francs CFA</td>
+            <td>{{ demande.description }}</td>
             <td>{{ demande.date_creation }}</td>
             <td>
               <form action="/detailsdemandesdirect" method="post" class="btn">

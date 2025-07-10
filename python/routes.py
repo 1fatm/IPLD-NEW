@@ -32,7 +32,8 @@ from python.Fonctions import (
     changer_statut_fonction,
     transmettre_fonction,
     valide_fonction,
-    demandes_transmises_fonction
+    demandes_transmises_fonction,
+    voirdetailsdirectfonction
 )
 @app.route('/')
 def index():
@@ -64,6 +65,19 @@ def pagechefdepartement():
         else:
                     demande['date_creation'] = 'N/A'
     return render_template('chefdedepartement.html', lesdemandes=demandes_data, session=session)
+
+@app.route('/pagedirection')
+def pagedirection_route():
+    if 'role' not in session or session['role'] != 'directeur':
+        return render_template('connexiondirection.html', error="Veuillez vous connecter d'abord.")
+    #on va afficher les information(demandes) faites à la direction
+    demandes=supabase.table('transmis').select('*').execute().data
+    montant = sum(demande['montant_total'] for demande in demandes)
+    session['montant'] = montant
+    total= len(demandes)
+    session['total'] = total
+    demandes = demandes[:5]
+    return render_template('pagedirection.html', session=session, lesdemandes=demandes)
 
 @app.route('/connexionprof')
 def connexionprof_route():
@@ -172,6 +186,10 @@ def synthese_chef_route():
 def detailsdemandes_route():
     return voirdetailsfonction()
 
+@app.route('/detailsdemandesdirect', methods=['POST'])
+def detailsdemandesdirect_route():
+    return voirdetailsdirectfonction()
+
 @app.route('/changerstatut', methods=['POST'])
 def changer_statut_route():
     return changer_statut_fonction()
@@ -182,5 +200,18 @@ def transmetteredemande_route():
 @app.route('/demandetransmises')
 def demandetransmises_route():
     return demandes_transmises_fonction()
+
+@app.route('/pagedemande')
+def pagedemande_route():
+    if 'role' not in session or session['role'] != 'directeur':
+        return render_template('connexiondirection.html', error="Veuillez vous connecter d'abord.")
+    #on va afficher les information(demandes) faites à la direction
+    demandes=supabase.table('transmis').select('*').execute().data
+    montant = sum(demande['montant_total'] for demande in demandes)
+    session['montant'] = montant
+    total= len(demandes)
+    session['total'] = total
+    return render_template('demandedirection.html', session=session, lesdemandes=demandes)
+
 if __name__ == '__main__':
     app.run(debug=True)
