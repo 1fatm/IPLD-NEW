@@ -41,7 +41,8 @@ from python.Fonctions import (
     transmettre_fonction,
     valide_fonction,
     demandes_transmises_fonction,
-    voirdetailsdirectfonction
+    voirdetailsdirectfonction,
+    generer_rapport_excel
 )
 @app.route('/')
 def index():
@@ -249,3 +250,11 @@ def pagedemande_route():
     total= len(demandes)
     session['total'] = total
     return render_template('demandedirection.html', session=session, lesdemandes=demandes)
+
+@app.route('/genererapport', methods=['POST'])
+def generer_rapport():
+    return generer_rapport_excel()
+
+@app.route('/detailsdemandesdirect', methods=['POST'])
+def detailsdemandesdirect():
+    return voirdetailsdirectfonction()
